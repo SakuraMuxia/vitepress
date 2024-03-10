@@ -2,7 +2,8 @@ import { defineConfig } from 'vitepress';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  head: [["link", { rel: "icon", href: "logo.svg" }]],
+  head: [["link", { rel: "icon", href: "/vitepress/logo.svg" }]],
+  base: "/vitepress/",
   title: "雨落辰潇-文档站",
   description: "A VitePress Site",
   themeConfig: {
