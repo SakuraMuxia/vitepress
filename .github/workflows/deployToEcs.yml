@@ -1,5 +1,5 @@
 #工作流的名称
-name: build and deploy
+name: deployToEcs
 
 #触发工作流的事件
 on:
@@ -25,10 +25,7 @@ jobs:
         #安装模块并打包项目
       - name: Build Project
         run:
-
           npm run docs:build
-
-
 
         #将文件上传至云服务器
       - name: ssh-scp-deploy
