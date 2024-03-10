@@ -21,12 +21,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-
+      - run: npm install --frozen-lockfile
         #安装模块并打包项目
       - name: Build Project
-        run: |
-          npm install
-          npm run build
+        run:
+
+          npm run docs:build
+
+
 
         #将文件上传至云服务器
       - name: ssh-scp-deploy
