@@ -16,11 +16,6 @@ export default defineConfig({
     },
     // logo配置
     logo: "logo.svg",
-      // 文章页脚
-      docFooter: {
-          prev: '←上一篇',
-          next: '下一篇→',
-      },
       //页脚
       footer: {
           message: '',
