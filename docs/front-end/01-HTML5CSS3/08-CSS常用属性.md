@@ -147,7 +147,7 @@ font: bold 14px/30px 'Microsoft YaHei';
 font: bold 14px/3 'Microsoft YaHei';  /* 此时 3 表示字体大小的倍数，相当于em */
 ```
 
-![image-20240311094401475](000-images/08-CSS常用属性/image-20240311094401475.png)
+![image-20240311094401475](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240311094401475.png)
 
 ## 背景样式
 
