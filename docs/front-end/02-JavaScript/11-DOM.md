@@ -880,7 +880,7 @@ new Option('内容'， 'value值')
 
 #### ① table 元素
 
-```
+```js
 rows			获取所有行元素的集合tr的集合
 
 insertRow(索引)	添加一行，如果不设置参数添加到最后，返回一个tr
@@ -889,7 +889,7 @@ deleteRow(索引)	删除一行
 
 #### ② tableRow 元素（tr 元素）
 
-```
+```js
 rowIndex		本行的索引
 cells			获取本行中单元格元素的集合
 
@@ -900,7 +900,7 @@ deleteCell(索引)	删除一个单元格
 
 #### ③ tableCell 元素 （td 或 th）
 
-```
+```js
 cellIndex		本单元格的索引（同一行内）
 ```
 
