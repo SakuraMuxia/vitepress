@@ -15,16 +15,17 @@ export default defineConfig({
       label: '目录'
     },
       //上一页下一页配置
-      docFooter: {
-        next: '回到第一章',
-      },
+    docFooter: {
+      prev: '上一篇',
+      next: '回到第一章',
+    },
     // logo配置
     logo: "logo.svg",
-      //页脚
-      footer: {
-          message: '',
-          copyright: 'Copyright © 2024 雨落辰潇',
-      },
+    //页脚
+    footer: {
+      message: '',
+      copyright: 'Copyright © 2024 雨落辰潇',
+    },
 //-----------------------------------------------------------------------
     // nav导航
     nav: [
