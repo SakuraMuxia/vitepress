@@ -4,7 +4,7 @@
 
 **哪些样式可以被后代元素继承：**
 
-```
+```shell
 1. 字体样式 font-size、font-weight、font-style font-family、font
 2. 文字颜色 color
 3. 文本样式 letter-spacing、word-spacing、text-decoration、text-indent、text-align、line-height （vertical-align 不可以被继承）

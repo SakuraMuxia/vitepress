@@ -1,6 +1,6 @@
-## URL
+# URL
 
-### 什么是 URL
+## 什么是 URL
 
 统一资源定位符（URL，英语 Uniform Resource Locator 的缩写），它的英文简称叫做 URL。也被称为网页地址，是因特网上标准的资源的地址。它最初是由蒂姆·伯纳斯－李发明用来作为万维网的地址的，现在它已经被万维网联盟编制为因特网标准RFC1738了。
 
@@ -10,7 +10,7 @@ URL 就是表示互联网上一个资源的地址。
 
 ### URL 的格式
 
-```
+```sh
 scheme://host.domain:port/path/filename
 ```
 
@@ -34,7 +34,7 @@ scheme://host.domain:port/path/filename
 
 #### 本地绝对路径
 
-```
+```sh
 C:\Library\200524\index.html
 ```
 
@@ -42,7 +42,7 @@ C:\Library\200524\index.html
 
 #### 网络绝对路径
 
-```
+```sh
 https://www.baidu.com/img/pc_cc75653cd975aea6d4ba1f59b3697455.png
 ```
 
@@ -54,14 +54,14 @@ https://www.baidu.com/img/pc_cc75653cd975aea6d4ba1f59b3697455.png
 
 #### 要引用的文件在同级或者下一级
 
-```
+```sh
 ./
 直接写
 ```
 
 #### 要引用的文件在上一级或者更上级
 
-```
+```sh
 ../ 上级目录
 ../../ 上上级目录
 ../../../ 上上上级目录

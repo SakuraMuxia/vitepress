@@ -1,4 +1,4 @@
-## CSS 简介
+# CSS
 
 层叠样式表(英文全称：Cascading Style Sheets)是一种用来表现 HTML 或 XML 等文件样式的计算机语言。CSS不仅可以静态地修饰网页，还可以配合各种脚本语言动态地对网页各元素进行格式化。
 
@@ -18,7 +18,7 @@ CSS 由哈坤·利于 1994 年进行设计，1997 年 W3C 完成了第一份正�
 
 ### HTML 元素树（元素和元素之间的关系）
 
-```
+```sh
 父元素
 祖先元素
 子元素
@@ -52,7 +52,7 @@ style 标签放在页面的任意位置都可以生效，建议放在 head 中�
 <link rel="stylesheet" href="CSS文件地址">
 ```
 
-```
+```sh
 link 标签放在页面的任意位置都可以生效，建议放在 head 中！
 ```
 
@@ -117,7 +117,7 @@ link 标签放在页面的任意位置都可以生效，建议放在 head 中！
 
 ### CSS 中的长度单位
 
-```
+```sh
 px 像素
 em 字体大小的倍数
 %  百分比 宽度参照的是父元素宽度，高度也是父元素的高度
@@ -129,7 +129,7 @@ em 字体大小的倍数
 
 常见的颜色名有：
 
-```
+```css
 red、orange、yellow、green、cyan、blue、purple、pink、deeppink、skyblue、greenyellow ...
 ```
 
@@ -184,7 +184,6 @@ background: #a8c;  /* #aa88cc */
 background: #bbb;  /* #bbbbbb */
 background: #ab2233;  /* 不可简写 */
 ```
-
 
 
 

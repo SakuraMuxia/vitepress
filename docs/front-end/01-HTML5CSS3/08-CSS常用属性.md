@@ -50,7 +50,7 @@ font-family: "Microsoft YaHei", 微软雅黑, 宋体, sans-serif;
 
 **衬线字体和非衬线字体：**
 
-```
+```sh
 serif 表示衬线字体，笔画粗细不一致，如宋体、仿宋体、楷体等
 sans-serif 表示非衬线字体，笔画粗细一致，如微软雅黑、黑体、Helvetica
 ```
@@ -75,7 +75,7 @@ font: italic italic 16px "Microsoft YaHei",微软雅黑,宋体,sans-serif;
 
 ### 子属性和复合属性的关系
 
-```
+```js
 1. 复合属性写在子属性的后面，前面的子属性全部失效，复合属性即使没写对应的值也会用默认值覆盖掉子属性
 2. 子属性写在复合属性的后面，子属性会覆盖掉复合属性中与之对应的样式
 ```
@@ -86,7 +86,7 @@ font: italic italic 16px "Microsoft YaHei",微软雅黑,宋体,sans-serif;
 | ------ | ------------ | ------ |
 | color  | 设置文字颜色 | 颜色   |
 
-```
+```sh
 行高可选值：
 1.normal：由浏览器根据文字大小决定的一个默认值。
 2.像素（px）
@@ -115,7 +115,7 @@ font: italic italic 16px "Microsoft YaHei",微软雅黑,宋体,sans-serif;
 
 #### ① vertical-align
 
-```
+```sh
 1. 设置行内元素或行内块元素与同行文本如何对齐，如 基线对齐、顶线对齐、中线对齐、底线对齐等
 2. 设置上标字和下标字
 3. 设置单元格中内容的纵向对齐方式，只能用于 td、th
@@ -125,7 +125,7 @@ font: italic italic 16px "Microsoft YaHei",微软雅黑,宋体,sans-serif;
 
 **行高的概念：**
 
-```
+```sh
 1. 上一行文字中线与下一行文字中线的距离称为行高
 2. 上一行文字底线与下一行文字顶线的距离称为行距，调整行高大小，行距受到影响
 ```
@@ -134,7 +134,7 @@ font: italic italic 16px "Microsoft YaHei",微软雅黑,宋体,sans-serif;
 
 **使用行高实现元素中的一行文字垂直居中，满足以下条件：**
 
-```
+```sh
 1. 只有一行文字
 2. 设置行高与高度一致
 ```
@@ -147,7 +147,7 @@ font: bold 14px/30px 'Microsoft YaHei';
 font: bold 14px/3 'Microsoft YaHei';  /* 此时 3 表示字体大小的倍数，相当于em */
 ```
 
-![image-20240311094401475](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240311094401475.png)
+![image-20240311094401475](000-images/08-CSS常用属性/image-20240311094401475.png)
 
 ## 背景样式
 
@@ -162,7 +162,7 @@ font: bold 14px/3 'Microsoft YaHei';  /* 此时 3 表示字体大小的倍数，
 
 ### ① 背景颜色
 
-```
+```sh
 1. 元素默认背景颜色是透明,background-color的默认值是 transparent（透明）
 2. 给 body 设置背景色就是给整个页面设置背景色
 ```
@@ -226,21 +226,21 @@ background-position: 10%;
 
 **background-position 的两个子属性：**
 
-```
+```sh
 background-position-x	设置x位置，y的值为默认状态 0
 background-position-y   设置y位置，x的值为默认状态 0
 ```
 
 ### ② 背景图像固定 background-attachment
 
-```
+```sh
 如果设置 background-attachment 为 fixed， 背景图像定位的坐标原点是视口的左上角
 背景图像只能显示图像与元素位置重合的位置
 ```
 
 ### ③ 背景复合属性 background
 
-```
+```sh
 任何子属性的值都可以作为background的值，没有数量要去，没有顺序要求
 ```
 

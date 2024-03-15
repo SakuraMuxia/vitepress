@@ -1,3 +1,5 @@
+# HTML功能标签
+
 ## 开发文档
 
 W3C 官网：  https://html.spec.whatwg.org/multipage/
@@ -86,7 +88,7 @@ MDN: https://developer.mozilla.org/zh-CN/docs/Web/HTML
 
 ### 常见的图片格式
 
-```
+```sh
 jpg / jpeg
 png
 gif
@@ -97,7 +99,7 @@ webp
 
 ### base64 图片
 
-```
+```sh
 1. 本质：一串特殊的文本，要通过浏览器打开，传统看图应用通常无法打开。
 2. 原理：把图片进行 base64 编码，形成一串文本。
 3. 如何生成：靠一些工具或网站。
@@ -121,7 +123,7 @@ base64编码工具： https://tool.chinaz.com/tools/imgtobase/
 
 ### 相对路径
 
-```
+```sh
 ./		当前目录（当前文件所在的目录）， ./可以省略
         如果目标文件在同级或者下级
         
@@ -134,7 +136,7 @@ base64编码工具： https://tool.chinaz.com/tools/imgtobase/
 
 ### HTML 中使用路径的场景
 
-```
+```sh
 1. img 标签引入图片
 2. 超链接设置目标文件
 3. video 标签引入视频
@@ -204,7 +206,7 @@ target 属性设置目标文件在哪个窗口打开，默认值是 _self,表示
 
 ####  如何设置锚点
 
-```
+```sh
 给标签设置一个ID属性，该标签就成为一个锚点，ID的属性值就是锚点的名字
 ```
 
@@ -341,7 +343,7 @@ target 属性设置目标文件在哪个窗口打开，默认值是 _self,表示
 
 **注意：**
 
-```
+```sh
 li 必须被 ul 或者 ol 直接包裹!
 ```
 
@@ -426,7 +428,7 @@ table
 
 给 table 标签设置如下属性：
 
-```
+```js
 width： 	设置宽度
 height:  设置高度
 cellspacing： 设置单元格之间的间距
@@ -438,14 +440,14 @@ border： 设置边框边框
 
 给 td、th 设置 width 和 height 属性：
 
-```
+```js
 给 td、th 设置 width 相当于设置列宽
 给 td、th 设置 height 相当于设置行高 
 ```
 
 给 tr 和 td 设置 height 有什么区别：
 
-```
+```js
 给 th、td 设置height，实际行高会在设置的高度的基础上加上上下的 cellpadding
 给 tr 设置 height 就是总行高
 ```
@@ -454,7 +456,7 @@ border： 设置边框边框
 
 **设置单元格内容横向对齐方式：**
 
-```
+```js
 给 thead、tbody、tfoot 设置 align 属性，属性的值： left、right、center，所包裹的单元格都会生效
 给 tr 设置 align 属性，属性的值： left、right、center，所包裹的单元格都会生效
 给 td、th 设置 align 属性，属性的值： left、right、center，本单元格会生效
@@ -462,7 +464,7 @@ border： 设置边框边框
 
 **设置单元格内容纵向对齐方式：**
 
-```
+```js
 给 thead、tbody、tfoot 设置 valign 属性，属性的值： top、bottom、middle，所包裹的单元格都会生效
 给 tr 设置 valign 属性，属性的值： top、bottom、middle，所包裹的单元格都会生效
 给td、th 设置 valign 属性，属性的值： top、bottom、middle，本单元格会生效
@@ -472,7 +474,7 @@ border： 设置边框边框
 
 给 td、th 设置属性：
 
-```
+```js
 rowspan： 设置所跨行数
 colspan： 设置所跨列数
 ```
@@ -596,7 +598,7 @@ cols 设置默认显示的列数，影响宽度
 </select>
 ```
 
-```
+```js
 默认选中的是第一个选项，可以使用 selected 设置默认选项
 ```
 
@@ -604,7 +606,7 @@ cols 设置默认显示的列数，影响宽度
 
 #### name 属性
 
-```
+```js
 1. name 用于给表单控件设置标识，与后端对应
 2. 多个单选框要实现单选效果需要设置相同的 name
 3. 下拉选项需要将 name 设置到 select 上
@@ -613,7 +615,7 @@ cols 设置默认显示的列数，影响宽度
 
 #### value 属性
 
-```
+```js
 1. 文本输入框、密码输入框，value 可以设置默认显示的内容
 2. 单选框、复选框，value 设置真正提交的数据
 3. input 实现的提交按钮、重置按钮、普通按钮，value 设置按钮上的文字
@@ -623,7 +625,7 @@ cols 设置默认显示的列数，影响宽度
 
 #### disabled 属性
 
-```
+```js
 1. 表单控件设置 disabled 属性将变为不可用
 2. disabled 属性不需要值
 3. select 设置disable 属性整个下拉选项不可用；option 设置 disabled 属性该选项不可选。
@@ -695,5 +697,4 @@ button 标签的 type 属性值有 submit、reset、button，默认值 submit
     </form>
     <iframe src="" frameborder="0" width="1000" height="500" name="xiaole"></iframe>
 ```
-
 

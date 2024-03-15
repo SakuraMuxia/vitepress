@@ -14,6 +14,10 @@ export default defineConfig({
       level: [1, 6],
       label: '目录'
     },
+      //上一页下一页配置
+      docFooter: {
+        next: '回到第一章',
+      },
     // logo配置
     logo: "logo.svg",
       //页脚

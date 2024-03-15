@@ -91,7 +91,7 @@ prompt()
 
 #### ② 打开关闭窗口
 
-```
+```sh
 open()		打开新窗口
 close()		关闭本窗口，要求该窗口必须是 open 打开的
 ```
@@ -112,7 +112,7 @@ open('网页地址', '', 'width=400,height=300')
 
 #### ③ 页面滚动
 
-```
+```sh
 scrollTo()		页面滚动到指定位置，设置坐标
 scrollBy()		页面滚动指定距离，设置距离
 ```
@@ -120,50 +120,37 @@ scrollBy()		页面滚动指定距离，设置距离
 ```js
 // 设置两个参数作为坐标
 scrollTo(0, 0);
-
 // 设置一个参数，该参数是对象
 scrollTo({
     left: 0, 
     top: 0,
     behavior: 'smooth'
 });
-
 // 设置两个参数作为滚动的距离
 scrollBy(100, 100);
-
 // 设置一个参数，该参数是对象
 scrollBy({
     top: 600,
     behavior: "smooth"
 });
-
 滚动到文档中的某个坐标:
 window.scrollTo(0, 1000);
-
 // 设置滚动行为改为平滑的滚动
 window.scrollTo({ 
     top: 1000, 
     behavior: "smooth" 
 });
-
-
 在窗口中按指定的偏移量滚动文档:
-
 // 向下滚动一页：
 window.scrollBy(0, window.innerHeight);
-
 // 向上滚动一页：
 window.scrollBy(0, window.innerHeight);
-
 // 平滑滚动
 window.scrollBy({   
   top: 100,
   left: 100,   
   behavior: "smooth" 
 });
-
-
-
 ```
 
 #### ④ 定时器
@@ -238,6 +225,52 @@ var invalId = setInterval(function() {
 //注意：把它取消
 clearInterval(timeoutId);
 ```
+
+案例
+
+```js
+    (function(){
+    // 获取元素
+    var box = document.querySelector('#box');
+    // 创建目标日期时间对象 2024-02-10
+    // var dstDate = new Date(2024, 1, 10);
+    var dstDate = new Date(2023, 3, 28, 9, 41, 30);
+    // 计算倒计时
+    runTime();
+    // 设置定时器 时间间隔1000ms
+    var intervalId = setInterval(runTime, 1000);
+    // 计算倒计时的函数 ，这里把回调函数 命名用来 规避1s后的延迟。
+    function runTime() {
+        // 创建当前的日期时间对象
+        var currDate = new Date();
+        // 计算目标日期与当前日期相差的毫秒数
+        var seconds = dstDate.getTime() - currDate.getTime();
+        // 如果到达了目标日期
+        if (seconds <= 0) {
+            clearInterval(intervalId);
+            box.innerHTML = '春节快乐！';
+            return;
+        }
+        // 从相差的毫秒数中提取整的天数
+        var d = Math.floor(seconds / (24*3600000));
+        // 提取整的小时数 先取出不足一天的毫秒数 除以3600000
+        var h = Math.floor(seconds % (24*3600000) / 3600000);
+        // 提取整的分钟数 先取出不足一小时的毫秒数再除以60000   (seconds % (24*3600000) % 3600000) -> (seconds % 3600000)
+        var i = Math.floor(seconds % 3600000 / 60000);
+        // 提取剩下的不足一分钟的毫秒数
+        var s = Math.floor(seconds % 60000 / 1000);
+        // 个位数补 0
+        d = d < 10 ? '0' + d : d;
+        h = h < 10 ? '0' + h : h;
+        i = i < 10 ? '0' + i : i;
+        s = s < 10 ? '0' + s : s;
+        // 拼接字符串
+        box.innerHTML = '距离春节还有<br>'+d+'天'+h+'小时'+i+'分钟'+s+'秒';
+    }
+})();
+```
+
+
 
 #### ⑤ window 对象属性和方法总结
 
