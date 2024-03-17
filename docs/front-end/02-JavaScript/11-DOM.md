@@ -478,7 +478,7 @@ ownerDocument     元素所属的文档对象（document）
 
 w3c设计的规范可以使用自定义属性
 
-在JS语法中属性名是不需要带 data-的，而且设置CSS 中的属性是不需要带"-",会自动映射成小驼峰的形式。
+如果在html中设置自定义属性名为标准形式`data-home-address=""`，则在JS语法中使用属性名就不需要带 `data-`前缀，`data-`后的`home-address`中的"-",会自动映射成小驼峰的形式，如`imgEle.dataset.homeAddress;`。
 
 ```html
 <img data-loadpic="" data-home-address="">
