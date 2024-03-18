@@ -52,6 +52,9 @@ DOM 是 HTML 文档为 JavaScript 提供的能够对 HTML 文档进行相关操�
 
 4. 设置元素中的文字内容
    元素对象.innerHTML = '内容';
+
+5. 离开窗口属性
+	document.hidden 	 监测用户是否离开页面 返回true/false
 ```
 
 
@@ -911,5 +914,45 @@ new Image(); 创建的时候可以指定宽高 200 100
 new Image(width, height);
 ```
 
+# DOM 对象深入分析
 
+## 元素对象的原型链关系
+
+```js
+div元素对象 -> HTMLDivElement.prototype -> HTMlElement.prototype -> Element.prototype -> Node.prototype -> EventTarget.prototype -> Object.prototype
+```
+
+##  事件对象的原型链关系
+
+以鼠标事件对象为例：
+
+```js
+鼠标事件对象 -> MouseEvent.prototype -> UIEvent.prototype -> Event.prototype -> Object.prototype
+```
+
+## HTMLCollection 和 NodeList 的区别
+
+这两种都是集合
+
+### ① HTMLCollection 对象
+
+```js
+1. 能够返回HTMLCollection 对象的属性和方法： 
+getElementsByTagName()、getElementsByClassName()、children（得到所有子元素）
+2. HTMLCollection 对象的成员只能是元素类型对象 
+3. 没有 forEach 方法
+4. 是动态的集合，如果文档中新增了满足条件的元素，集合会自动更新
+```
+
+### ② NodeList
+
+```js
+1. 能够返回 NodeList 对象的属性和方法： 
+querySelectorAll()、getElementsByName()、childNodes:（得到所有子节点）
+2. NodeList 对象的成员可以是节点类型的对象（包括元素类型、document 等）
+3. 具有 forEach 方法
+4. 静态的集合
+```
+
+# 
 
