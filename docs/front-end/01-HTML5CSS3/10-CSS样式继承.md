@@ -20,7 +20,8 @@ em 自带 font-style
 strong 自带 font-weight
 a 自带 color、text-decoration、cursor
 ul、ol 自带 padding-left、上下外边距
-...
+input输入框自带 outline属性 有内边框 
+button的默认显示的尺寸就是border-box
 ```
 
 ## 权重

@@ -161,6 +161,14 @@ reset
 button
 ```
 
+input自带outline属性()
+
+```css
+outline:none
+```
+
+
+
 #### ① 输入框类（5个）
 
 ```html

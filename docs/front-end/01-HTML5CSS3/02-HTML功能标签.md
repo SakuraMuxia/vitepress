@@ -560,6 +560,12 @@ colspan： 设置所跨列数
 <button>登录</button>
 ```
 
+```css
+button的默认显示的尺寸就是border-box
+```
+
+
+
 #### 重置按钮
 
 ```html
