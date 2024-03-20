@@ -134,7 +134,8 @@ console.log('nodeType：', comment.nodeType);
 所有的节点对象具有以下三个属性：
 
 ```js
-nodeName		节点名称，元素类型节点的节点名称是标签名
+nodeName		节点名称，元素类型节点的节点名称是标签名，返回的标签名称都是大写
+tagName			标签名称，返回的标签名称都是大写
 nodeValue		节点值
 nodeType		节点类型 文档:9; 元素：1； 属性：2； 文本：3；  注释：8
 ```
