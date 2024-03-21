@@ -202,6 +202,14 @@ target 属性设置目标文件在哪个窗口打开，默认值是 _self,表示
 <a href="">刷新</a>
 ```
 
+#### 使用JavaScript接管
+
+```html
+<a href="javascript:;"></a>
+```
+
+
+
 ### 锚点
 
 ####  如何设置锚点
