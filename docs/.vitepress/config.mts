@@ -40,8 +40,8 @@ export default defineConfig({
             link: '/front-end/02-JavaScript/'
           },
           {
-            text: 'BootStrap',
-            link: '/front-end/'
+            text: '03-BootStrap',
+            link: '/front-end/03-Bootstrap/'
           },
           {
             text: 'ES6',
@@ -152,6 +152,7 @@ export default defineConfig({
 sidebar: {
     "/front-end/01-HTML5CSS3/": set_sidebar("/docs/front-end/01-HTML5CSS3/"),
     "/front-end/02-JavaScript/": set_sidebar("/docs/front-end/02-JavaScript/"),
+    "/front-end/03-Bootstrap/": set_sidebar("/docs/front-end/03-Bootstrap/"),
 },
 //---------------------------------------------------------------
     // 设置搜索框的样式

@@ -551,6 +551,24 @@ Less 可以使用 when 关键字实现条件判断
 }
 ```
 
+less条件判断案例--混合的递归调用--栅格动态响应系统
+
+```less
+.grid(@type:xs) {
+    //条件判断：当数量小于栅格列数
+    .make-col(@num) when (@num <= @columns) {
+        //变量名拼接 作为类名传入
+        .col-@{type}-@{num} {
+            width: percentage((@num/@columns))
+        }
+        .make-col(@num+1);
+    }
+    .make-col(1);
+}
+```
+
+
+
 ### Less 导入
 
 **导入 less 文件：**
