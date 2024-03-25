@@ -40,7 +40,7 @@ export default defineConfig({
             link: '/front-end/02-JavaScript/'
           },
           {
-            text: '03-BootStrap',
+            text: 'BootStrap',
             link: '/front-end/03-Bootstrap/'
           },
           {
@@ -146,6 +146,12 @@ export default defineConfig({
               link: '/front-end/'
           },
         ]},
+      { text: '博客', items:[
+                {
+                    text: '技术',
+                    link: '/blogs/01-technology'
+                }
+            ]},
     ],
 //-----------------------------------------------------------------------
     // sidebar
@@ -153,6 +159,7 @@ sidebar: {
     "/front-end/01-HTML5CSS3/": set_sidebar("/docs/front-end/01-HTML5CSS3/"),
     "/front-end/02-JavaScript/": set_sidebar("/docs/front-end/02-JavaScript/"),
     "/front-end/03-Bootstrap/": set_sidebar("/docs/front-end/03-Bootstrap/"),
+    "/blogs/01-technology/": set_sidebar("/docs/blogs/01-technology/"),
 },
 //---------------------------------------------------------------
     // 设置搜索框的样式
