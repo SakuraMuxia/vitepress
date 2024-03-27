@@ -45,7 +45,7 @@ export default defineConfig({
           },
           {
             text: 'ES6',
-            link: '/front-end/'
+            link: '/front-end/04-ES6/'
           },
           {
             text: 'MongoDB',
@@ -159,6 +159,7 @@ sidebar: {
     "/front-end/01-HTML5CSS3/": set_sidebar("/docs/front-end/01-HTML5CSS3/"),
     "/front-end/02-JavaScript/": set_sidebar("/docs/front-end/02-JavaScript/"),
     "/front-end/03-Bootstrap/": set_sidebar("/docs/front-end/03-Bootstrap/"),
+    "/front-end/04-ES6/": set_sidebar("/docs/front-end/04-ES6/"),
     "/blogs/01-technology/": set_sidebar("/docs/blogs/01-technology/"),
 },
 //---------------------------------------------------------------
