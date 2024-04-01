@@ -21,6 +21,28 @@ let 变量名 = value;
 ｛｝代表对象，
 ```
 
+```js
+// 2. let 创建的变量不会提升
+console.log(age); //undefined
+// console.log(address);
+
+// 创建变量
+let address = '上海';
+var age = 100;
+let func = function(){};
+
+// 1. let 创建的变量不能重复声明
+// let address = '北京';   报错
+var age = 200;
+// let age = 300;  报错
+// var address = '北京'; 报错
+
+
+// 3. let 创建的全局变量不是全局对象的属性
+console.log(window.age);    //200
+console.log(window.address); //undefined
+```
+
 
 
 ## const 关键字
