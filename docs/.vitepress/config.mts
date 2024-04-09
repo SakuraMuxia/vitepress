@@ -87,7 +87,7 @@ export default defineConfig({
           },
           {
             text: 'Git',
-            link: '/front-end/'
+            link: '/devops/git/'
           },
           {
               text: 'Ansible',
@@ -161,6 +161,7 @@ sidebar: {
     "/front-end/03-Bootstrap/": set_sidebar("/docs/front-end/03-Bootstrap/"),
     "/front-end/04-ES6/": set_sidebar("/docs/front-end/04-ES6/"),
     "/blogs/01-technology/": set_sidebar("/docs/blogs/01-technology/"),
+    "/devops/git/": set_sidebar("/docs/devops/git/"),
 },
 //---------------------------------------------------------------
     // 设置搜索框的样式
