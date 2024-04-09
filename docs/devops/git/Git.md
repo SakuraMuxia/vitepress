@@ -458,7 +458,7 @@ stars:>100000
 
 3. 本地运行命令， 给仓库地址取别名为 origin
 
-   ```sb
+   ```js
    git remote add origin 远程仓库地址
    ```
 
