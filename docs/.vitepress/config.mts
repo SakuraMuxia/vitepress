@@ -61,7 +61,7 @@ export default defineConfig({
           },
           {
             text: 'Nodejs',
-            link: '/front-end/'
+            link: '/front-end/05-Node.js/'
           },
           {
             text: 'React',
@@ -160,6 +160,7 @@ sidebar: {
     "/front-end/02-JavaScript/": set_sidebar("/docs/front-end/02-JavaScript/"),
     "/front-end/03-Bootstrap/": set_sidebar("/docs/front-end/03-Bootstrap/"),
     "/front-end/04-ES6/": set_sidebar("/docs/front-end/04-ES6/"),
+    "/front-end/05-Node.js/": set_sidebar("/docs/front-end/05-Node.js/"),
     "/blogs/01-technology/": set_sidebar("/docs/blogs/01-technology/"),
     "/devops/git/": set_sidebar("/docs/devops/git/"),
 },
