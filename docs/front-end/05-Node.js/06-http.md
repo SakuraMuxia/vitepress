@@ -258,8 +258,8 @@ const {URL} = require('url');
 
 // 需要手动拼接成完整的url，否则会报错
 const urlInfo = new URL('http://127.0.0.1/' + req.url);
-
-console.log(urlInfo.searchParams);
+// 使用得到的对象中的searchParams属性，searchParams属性本身是一种类似MAP结构的对象
+console.log(urlInfo.searchParams); // 得到一个类似MAP结构的对象
 // 使用 get 方法获取相应的信息
 console.log(urlInfo.searchParams.get('a'));
 console.log(urlInfo.searchParams.get('b'));
