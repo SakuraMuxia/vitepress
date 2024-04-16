@@ -122,6 +122,31 @@ progress {
 mark 元素定义带有记号的文本，请在需要突出显示文本时使用，如搜索引擎搜索页面。
 ```
 
+picture标签使用source来设置不同屏幕显示
+
+```html
+在 <picture> 标签中使用 <source> 来设置不同屏幕显示的图片：
+
+<picture>
+  <source media="(min-width:650px)" srcset="https://static.jyshare.com/images/runoob-logo.png">
+  <source media="(min-width:465px)" srcset="https://static.jyshare.com/images/code-icon-script.png">
+  <img src="https://static.jyshare.com/images/mix/hjkg_icon.png"  style="width:auto;">
+</picture>
+
+```
+
+在标签中使用来设置视频：
+
+```html
+在 <video> 标签中使用 <source> 来设置视频：
+
+<video width="320" height="240" controls>
+  <source src="movie.mp4" type="video/mp4">
+  <source src="movie.ogg" type="video/ogg">
+  Your browser does not support the video tag.
+</video>
+```
+
 
 
 ## HTML5 表单新增功能
