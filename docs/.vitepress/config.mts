@@ -49,7 +49,7 @@ export default defineConfig({
           },
           {
             text: 'MongoDB',
-            link: '/front-end/'
+            link: '/front-end/06-mongoDB/'
           },
           {
             text: 'Ajax',
@@ -161,6 +161,7 @@ sidebar: {
     "/front-end/03-Bootstrap/": set_sidebar("/docs/front-end/03-Bootstrap/"),
     "/front-end/04-ES6/": set_sidebar("/docs/front-end/04-ES6/"),
     "/front-end/05-Node.js/": set_sidebar("/docs/front-end/05-Node.js/"),
+    "/front-end/06-mongoDB/": set_sidebar("/docs/front-end/06-mongoDB/"),
     "/blogs/01-technology/": set_sidebar("/docs/blogs/01-technology/"),
     "/devops/git/": set_sidebar("/docs/devops/git/"),
 },

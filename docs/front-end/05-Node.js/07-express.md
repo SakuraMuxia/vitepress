@@ -328,8 +328,13 @@ app.get('/news/:date/:id.shtml', (request, response) => {
 https://www.npmjs.com/package/body-parser
 
 ```js
-request.body 必须经过第三方中间件body-parser的处理才能获取到请求体数据解析成的对象，否则只能得到 undefined
+request.body 必须经过第三方中间件的处理才能获取到请求体数据解析成的对象，否则只能得到 undefined
 request.body 返回一个对象 对象中的属性名是表单提交的name
+
+body-parser包中间件 可以把req.body中的数据解析转为对象
+express-generator包 自带body-parser可以把req.body中的数据自动解析为对象
+mongoose包自带body-parser可以把req.body中的数据自动解析为对象
+
 ```
 
 ```js

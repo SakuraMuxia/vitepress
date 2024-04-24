@@ -140,6 +140,10 @@ app.set('views', path.join(__dirname, 'pages'));
 
 使用npm包[express-generator](https://www.npmjs.com/package/express-generator)
 
+```js
+express-generator自带body-prase中间件把req.body中的数据转为对象
+```
+
 **全局安装：**
 
 ```shell
