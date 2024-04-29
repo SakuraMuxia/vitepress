@@ -525,6 +525,17 @@ colspan： 设置所跨列数
 <input type="text" maxlength="10">
 ```
 
+当类型为file时为上传文件
+
+```html
+<form action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="avator">
+    <button>上传</button>
+</form>
+```
+
+
+
 #### 密码输入框
 
 ```html

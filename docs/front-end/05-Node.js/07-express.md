@@ -335,6 +335,8 @@ body-parser包中间件 可以把req.body中的数据解析转为对象
 express-generator包 自带body-parser可以把req.body中的数据自动解析为对象
 mongoose包自带body-parser可以把req.body中的数据自动解析为对象
 
+表单发送的content-type类型是application/x-www-form-urlencoded解析为对象
+默认发送的content-type类型是text/plain源格式还是字符串。 
 ```
 
 ```js
@@ -523,5 +525,16 @@ data.json
       "newsContent": "近日，王宝强被拍到与一众好友去火锅店吃火锅，同行的还有漂亮的女性友人。<br/>从照片中可以看见，王宝强穿着一身黑，阔腿裤搭配着高筒靴子，羽绒服还是叠穿的，头发也梳得很有型，看着很是时髦，整个人精气神十足。<br/>众人吃饭结束后，王宝强走在最前头，还时不时回头与两位女性友人聊天，看上去心情很好，离开时也挥手向友人告别，可以发现，几人的关系还是非常好的。"
     }
 ]
+```
+
+设置响应体为json格式
+
+```json
+// 响应一个json数据
+res.json({
+    code: '1001',
+    msg: '读取失败~~',
+    data: null
+});
 ```
 
