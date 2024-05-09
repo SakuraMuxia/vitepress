@@ -489,19 +489,19 @@ const p1 = new Promise((resolve, reject) => {
 
 执行器函数 传给class类中的构造器exector作为形参
 
-![image-20240506170947017](000-images/18-promise自定义/image-20240506170947017.png)
+![image-20240506170947017](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240506170947017.png)
 
 **传入调用过程2** 
 
 构造器函数调用 传来的执行器函数，并且使用两个函数作为参数，（一个成功的函数，一个失败的函数）
 
-![image-20240506171354717](000-images/18-promise自定义/image-20240506171354717.png)
+![image-20240506171354717](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240506171354717.png)
 
 **传入调用过程3** 
 
 执行器函数 调用成功的函数设置成功状态
 
-![image-20240506173012063](000-images/18-promise自定义/image-20240506173012063.png)
+![image-20240506173012063](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240506173012063.png)
 
 
 
@@ -954,7 +954,7 @@ then方法链式调用过程。
 
 then方法返回一个新的Promise对象，新对象在实例化中执行器
 
-![image-20240507105406241](000-images/18-promise自定义/image-20240507105406241.png)
+![image-20240507105406241](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240507105406241.png)
 
 ## 9 实现 then 方法： 进一步封装
 
