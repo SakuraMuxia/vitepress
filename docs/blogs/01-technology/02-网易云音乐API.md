@@ -16,7 +16,7 @@
 
 不要频繁调登录接口,不然可能会被风控,登录状态还存在就不要重复调登录接口
 
-如果是跨域请求 , 请在所有请求带上 `xhrFields: { withCredentials: true }` (axios 为 `withCredentials: true`, Fetch API 为 `fetch(url, { credentials: 'include' })`), 或直接手动传入 cookie (参见 `登录`), 否则 可能会因为没带上 cookie 导致 301, 具体例子可看 `public/test.html`, 访问`http://192.168.1.1/test.html`(默认端口的话) 例子使用 jQuery 和 axios
+如果是跨域请求 , 请在所有请求带上 `xhrFields: { withCredentials: true }` (axios 为 `withCredentials: true`, Fetch API 为 `fetch(url, { credentials: 'include' })`), 或直接手动传入 cookie (参见 `登录`), 否则 可能会因为没带上 cookie 导致 301, 具体例子可看 `public/test.html`, 访问`http://192.168.1.1:3000/test.html`(默认端口的话) 例子使用 jQuery 和 axios
 
 301 错误基本都是没登录就调用了需要登录的接口,如果登录了还是提示 301, 基本都是缓存把数据缓存起来了,解决方法是加时间戳或者等待 2 分钟或者重启服务重新登录后再调用接口,可自行改造缓存方法
 
