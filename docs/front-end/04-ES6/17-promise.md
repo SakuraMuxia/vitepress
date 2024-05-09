@@ -430,7 +430,7 @@ Promise.allsettled() 返回一个 promise 对象， 状态一直都是成功(除
 
 ```javascript
 1. 参数是可遍历对象，返回值一定是个成功状态的 promise 对象，所有的参数的成员都完成，返回值状态才改变， PromiseResult是一个数组，数组中每个成员与参数每个成员按照顺序对应 
-2. 数组的每个成员状态如果成功 PromiseResult[元素]是{status value}, 如果对应的是失败的 {status,reason}
+2. 返回值是一个数组，数组的每个成员是一个对象，对象的结构由{status:'',value:''}组成，成员状态如果成功 PromiseResult[元素]是{status value}, 如果成员的状态是失败则：PromiseResult[元素]是{status,reason}
 3. 如果参数不是可遍历对象，返回失败状态的 promise 对象      
 ```
 
@@ -537,7 +537,7 @@ async 函数返回一个 Promise 对象， Promise 对象的状态取决于 asyn
 1. 情况一，没有reutrn, async函数返回的Promise对象改为成功状态，PromiseResult是undefined
 2. 情况二：return 非Promise类型的对象或原始类型数据，async函数返回的Promise对象改为成功状态，PromiseResult 是 return 的值
 3. 情况三：return Promise对象， async函数返回的Promise对象就是 return 的 Promise对象
-4. 情况四：抛出异常,  async函数返回的Promise对象,状态改为失败，PromiseResult是错误对象
+4. 情况四：抛出异常, async函数返回的Promise对象,状态改为失败，PromiseResult是错误对象
 ```
 
 ## await 表达式
@@ -553,9 +553,50 @@ async 函数返回一个 Promise 对象， Promise 对象的状态取决于 asyn
 
 ```javascript
 1. await 右侧的表达式是 非Promsie, 右侧表达式的值就是 await 表达式的值
-2. await 右侧的表达式是成功状态 Promise 对象，状态改变之后，await 表达式才能取到值，值是 Promise 对象的 	PromiseResult
-3. await 右侧的表达式是失败状态的 Promise 对象, 抛出异常, await 表达式取不到值         
+2. await 右侧的表达式是成功状态 Promise 对象，状态改变之后，await 表达式才能取到值，值是 Promise 对象的PromiseResult
+3. await 右侧的表达式是失败状态的 Promise 对象, 抛出异常, await 表达式取不到值，中断链式调用
+4. await 相当于then链式调用，上一个不完成（状态不改变），下一个不开始，要的就是等待。
+5. await 后边的语句就相当于在promise对象的then的回调中。
 ```
+
+```javascript
+
+    async function fn1() {
+        console.log(1);
+        await fn2();
+        console.log(2);  // 相当于在promise对象的then的回调里  微任务,立即进入异步队列中等待，下一轮执行。
+    }
+
+    async function fn2() {
+        console.log(3);
+    }
+
+    console.log(4);
+    
+    setTimeout(function () {
+        console.log(5);
+    }, 0)
+    
+    fn1();
+    
+    new Promise(function (resolve) {
+        console.log(6);
+        resolve();
+    }).then(function () {
+        console.log(7);
+    });
+    
+    console.log(8);
+
+<!-- 
+    同步任务： 4   1   3  6  8
+    微任务 2 7
+    宏任务 5
+
+ -->
+```
+
+
 
 ### ③ await 处理 rejected 状态的 Promise 对象
 
@@ -603,8 +644,11 @@ async 与 await 实现链式调用
 
 
 1. JS 中用来存储待执行回调函数的队列包含2个不同特定的列队
-2. 宏列队：用来保存待执行的宏任务(回调)，比如：定时器回调、DOM事件回调、ajax回调。
-3. 微列队：用来保存待执行的微任务(回调)，比如：Promise 的回调、MutationObserver 的回调。
+2. 宏队列：用来保存待执行的宏任务(回调)，比如：定时器回调、DOM事件回调、ajax回调。
+3. 微队列：用来保存待执行的微任务(回调)，比如：Promise 的回调、MutationObserver 的回调。
 4. JS 执行时会区别这2个队列：
    - (1) JS 引擎首先必须先执行所有的初始化同步任务代码。
    - (2) 每次准备取出第一个宏任务执行前, 都要将所有的微任务一个一个取出来执行。
+
+![image-20240506142439784](000-images/17-promise/image-20240506142439784.png)
+

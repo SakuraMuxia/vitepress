@@ -56,10 +56,6 @@ export default defineConfig({
             link: '/front-end/07-ajax/'
           },
           {
-            text: 'Promise',
-            link: '/front-end/'
-          },
-          {
             text: 'Nodejs',
             link: '/front-end/05-Node.js/'
           },
