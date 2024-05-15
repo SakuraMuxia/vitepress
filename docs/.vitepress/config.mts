@@ -163,7 +163,7 @@ sidebar: {
     "/front-end/05-Node.js/": set_sidebar("/docs/front-end/05-Node.js/"),
     "/front-end/06-mongoDB/": set_sidebar("/docs/front-end/06-mongoDB/"),
     "/front-end/07-ajax/": set_sidebar("/docs/front-end/07-ajax/"),
-    "/front-end/08-Webpack/": set_sidebar("/docs/front-end/08-webpack/"),
+    "/front-end/08-webpack/": set_sidebar("/docs/front-end/08-webpack/"),
     "/blogs/01-technology/": set_sidebar("/docs/blogs/01-technology/"),
     "/devops/git/": set_sidebar("/docs/devops/git/"),
 },
