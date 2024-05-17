@@ -469,6 +469,17 @@ ownerDocument     元素所属的文档对象（document）
 2. html标签中不需要设置值的属性，对应的js元素对象的属性值是布尔值
 ```
 
+读取表单form标签中的数值(仅支持在form标签中使用)
+
+```javascript
+1. 首先在html页面中 在表单标签中设置 name 属性
+<form name="adminForm" id="addAdminForm"> </form>
+2. JS 获取表单数据,直接使用document.[name].[].value 就可以得到表单中的数据
+const passWord = document.adminForm.passWord.value.trim();
+```
+
+
+
 ### 读写设置在标签代码上的属性
 
 标签自定义的属性，内置属性不存在的。

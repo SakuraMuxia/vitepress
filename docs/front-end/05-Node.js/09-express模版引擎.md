@@ -136,6 +136,19 @@ app.set('views', path.join(__dirname, 'pages'));
 <%- include('footer') -%>
 ```
 
+#### ⑧自定义定界符
+
+```javascript
+// 单个模板文件
+ejs.render('<?= users.join(" | "); ?>', {users: users},
+    {delimiter: '?'});
+
+
+// 全局
+ejs.delimiter = '$';
+ejs.render('<$= users.join(" | "); $>', {users: users});
+```
+
 ## Express 项目生成器
 
 使用npm包[express-generator](https://www.npmjs.com/package/express-generator)

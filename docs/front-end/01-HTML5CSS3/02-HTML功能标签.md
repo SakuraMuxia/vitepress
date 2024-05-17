@@ -551,7 +551,7 @@ colspan： 设置所跨列数
 <input type="radio" name="gender" checked>其他
 ```
 
-```
+```javascript
 1. 多个单选框要实现单选效果，需要设置相同的 name 属性值
 2. 设置 checked 属性可以实现默认选中，该属性不需要值 
 ```
@@ -566,7 +566,7 @@ colspan： 设置所跨列数
 <input type="checkbox" checked>敲代码
 ```
 
-```
+```javascript
 设置 checked 属性可以实现默认选中，该属性不需要值 
 ```
 
@@ -605,7 +605,7 @@ button的默认显示的尺寸就是border-box
 <textarea rows="10" cols="60"></textarea>
 ```
 
-```
+```javascript
 rows 设置默认显示的行数，影响高度
 cols 设置默认显示的列数，影响宽度
 ```

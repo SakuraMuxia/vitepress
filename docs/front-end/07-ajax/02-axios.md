@@ -266,6 +266,8 @@ instance.get(url).then(res => {
 
 ## 拦截器
 
+拦截器本质上是一个函数，参数是 两个回调函数 ，返回一个promise对象。
+
 在请求或响应被 `then` 或 `catch` 处理前拦截它们。
 
 ```js
@@ -308,7 +310,7 @@ instance.interceptors.request.use(function () {/*...*/});
 
 调用 axios() 并不是立即发送 ajax 请求, 而是需要经历一个较长的流程
 
-```
+```javascript
 1. 流程: 请求拦截器2 -> 请求拦截器1 -> 发ajax请求 -> 响应拦截器1 -> 响应拦截器2 -> 请求的回调
 2. 注意: 此流程是通过 Promise 串连起来的, 请求拦截器传递的是 config, 响应拦截器传递的是 response
 ```
