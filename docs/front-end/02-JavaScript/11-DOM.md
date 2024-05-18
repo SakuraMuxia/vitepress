@@ -309,6 +309,19 @@ checkAllBox.onclick = function() {
 };
 ```
 
+### ⑤ jQuery$
+
+jQuery的使用最重要的函数就是`$`
+
+```javascript
+jQuery中的$ 作用 与 document.querySelector() 类似;
+
+$ 专门用于获取DOM元素对象，它的参数是一个选择器，返回值也是一个对象。这个对象的方法是JQuery自己设计的方法。与DOM元素的方法不一样。
+// jQuery给标签添加类名hide
+$('#标签id').modal('hide')
+
+```
+
 
 
 ### ⑥ 快捷方式获取元素
