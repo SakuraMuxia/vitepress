@@ -702,6 +702,12 @@ input 标签的 type 属性值有 text、password、radio、checkbox、submit、
 button 标签的 type 属性值有 submit、reset、button，默认值 submit
 ```
 
+input标签设置隐藏域 用于隐藏数据，做出判断 type属性值为 hidden
+
+```html
+ <input type="hidden" name="id" value="">
+```
+
 
 
 ## 内联框架标签
