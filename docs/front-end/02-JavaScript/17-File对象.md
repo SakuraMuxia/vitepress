@@ -61,3 +61,4 @@ fileInput.addEventListener('change', () => {
 });
 ```
 
+[`FileReader`](https://developer.mozilla.org/zh-CN/docs/Web/API/FileReader) 接口的 **`result`** 只读属性返回文件的内容。该属性仅在读取操作完成后才有效，数据的格式取决于使用哪种方法来启动读取操作。
