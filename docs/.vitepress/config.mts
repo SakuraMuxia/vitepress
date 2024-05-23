@@ -73,7 +73,7 @@ export default defineConfig({
           },
           {
             text: 'Vue',
-            link: '/front-end/'
+            link: '/front-end/09-vue/'
           },
           {
             text: 'uni-app',
@@ -164,6 +164,7 @@ sidebar: {
     "/front-end/06-mongoDB/": set_sidebar("/docs/front-end/06-mongoDB/"),
     "/front-end/07-ajax/": set_sidebar("/docs/front-end/07-ajax/"),
     "/front-end/08-webpack/": set_sidebar("/docs/front-end/08-webpack/"),
+    "/front-end/09-vue/": set_sidebar("/docs/front-end/09-vue/"),
     "/blogs/01-technology/": set_sidebar("/docs/blogs/01-technology/"),
     "/devops/git/": set_sidebar("/docs/devops/git/"),
 },
