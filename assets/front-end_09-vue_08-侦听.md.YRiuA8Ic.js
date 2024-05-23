@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as n}from"./chunks/framework.ysm0ofoH.js";const i=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"front-end/09-vue/08-侦听.md","filePath":"front-end/09-vue/08-侦听.md"}'),r={name:"front-end/09-vue/08-侦听.md"};function a(o,s,c,_,d,f){return n(),t("div")}const m=e(r,[["render",a]]);export{i as __pageData,m as default};
