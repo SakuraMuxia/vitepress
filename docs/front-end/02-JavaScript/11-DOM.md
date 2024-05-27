@@ -925,6 +925,23 @@ focus()				 执行该方法会获取焦点
 new Option('内容'， 'value值')
 ```
 
+**使用 document.表单内元素name属性值 快速得到 表单内的元素对象**
+
+```javascript
+使用的前提是 form表单的name唯一，如果不唯一，则得到的是一个数组  
+document.formName[0]
+
+可以一直使用"."获取里层的元素的对象,同样使用name属性值
+document.formName.inputName..value
+
+以上仅仅在表单元素控件内才可以使用
+
+提交表单内的所有数据
+document.formName.submit();
+```
+
+
+
 ## 表格相关元素 
 
 #### ① table 元素

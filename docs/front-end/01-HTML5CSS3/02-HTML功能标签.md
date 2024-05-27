@@ -646,6 +646,8 @@ cols 设置默认显示的列数，影响宽度
 3. input 实现的提交按钮、重置按钮、普通按钮，value 设置按钮上的文字
 4. button 和 textarea 不需要 value 双标签不需要设置value值
 5. 下拉选项option可以使用value设置真正提交的数据，如果没有设置value，双标签中的文字作为提交的数据
+
+复选框的 value的返回值是一个 数组Array[]
 ```
 
 #### disabled 属性
