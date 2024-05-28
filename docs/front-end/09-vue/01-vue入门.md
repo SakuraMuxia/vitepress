@@ -177,16 +177,6 @@ Vue操作DOM
 </script>
 ```
 
-## 文本插值
-
-最基本的数据绑定形式是文本插值，它使用的是“Mustache”语法 (即双大括号)：
-
-```html
-<span>Message: {{ msg }}</span>
-```
-
-双大括号标签会被替换为[相应组件实例中](https://cn.vuejs.org/guide/essentials/reactivity-fundamentals.html#declaring-reactive-state) `msg` 属性的值。同时每次 `msg` 属性更改时它也会同步更新。
-
 ## 创建实例
 
 - 每个 Vue 应用都是通过用 Vue 函数创建一个新的 Vue 实例开始的
@@ -384,10 +374,38 @@ const vm = new Vue({
 
 ## 模板中的插值表达式{{}}
 
+最基本的数据绑定形式是文本插值，它使用的是“Mustache”语法 (即双大括号)：
+
+```html
+<span>Message: {{ msg }}</span>
+```
+
+双大括号标签会被替换为[相应组件实例中](https://cn.vuejs.org/guide/essentials/reactivity-fundamentals.html#declaring-reactive-state) `msg` 属性的值。同时每次 `msg` 属性更改时它也会同步更新。
+
+```javascript
+{{ number + 1 }}
+
+{{ ok ? 'YES' : 'NO' }}
+
+{{ message.split('').reverse().join('') }}
+
+<div v-bind:id="'list-' + id"></div>
+
+<!-- 这是语句，不是表达式 -->
+{{ var a = 1 }}
+
+<!-- 流控制也不会生效，请使用三元表达式 -->
+{{ if (ok) { return message } }}
+```
+
+在布尔属性的情况下，它们的存在即暗示为 true， 如果值是 null、undefined 或 false，则属性不会被包含在渲染出来的
+
+Mustache语法不能作用在 HTML 特性上，遇到这种情况应该使用 v-bind 指令
+
 总结
 
 ```javascript
-1：插值表达式支持字符串，数字，布尔，对象，数组，方法
+1：插值表达式支持字符串，数字，布尔，对象，数组，方法数据类型
 2：undefined,null不会进行任何输出（与React相同）
 3：数组不支持直接展开（React支持）
 4：支持输出对象（React不支持）
@@ -457,5 +475,4 @@ new Vue({
 // 浏览器查看源代码
 您好，欢迎您的到来！
 ```
-
 
