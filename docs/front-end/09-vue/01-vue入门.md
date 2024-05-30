@@ -64,99 +64,6 @@
   $ npm install vue
   ```
 
-# 操作DOM
-
-原生js操作DOM
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Title</title>
-</head>
-<body>
-	<div id="root">
-		<input type="text">
-		<div></div>
-	</div>
-</body>
-<script>
-	const inp = document.querySelector("#root input");
-	const div = document.querySelector("#root div");
-	let str = "我是一只小小小小鸟，怎么飞也飞不高！";
-	inp.value = div.innerHTML = str;
-	inp.oninput = (e)=>{
-		div.innerHTML = str = e.target.value;
-	}
-</script>
-</html>
-```
-
-React操作DOM
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Title</title>
-	<script src="lib/react.development.js"></script>
-	<script src="lib/react-dom.development.js"></script>
-	<script src="lib/babel.min.js"></script>
-</head>
-<body>
-<div id="root">
-
-</div>
-</body>
-<script type="text/babel">
-	
-	const root = ReactDOM.createRoot(document.querySelector("#root"));
-	const App = () => {
-		const [str,setStr] = React.useState("我确定你就是那只匹着羊皮的狼！");
-		return (
-			<>
-				<input onInput={(e)=>setStr(e.target.value)} defaultValue={str} type="text"/>
-				<input onChange={(e)=>setStr(e.target.value)} value={str} type="text"/>
-				<div>{str}</div>
-			</>
-		);
-	}
-	root.render(<App/>);
-</script>
-</html>
-```
-
-Vue操作DOM
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Title</title>
-	<script src="lib/vue.js"></script>
-</head>
-<body>
-	<div id="root">
-		<input type="text" v-model="str">
-		<div>{{str}}</div>
-	</div>
-</body>
-<script>
-	const vm = new Vue({
-		el:"#root",
-		data:{
-			str:"我现在要开始学习VUE"
-		}
-	})
-</script>
-</html>
-```
-
-
-
 # Vue的基本用法
 
 > `Vue.js` 使用了基于 HTML 的模板语法，允许开发者声明式地将 DOM 绑定至底层` Vue` 实例的数据。所有 `Vue.js` 的模板都是合法的 HTML，所以能被遵循规范的浏览器和 HTML 解析器解析。
@@ -266,8 +173,6 @@ vm.plus()
 vm.a // 2
 ```
 
-
-
 ## Vue挂载
 
 使用实例的`el`属性 ：指定Vue实例应用的元素
@@ -315,8 +220,6 @@ const vm = new Vue({
 在Vue模板中可以直接使用Vue实例中的属性或方法（不需要使用this,不需要使用this)
 模块中可以使用this(不建议），说明模块所处的环境上下文中的this指向的是Vue实例
 ```
-
-
 
 相同Vue实例挂载到不同元素
 
@@ -372,7 +275,7 @@ const vm = new Vue({
 </script>
 ```
 
-## 模板中的插值表达式{{}}
+## 插值
 
 最基本的数据绑定形式是文本插值，它使用的是“Mustache”语法 (即双大括号)：
 
@@ -400,7 +303,43 @@ const vm = new Vue({
 
 在布尔属性的情况下，它们的存在即暗示为 true， 如果值是 null、undefined 或 false，则属性不会被包含在渲染出来的
 
-Mustache语法不能作用在 HTML 特性上，遇到这种情况应该使用 v-bind 指令
+`Mustache语法不能作用在 HTML 特性上，遇到这种情况应该使用 v-bind 指令`
+
+```html
+<div v-bind:id="dynamicId"></div>
+```
+
+对于布尔 attribute (它们只要存在就意味着值为 `true`)，`v-bind` 工作起来略有不同，在这个例子中：
+
+```javascript
+<button v-bind:disabled="isButtonDisabled">Button</button>
+```
+
+如果 `isButtonDisabled` 的值是 `null`、`undefined` 或 `false`，则 `disabled` attribute 甚至不会被包含在渲染出来的 `<button>` 元素中。
+
+### [使用 JavaScript 表达式](https://v2.cn.vuejs.org/v2/guide/syntax.html#使用-JavaScript-表达式)
+
+迄今为止，在我们的模板中，我们一直都只绑定简单的 property 键值。但实际上，对于所有的数据绑定，Vue.js 都提供了完全的 JavaScript 表达式支持。
+
+```javascript
+{{ number + 1 }}
+
+{{ ok ? 'YES' : 'NO' }}
+
+{{ message.split('').reverse().join('') }}
+
+<div v-bind:id="'list-' + id"></div>
+```
+
+这些表达式会在所属 Vue 实例的数据作用域下作为 JavaScript 被解析。有个限制就是，每个绑定都只能包含**单个表达式**，所以下面的例子都**不会**生效。
+
+```javascript
+<!-- 这是语句，不是表达式 -->
+{{ var a = 1 }}
+
+<!-- 流控制也不会生效，请使用三元表达式 -->
+{{ if (ok) { return message } }}
+```
 
 总结
 
