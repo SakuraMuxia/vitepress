@@ -529,6 +529,18 @@ const user = {
 }
 ```
 
+在script标签中 type属性值为 `model`时也相当于定义了一个async函数，
+
+```html
+<script type="model">
+	// import内置函数是一个异步 require是同步(synchronous)的，会阻塞脚本的执行，import是异步(asynchronous)的，加载过程不会阻塞脚本的执行。
+	import xxx from "./js/xxx.js"
+	...
+</script>
+```
+
+
+
 ### ② async 函数的返回值
 
 async 函数返回一个 Promise 对象， Promise 对象的状态取决于 async 函数内的 return， 规则如下：

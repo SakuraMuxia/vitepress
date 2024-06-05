@@ -120,6 +120,16 @@ var app = new Vue({
 
 ## 数据和方法
 
+## 术语
+
+```javascript
+实例或组件中的 data,methods,template,components,computer 这类属性名 称为 property
+
+实例或组件中的 data中的数据,methods中的方法名,template,components中的组件名,computer方法名 这类属性名 称为 attribute
+```
+
+
+
 ### 数据data
 
 ```javascript
