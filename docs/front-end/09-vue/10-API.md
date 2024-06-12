@@ -20,6 +20,39 @@ Vue.set( target, propertyName/index, value )
 
   注意对象不能是 Vue 实例，或者 Vue 实例的根数据对象。
 
+### Vue.nextTick
+
+Vue.nextTick( [callback, context] )
+
+```javascript
+Vue.nextTick( [callback, context] )
+参数：
+
+{Function} [callback]
+{Object} [context]
+用法：
+
+在下次 DOM 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 DOM。
+
+```
+
+```javascript
+// 修改数据
+vm.msg = 'Hello'
+// DOM 还没有更新
+Vue.nextTick(function () {
+  // DOM 更新了
+})
+
+// 作为一个 Promise 使用 (2.1.0 起新增，详见接下来的提示)
+Vue.nextTick()
+  .then(function () {
+    // DOM 更新了
+})
+```
+
+
+
 ## 实例方法-数据
 
 ### vm.$watch
@@ -272,3 +305,47 @@ vm.$options
     }
   })
   ```
+
+### vm.$nextTick
+
+vm.$nextTick( [callback] )
+
+```javascript
+vm.$nextTick( [callback] )
+参数：
+{Function} [callback]
+用法：
+将回调延迟到下次 DOM 更新update钩子函数执行之后 执行。
+在修改数据之后立即使用它，然后等待 DOM 更新。
+它跟全局方法 Vue.nextTick 一样，不同的是回调的 this 自动绑定到调用它的实例上。
+
+2.1.0 起新增：如果没有提供回调且在支持 Promise 的环境中，则返回一个 Promise。
+请注意 Vue 不自带 Promise 的 polyfill，所以如果你的目标浏览器不是原生支持 Promise (IE：你们都看我干嘛)，你得自行 polyfill。
+```
+
+```javascript
+new Vue({
+  // ...
+  methods: {
+    // ...
+    example: function () {
+      // 修改数据
+      this.message = 'changed'
+      // DOM 还没有更新,作为一个回调函数使用
+      this.$nextTick(function () {
+        // DOM 现在更新了
+        // `this` 绑定到当前实例
+        this.doSomethingElse()
+      })
+    }
+  }
+
+  // 挂载完毕之后调用。作为一个 Promise 使用
+  created(){
+		this.$nextTick().then(value=>{
+            console.log(document.querySelector("button").innerText)
+   })
+  },
+})
+```
+
