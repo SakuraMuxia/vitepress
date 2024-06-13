@@ -310,17 +310,20 @@ vm.$options
 
 vm.$nextTick( [callback] )
 
+可能你还没有注意到，Vue 在更新 DOM 时是**异步**执行的。只要侦听到数据变化，Vue 将开启一个队列，并缓冲在同一事件循环中发生的所有数据变更。如果同一个 watcher 被多次触发，只会被推入到队列中一次。这种在缓冲时去除重复数据对于避免不必要的计算和 DOM 操作是非常重要的。
+
 ```javascript
 vm.$nextTick( [callback] )
 参数：
 {Function} [callback]
 用法：
-将回调延迟到下次 DOM 更新update钩子函数执行之后 执行。
-在修改数据之后立即使用它，然后等待 DOM 更新。
+将回调延迟到下次 DOM 更新，update钩子函数执行之后执行。
 它跟全局方法 Vue.nextTick 一样，不同的是回调的 this 自动绑定到调用它的实例上。
 
 2.1.0 起新增：如果没有提供回调且在支持 Promise 的环境中，则返回一个 Promise。
-请注意 Vue 不自带 Promise 的 polyfill，所以如果你的目标浏览器不是原生支持 Promise (IE：你们都看我干嘛)，你得自行 polyfill。
+
+请注意 Vue 不自带 Promise 的 polyfill，所以如果你的目标浏览器不是原生支持 Promise 
+(IE：你们都看我干嘛)，你得自行 polyfill。
 ```
 
 ```javascript
@@ -331,21 +334,38 @@ new Vue({
     example: function () {
       // 修改数据
       this.message = 'changed'
-      // DOM 还没有更新,作为一个回调函数使用
+      // DOM 还没有更新,
+      // 作为一个回调函数使用
       this.$nextTick(function () {
-        // DOM 现在更新了
+        // DOM 现在更新了 
+        // 延迟到 updated钩子 之后执行
         // `this` 绑定到当前实例
         this.doSomethingElse()
       })
     }
   }
 
-  // 挂载完毕之后调用。作为一个 Promise 使用
+  // 实例创建之后调用
   created(){
-		this.$nextTick().then(value=>{
-            console.log(document.querySelector("button").innerText)
+    	// 延迟到挂载完毕 mounted 之后调用，获取挂载后的视图。
+    	// 作为一个 Promise 使用
+		this.$nextTick().then(()=>{
+            console.log("nextTick")
    })
   },
 })
 ```
 
+### vm.$destroy
+
+```javascript
+vm.$destroy()
+```
+
+- **用法**：
+
+  完全销毁一个实例。清理它与其它实例的连接，解绑它的全部指令及事件监听器。
+
+  触发 `beforeDestroy` 和 `destroyed` 的钩子。
+
+  在大多数场景中你不应该调用这个方法。最好使用 `v-if` 和 `v-for` 指令以数据驱动的方式控制子组件的生命周期。
