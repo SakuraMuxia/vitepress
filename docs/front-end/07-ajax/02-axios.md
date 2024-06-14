@@ -236,6 +236,50 @@ axios.defaults.headers = {
 }
 ```
 
+## 获取响应体内容
+
+方式1：使用then直接获取
+
+```javascript
+axios.get("https://api.github.com/search/repositories",{
+    // ?q=r&sort=stars
+    params:{
+        q:"r",
+        sort:"stars"
+    }
+}).then(response=>{
+    console.log(response.data);
+})
+```
+
+方式2：使用解构赋值获取数据
+
+```javascript
+// 方式2 结构赋值
+axios.get("https://api.github.com/search/repositories",{
+    // ?q=r&sort=stars
+    params:{
+        q:"r",
+        sort:"stars"
+    }
+}).then(({data})=>{
+    console.log(data);
+})
+```
+
+方式3：使用 async await 函数
+
+```javascript
+// 方式3 async await 函数
+const {data} = await  axios.get("https://api.github.com/search/repositories",{
+    params: {
+        q: "r",
+        sort: "stars"
+    }
+});
+console.log(data);
+```
+
 
 
 ## 创建 axios 实例
