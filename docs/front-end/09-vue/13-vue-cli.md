@@ -124,6 +124,56 @@ https://api.github.com/search/repositories?q=r&sort=stars
 https://api.github.com/search/users?q=r&sort=stars
 ```
 
+### 组件命名
+
+组件名称为大驼峰，不要用系统中命令常见的名称
+
+方式1修改.eslintrc.js文件，关闭组件命名语法检查
+
+```javascript
+module.exports = {
+    root: true,
+    env: {
+      node: true
+    },
+    'extends': [
+      'plugin:vue/essential',
+      'eslint:recommended'
+    ],
+    parserOptions: {
+      parser: '@babel/eslint-parser'
+    },
+    rules: {
+      'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+      'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+       //在rules中添加自定义规则
+       //关闭组件命名规则
+       "vue/multi-word-component-names":"off",
+    },
+    overrides: [
+      {
+        files: [
+          '**/__tests__/*.{j,t}s?(x)',
+          '**/tests/unit/**/*.spec.{j,t}s?(x)'
+        ],
+        env: {
+          jest: true
+        }
+      }
+    ]
+  }
+```
+
+方式2：修改Vue项目主配置文件vue.config.js文件
+
+```javascript
+const { defineConfig } = require('@vue/cli-service')
+	module.exports = defineConfig({
+	  transpileDependencies: true,
+	  lintOnSave:false  //关闭语法检查
+	})
+```
+
 
 
 ## 项目结构
@@ -207,7 +257,7 @@ src->App.vue主组件
 <script>
 import Child from "@/components/Child";
 export default {
-    name: "App.vue",
+    name: "App",
     data(){
         return {
             num:1
@@ -315,7 +365,7 @@ public->index.html
 
 ### 全局过滤器
 
-1. 放在入口文件中(src->main.js)使用
+方式1：放在入口文件中(src->main.js)使用，并且放在new Vue(){...}代码前使用。
 
 ```javascript
 // src->main.js
@@ -333,7 +383,7 @@ Vue.filter("date",function(t){
  })
 ```
 
-2. 抽离到文件夹中模块化使用(src->filters->index.js)
+方式2：抽离到文件夹中模块化使用(src->filters->index.js)
 
 ```javascript
 // src->main.js
@@ -408,7 +458,7 @@ const filters = {
 		return type+v.toFixed(n);
 	}
 };
-// 暴漏过滤器 作为一个函数暴漏 fun(Vue){...}
+// 暴漏一个函数 fun(Vue){...}
 export default function(V){
 	for(let key in filters){
 		V.filter(key,filters[key]);
@@ -429,8 +479,8 @@ import filters from "@/filters";
 
 // 安装过滤器插件
 // filters的两种类型：
-// 1- 如果filters之前暴漏是一个对象，Vue.use会调用对象下的install方法，并传递Vue
-// 2- 如果filters之前暴漏是一个函数，会直接调用该函数，并传递Vue
+// 1- 如果filters暴漏是一个对象，Vue.use会调用对象下的install方法，并传递Vue
+// 2- 如果filters暴漏是一个函数，会直接调用该函数，并传递Vue
 Vue.use(filters);
 ```
 
@@ -452,18 +502,14 @@ const filters = {
 	currency(v,n=2,type="$"){
 		return type+v.toFixed(n);
 	},
-    // ?
-    install(Vue){
-        for(let key in filters){
-			Vue.filter(key,filters[key]);
-		};
-        console.log(Vue);
-    }
+    install(V) {
+        for (let key in filters) {
+            V.filter(key, filters[key]);
+        }
+    },
 };
-// 暴漏过滤器 作为一个对象暴漏
-export default {
-	filters,
-}
+// 暴漏一个对象
+export default filters;
 ```
 
 入口文件通过插件形式安装过滤器到全局
@@ -479,8 +525,8 @@ import filters from "@/filters";
 
 // 安装过滤器插件
 // filters的两种类型：
-// 1- 如果filters之前暴漏是一个对象，Vue.use会调用对象下的install方法，并传递Vue
-// 2- 如果filters之前暴漏是一个函数，会直接调用该函数，并传递Vue
+// 1- 如果filters暴漏是一个对象，Vue.use会调用对象下的install方法，并传递参数Vue(构造函数)
+// 2- 如果filters暴漏是一个函数，会直接调用该函数，并传递参数Vue(构造函数)
 Vue.use(filters);
 ```
 
@@ -548,7 +594,6 @@ src->App.vue
                 <p>{{item.full_name}}</p>
             </div>
         </template>
-
     </div>
 </template>
 
@@ -722,5 +767,3 @@ new Vue({
 ```
 
 
-
-### axios拦截
