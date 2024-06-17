@@ -280,6 +280,74 @@ const {data} = await  axios.get("https://api.github.com/search/repositories",{
 console.log(data);
 ```
 
+原始axios获取数据
+
+```javascript
+axios.get('/user', {
+    params: {
+      ID: 12345
+    }
+  })
+  .then(response => {	// 正常请求
+    this.tableData = response.data;
+  })
+  .catch(error => {	// 出现异常
+    console.log(error);
+  });
+
+// 因为请求后即使没出现异常，也可能会出现请求没获取到任何数据的情况，这时候要加些判断过滤了，还有如果出错了要给用户提示
+
+axios.get('/user', {
+    params: {
+      ID: 12345
+    }
+  })
+  .then(response => {	// 正常请求
+    if(!response || !response.data){
+         this.warnMsg("数据获取失败！");
+         this.tableData = [];
+    }else if(result.data.status == 0){
+         this.tableData = result.data;
+    }
+  })
+  .catch(error => {	// 出现异常
+    this.errMsg("系统异常，数据获取失败！");
+    console.log(error);
+  });
+
+// Promise中有finally，可以加在后面
+return new Promise((resolve,reject) => {
+    axios.get(url,{
+      params:params
+    })
+    .then(response => {
+      resolve(response.data);
+    })
+    .catch(err => {
+      reject(err)
+    }).finally(console.log("执行finally"))
+// 就直接自己定义一个对象用于回调时返回所需数据吧，这回都回调then
+return new Promise((resolve,reject) => {
+    axios.get(url,{
+      params:params
+    })
+.then(response => {
+     if (!response || !response.data) {
+         Message("数据获取失败！");
+         resolve({ ok: false, data: null });	// 回调then，返回失败提示
+      } else if (response.data.status == 0) {
+         resolve({ ok: true, data: response.data.data });	// 回调then，请求得到的数据
+      } else {
+         Message(response.data.msg);
+         resolve({ ok: false, data: null });	// 回调then，返回失败状态
+      }
+}).catch(err => {
+     Message("系统异常！" + err);
+     resolve({ ok: false, data: null });	// 回调then，返回失败状态
+ })
+    
+```
+
 
 
 ## 创建 axios 实例
