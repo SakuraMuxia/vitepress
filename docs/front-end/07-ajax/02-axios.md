@@ -137,7 +137,8 @@ axios
         
     // `headers` 是即将被发送的请求头
   	headers: {
-        'Content-type': 'appliation/json'
+        'Content-type': 'appliation/json',
+        // 可以在这里设置请求头，解决跨域问题，卖座网的案例
     },
     
     // `params` 是即将与请求一起发送的 URL 参数 相当于查询字符串
@@ -166,6 +167,18 @@ axios
 ```
 
 > **注意：** 更多的请求配置项见附录
+
+### params规避浏览器缓存
+
+```javascript
+params: {
+    ID: 12345,
+    // 使用时间戳规避浏览器缓存
+    t:Date.now
+},
+```
+
+
 
 ### 每次发送请求时设置配置项
 

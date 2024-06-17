@@ -546,6 +546,12 @@ Access-Control-Expose-Headers: content-type,cache-control
 4. 如果在请求头中添加了其他自定义头信息，例如 `Authorization` ，则需要在服务器端设置 `Access-Control-Allow-Headers` 头信息，否则浏览器也不会发送 Cookie。
 5. 所有设置的 Cookie 需要设置相关属性 Secure 和 SameSite=None，才允许被跨域携带。
 
+## 解决跨域
+
+- JSONP前端
+- 和后端协商设置特定的请求头，卖座网
+- 后端允许跨域
+
 ## JSONP
 
 ### 实现思路
