@@ -549,12 +549,13 @@ Access-Control-Expose-Headers: content-type,cache-control
 ## 解决跨域
 
 - JSONP前端
-- 和后端协商设置特定的请求头，卖座网
+- 和后端协商设置特定的请求头
 - 后端允许跨域
+- 代理
 
-## JSONP
+### JSONP
 
-### 实现思路
+**实现思路**
 
 ```js
 实现基础：
@@ -622,13 +623,87 @@ var obj = {
 res.send(callback+"("+JSON.stringify(obj)+")");
 ```
 
-### JSONP 缺点
+**JSONP 缺点**
 
 ```
 只支持 GET 请求
 ```
 
-### 封装一个 Ajax 函数
+### 代理
+
+手写一个后端服务，放开跨域限制，然后前端向这个地址请求数据。
+
+```javascript
+// 导入express中间件
+const express = require("express");
+const axios = require("axios");
+const app = express();
+// 允许跨域
+app.use((req,res,next)=>{
+    // 允许来源
+	res.set("Access-Control-Allow-Origin","*");
+    // 允许请求方法 所有 (默认不支持put delete)
+	res.set("Access-Control-Allow-Methods","*");
+    // 允许携带请求头
+	res.set("Access-Control-Allow-Headers","*");
+	next();
+})
+
+// 设置路由 并且响应数据
+app.get("/info",(req,res)=>{
+	res.json({
+		ok:1,
+		msg:"get->info"
+	})
+})
+// 设置路由 重新向服务端请求数据 然后把数据响应给客户端
+app.get("/maoyan",(req,res)=>{
+	axios.get("https://i.maoyan.com/api/mmdb/movie/v3/list/hot.json?ct=上海&ci=10&channelId=4")
+    .then(value => {
+		res.json(value.data);
+	})
+})
+// 启动服务
+app.listen(8089,()=>{
+	console.log("success");
+})
+
+```
+
+### 开发阶段配置
+
+在 `vue.config.js` 文件中，加入如下代码：
+
+```js
+devServer:{
+    open:true,
+    proxy: {
+        '/4000': {
+                    target: 'http://api.waimai.fuming.site:4000',
+                    changeOrigin: true,
+                    pathRewrite: {
+                        '^/4000': ''
+                    }
+            }
+        }
+},
+```
+
+### 部署到 nginx 之后通过反向代理解决跨域问题
+
+打开 nginx 配置文件，在 server 的花括号内添加如下一行：
+
+```conf
+location /4000 {
+     proxy_pass http://api.waimai.fuming.site:4000/;
+}
+```
+
+### 后端解决跨域
+
+后端也可以通过 CORS 方案结局跨域问题，原理是设置响应头里的`Cross-origin resource sharing` 字段
+
+## 封装一个 Ajax 函数
 
 ```js
 /*  
