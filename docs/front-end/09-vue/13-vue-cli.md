@@ -215,8 +215,24 @@ new Vue({
   router,
   store,
   render: h => h(App)
-}).$mount('#app')
+}).$mount('#app') // 这里的id为app 在public -> index.html中
 
+```
+
+```javascript
+render: function (createElement) {
+    return createElement(App);
+}
+// 简写
+render (createElement) {
+    return createElement(App);
+}
+// 进一步简写
+render: h => h(App);
+
+Vue 在调用 render 方法时，会传入一个 createElement 函数作为参数，也就是这里的 h 的实参是 createElement 函数，这个函数的作用就是生成一个 VNode节点，render 函数得到这个 VNode 节点之后，调用了 mount 方法，渲染成真实 DOM 节点，并挂载到（通常是div app）节点上。
+
+createElement函数是用来生成HTML DOM元素的，也就是generate HTML structures，也就是Hyperscript，这样作者才把createElement简写成h。h是vue.js里面的createElement函数，这个函数的作用就是生成一个VNode节点，render函数得到这个VNode节点之后，返回给vue.js的mount函数，渲染成真实DOM节点，并挂载到根节点上。
 ```
 
 
@@ -765,5 +781,4 @@ new Vue({
 	}
 }).$mount("#app");
 ```
-
 

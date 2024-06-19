@@ -45,6 +45,8 @@ npm run build
 
 ### VueRouter创建实例
 
+// src=> main.js
+
 ```javascript
 // 0. 导入Vue和VueRouter，要调用 Vue.use(VueRouter)
 import Vue from 'vue';
@@ -86,6 +88,8 @@ const app = new Vue({
 // 现在，应用已经启动了！
 ```
 
+// src=> App.vue
+
 ```vue
 <template>
     <div id="app">
@@ -96,6 +100,8 @@ const app = new Vue({
             <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
             <router-link to="/foo">Go to Foo</router-link>
             <router-link to="/bar">Go to Bar</router-link>
+            <!-- 通过传入 `:to` 属性传入对象 -->
+            <router-link :to="{path:'/foo'}">Go to Foo</router-link>
         </p>
 
         <!-- 路由出口 -->
@@ -108,49 +114,191 @@ const app = new Vue({
 ```javascript
 在这个 `template` 中使用了两个由 Vue Router 提供的组件: `RouterLink` 和 `RouterView`。
 不同于常规的 `<a>` 标签，我们使用组件 `RouterLink` 来创建链接。
-这使得 Vue Router 能够在不重新加载页面的情况下改变 URL，处理 URL 的生成、编码和其他功能。我们将会在之后的部分深入了解 `RouterLink` 组件。
+这使得 Vue Router 能够在不重新加载页面的情况下改变 URL，处理 URL 的生成、编码和其他功能。
 `RouterView` 组件可以使 Vue Router 知道你想要在哪里渲染当前 URL 路径对应的路由组件。
 ```
 
-### createRouter()创建实例
-
-路由器实例是通过调用 `createRouter()` 函数创建的:
-
 ```javascript
-// 导入构造函数对象
-import { createMemoryHistory, createRouter } from 'vue-router'
-// 导入组件
-import HomeView from './HomeView.vue'
-import AboutView from './AboutView.vue'
-// 定义路由 routes
-const routes = [
-  { path: '/', component: HomeView },
-  { path: '/about', component: AboutView },
-]
-// 创建 router 实例 通过函数方式创建。
-const router = createRouter({
-    // 这里的history选项控制了路由和 URL 路径是如何双向映射的。
-    // 它会完全忽略浏览器的 URL 而使用其自己内部的 URL
-    // createWebHistory() History模式
-    // createWebHashHistory() Hash模式
-  	history: createMemoryHistory(),
-  	routes,
-})
-
-// 注册路由器插件
-// 一旦创建了我们的路由器实例，我们就需要将其注册为插件，这一步骤可以通过调用use()来完成
-
+<router-link to="/foo">Go to Foo</router-link>
+<!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
+<a href=""></a>
 ```
 
-## 动态路由匹配
+### RouterLink组件
 
-## 嵌套路由
+RouterLink组件将两个CSS类，添加到Activelinks中，exact 准确的
 
-## 编程式导航
+**设置路由匹配样式**
+
+方式1：使用`router-link-exact-active`类匹配样式
+
+```javascript
+精确匹配: 请求地址(https://xxx/hanser) 路由(path:'/hanser')
+非精确匹配: 请求地址(https://xxx/hanser/yousa) 路由(path:'/hanser')
+无匹配: 请求地址(https://xxx/hanseryousa) 路由(path:'/hanser')
+
+router-link 渲染的后，a标签的自动添加class属性`router-link-active`和`router-link-exact-active`两个class类
+           
+<router-link to="/hanser">Go to Hanser</router-link>
+// router-link 渲染后的a标签，非精确匹配包含了精确匹配
+<a class="router-link-active router-link-exact-active"> </a>
+
+// 当请求地址(https://xxx/hanser)与路由(path:'/hanser')非精确匹配时，添加这个类
+`router-link-active` 
+// 当请求地址(https://xxx/hanser)与路由(path:'/hanser')精确匹配,添加这个类
+`router-link-exact-active` 
+```
+
+```vue
+// src=>App.vue
+<stype>
+	a.router-link-exact-active{
+    	color:red
+    }
+</style>
+```
+
+方式2：设置exact属性，使用`.active`类匹配样式
+
+```javascript
+// 在router-link设置exact属性 
+// 只有 请求地址(https://xxx/hanser)与路由(path:'/hanser') 精确匹配时
+<router-link exact to="/hanser">Go to Hanser</router-link>
+// 渲染后的a标签才有 router-link-active 类
+<a class="router-link-active"> </a>
+```
+
+```javascript
+// src=>router=>index.js
+export default new VueRouter({
+    mode:""
+    router,
+    // 给非精确匹配设置类名 active
+    linkActiveClass:"acitve",
+})
+```
+
+```vue
+// src=>App.vue
+<stype>
+	a.active{
+    	color:red
+    }
+</style>
+```
+
+方式3: 设置`exact-active-class `属性，使用`.active`类匹配样式
+
+```javascript
+// src=>App.vue
+// 在router-link标签设置 exact-active-class 属性 
+// 只有 请求地址(https://xxx/hanser)与路由(path:'/hanser') 精确匹配时
+<router-link exact-active-class to="/hanser">Go to Hanser</router-link>
+// 渲染后的a标签才有 active 类
+<a class="active"> </a>
+```
+
+```javascript
+// src=>router=>index.js
+export default new VueRouter({
+    mode:""
+    router,
+    // 给非精确匹配设置类名 active
+    linkActiveClass:"acitve",
+})
+```
+
+```vue
+// src=>App.vue
+<stype>
+	a.active{
+    	color:red;
+    }
+</style>
+```
+
+
+
+## 命名路由
+
+当创建一个路由时，我们可以选择给路由一个 `name`：
+
+src->main.js
+
+```javascript
+const routes = [
+  {
+    // 带参数
+	path: '/user/:username',
+    name: 'profile', 
+    component: User
+  }
+]
+```
+
+可以使用 `name` 而不是 `path` 来传递 `to` 属性给 `<router-link>`：
+
+src->App.vue
+
+```vue
+<template>
+	<-- 传参数 -->
+    <router-link :to="{ name: 'profile', params: { username: 'erina' } }">
+    	User profile
+    </router-link>
+</template>
+```
 
 ## 命名视图
 
-## 重定向和别名
+有时候想同时 (同级) 展示多个视图，而不是嵌套展示，例如创建一个布局，有 `sidebar` (侧导航) 和 `main` (主内容) 两个视图，这个时候命名视图就派上用场了。
+
+你可以在界面中拥有多个单独命名的视图，而不是只有一个单独的出口。如果 `router-view` 没有设置名字，那么默认为 `default`。
+
+```vue
+<router-view class="view left-sidebar" name="LeftSidebar" />
+<router-view class="view main-content" />
+<router-view class="view right-sidebar" name="RightSidebar" />
+```
+
+一个视图使用一个组件渲染，因此对于同个路由，多个视图就需要多个组件。确保正确使用 `components` 配置 (带上 **s**)
+
+```javascript
+// 方式1 
+const router = createRouter({
+	history: createWebHashHistory(),
+    routes: [
+        {
+            path: '/',
+            components: {
+                default: Home,
+                // LeftSidebar: LeftSidebar 的缩写
+                LeftSidebar,
+                // 它们与 `<router-view>` 上的 `name` 属性匹配
+                RightSidebar,
+            },
+        },
+    ],
+})
+```
+
+```javascript
+// 方式2 src=> main.js
+const routes = [
+    {
+        path:"/fubuki",
+        components:{
+            // 定义默认组件
+            default: Home,
+            FubukiHeader,
+            FubukiMain,
+            FubukiFooter
+        }
+    }
+]
+```
+
+## 定向和别名
 
 ### 重定向
 
@@ -299,6 +447,10 @@ module.exports = {
   },
 };
 ```
+
+## 路由跳转过程
+
+
 
 
 
