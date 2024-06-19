@@ -132,30 +132,13 @@ const app = new Vue({
 </div>
 ```
 
-```vue
-// App.vue
-<template>
-  <h1>Hello App!</h1>
-  <p>
-    <strong>Current route path:</strong> {{ $route.fullPath }}
-  </p>
-  <nav>
-    <RouterLink to="/">Go to Home</RouterLink>
-    <RouterLink to="/about">Go to About</RouterLink>
-  </nav>
-  <main>
-    <RouterView />
-  </main>
-</template>
-```
-
 在这个 `template` 中使用了两个由 Vue Router 提供的组件: `RouterLink` 和 `RouterView`。
 
 不同于常规的 `<a>` 标签，我们使用组件 `RouterLink` 来创建链接。这使得 Vue Router 能够在不重新加载页面的情况下改变 URL，处理 URL 的生成、编码和其他功能。我们将会在之后的部分深入了解 `RouterLink` 组件。
 
 `RouterView` 组件可以使 Vue Router 知道你想要在哪里渲染当前 URL 路径对应的**路由组件**。它不一定要在 `App.vue` 中，你可以把它放在任何地方，但它需要在某处被导入，否则 Vue Router 就不会渲染任何东西。
 
-上述示例还使用了 `{{ $route.fullPath }}` 。你可以在组件模板中使用 `$route` 来访问当前的路由对象。
+上述示例还使用了 {{ $route.fullPath }} 。你可以在组件模板中使用 `$route` 来访问当前的路由对象。
 
 **方式4：直接使用**
 
@@ -261,8 +244,6 @@ const router = new VueRouter({
 })
 ```
 
-
-
 ### 创建路由器实例
 
 路由器实例是通过调用 `createRouter()` 函数创建的:
@@ -284,11 +265,19 @@ const router = createRouter({
 })
 ```
 
-这里的 `routes` 选项定义了一组路由，把 URL 路径映射到组件。其中，由 `component` 参数指定的组件就是先前在 `App.vue` 中被 `<RouterView>` 渲染的组件。这些路由组件通常被称为*视图*，但本质上它们只是普通的 Vue 组件。
+这里的 `routes` 选项定义了一组路由，把 URL 路径映射到组件。其中，由 `component` 参数指定的组件就是先前在 `App.vue` 中被 `<RouterView>` 渲染的组件。
+
+这些路由组件通常被称为视图，但本质上它们只是普通的 Vue 组件。
 
 其他可以设置的路由选项我们会在之后介绍，目前我们只需要 `path` 和 `component`。
 
-这里的 `history` 选项控制了路由和 URL 路径是如何双向映射的。在演练场的示例里，我们使用了 `createMemoryHistory()`，它会完全忽略浏览器的 URL 而使用其自己内部的 URL。 这在演练场中可以正常工作，但是未必是你想要在实际应用中使用的。通常，你应该使用 `createWebHistory()` 或 `createWebHashHistory()`。我们将在[不同的历史记录模式](https://router.vuejs.org/zh/guide/essentials/history-mode.html)的部分详细介绍这个主题。
+这里的 `history` 选项控制了路由和 URL 路径是如何双向映射的。
+
+在演练场的示例里，我们使用了 `createMemoryHistory()`，它会完全忽略浏览器的 URL 而使用其自己内部的 URL。 
+
+这在演练场中可以正常工作，但是未必是你想要在实际应用中使用的。
+
+通常，你应该使用 `createWebHistory()` 或 `createWebHashHistory()`。我们将在不同的历史记录模式的部分详细介绍这个主题。
 
 ### 注册路由器插件
 
@@ -312,7 +301,7 @@ app.mount('#app')
 
 如果你好奇这个插件做了什么，它的职责包括：
 
-1. [全局注册](https://cn.vuejs.org/guide/components/registration.html#global-registration) `RouterView` 和 `RouterLink` 组件。
+1. 全局注册`RouterView` 和 `RouterLink` 组件。
 2. 添加全局 `$router` 和 `$route` 属性。
 3. 启用 `useRouter()` 和 `useRoute()` 组合式函数。
 4. 触发路由器解析初始路由。
@@ -321,7 +310,9 @@ app.mount('#app')
 
 你很可能想要在应用的其他地方访问路由器。
 
-如果你是从 ES 模块导出路由器实例的，你可以将路由器实例直接导入到你需要它的地方。在一些情况下这是最好的方法，但如果我们在组件内部，那么我们还有其他选择。
+如果你是从 ES 模块导出路由器实例的，你可以将路由器实例直接导入到你需要它的地方。
+
+在一些情况下这是最好的方法，但如果我们在组件内部，那么我们还有其他选择。
 
 在组件模板中，路由器实例将被暴露为 `$router`。这与同样被暴露的 `$route` 一样，但注意前者最后有一个额外的 `r`。
 
@@ -337,7 +328,7 @@ export default {
 }
 ```
 
-这里调用了 `push()`，这是用于[编程式导航](https://router.vuejs.org/zh/guide/essentials/navigation.html)的方法。我们会在后面详细了解。
+这里调用了 `push()`，这是用于编程式导航的方法。我们会在后面详细了解。
 
 对于组合式 API，我们不能通过 `this` 访问组件实例，所以 Vue Router 给我们提供了一些组合式函数。演练场示例中的 `AboutView.vue` 组件使用了这种方法：
 
@@ -366,7 +357,9 @@ const search = computed({
 
 ### 动态路径参数 dynamic segment
 
-我们经常需要把某种模式匹配到的所有路由，全都映射到同个组件。例如，我们有一个 `User` 组件，对于所有 ID 各不相同的用户，都要使用这个组件来渲染。那么，我们可以在 `vue-router` 的路由路径中使用“动态路径参数”(dynamic segment) 来达到这个效果：
+我们经常需要把某种模式匹配到的所有路由，全都映射到同个组件。例如，我们有一个 `User` 组件，对于所有 ID 各不相同的用户，都要使用这个组件来渲染。
+
+那么，我们可以在 `vue-router` 的路由路径中使用“动态路径参数”(dynamic segment) 来达到这个效果：
 
 ```js
 const User = {
@@ -383,7 +376,9 @@ const router = new VueRouter({
 
 现在呢，像 `/user/foo` 和 `/user/bar` 都将映射到相同的路由。
 
-一个“路径参数”使用冒号 `:` 标记。当匹配到一个路由时，参数值会被设置到 `this.$route.params`，可以在每个组件内使用。于是，我们可以更新 `User` 的模板，输出当前用户的 ID：
+一个“路径参数”使用冒号 `:` 标记。当匹配到一个路由时，参数值会被设置到 `this.$route.params`，可以在每个组件内使用。
+
+于是，我们可以更新 `User` 的模板，输出当前用户的 ID：
 
 ```js
 const User = {
@@ -398,7 +393,7 @@ const User = {
 | /user/:username               | /user/evan          | `{ username: 'evan' }`               |
 | /user/:username/post/:post_id | /user/evan/post/123 | `{ username: 'evan', post_id: 123 }` |
 
-除了 `$route.params` 外，`$route` 对象还提供了其它有用的信息，例如，`$route.query` (如果 URL 中有查询参数)、`$route.hash` 等等。你可以查看 [API 文档](https://router.vuejs.org/zh/api/#路由对象) 的详细说明。
+除了 `$route.params` 外，`$route` 对象还提供了其它有用的信息，例如，`$route.query` (如果 URL 中有查询参数)、`$route.hash` 等等。你可以查看 API 文档的详细说明。
 
 ### 响应路由参数的变化
 
@@ -468,9 +463,13 @@ const routes = [
 - 防止你在 URL 中出现打字错误。
 - 绕过路径排序，例如展示一个匹配相同路径但排序较低的路由。
 
-所有路由的命名**都必须是唯一的**。如果为多条路由添加相同的命名，路由器只会保留最后那一条。你可以在[动态路由](https://router.vuejs.org/zh/guide/advanced/dynamic-routing.html#Removing-routes)章节了解更多。
+所有路由的命名**都必须是唯一的**。如果为多条路由添加相同的命名，路由器只会保留最后那一条。
 
-Vue Router 有很多其他部分可以传入网址，例如 `router.push()` 和 `router.replace()` 方法。我们将在[编程式导航](https://router.vuejs.org/zh/guide/essentials/navigation.html)指南中详细介绍这些方法。就像 `to` 属性一样，这些方法也支持通过 `name` 传入网址：
+你可以在[动态路由](https://router.vuejs.org/zh/guide/advanced/dynamic-routing.html#Removing-routes)章节了解更多。
+
+Vue Router 有很多其他部分可以传入网址，例如 `router.push()` 和 `router.replace()` 方法。
+
+我们将在[编程式导航](https://router.vuejs.org/zh/guide/essentials/navigation.html)指南中详细介绍这些方法。就像 `to` 属性一样，这些方法也支持通过 `name` 传入网址：
 
 ```javascript
 router.push({ name: 'user', params: { username: 'erina' } })
@@ -552,7 +551,9 @@ const router = new VueRouter({
 
 你会发现，`children` 配置就是像 `routes` 配置一样的路由配置数组，所以呢，你可以嵌套多层路由。
 
-此时，基于上面的配置，当你访问 `/user/foo` 时，`User` 的出口是不会渲染任何东西，这是因为没有匹配到合适的子路由。如果你想要渲染点什么，可以提供一个 空的 子路由：
+此时，基于上面的配置，当你访问 `/user/foo` 时，`User` 的出口是不会渲染任何东西，这是因为没有匹配到合适的子路由。
+
+如果你想要渲染点什么，可以提供一个 空的 子路由：
 
 ```js
 const router = new VueRouter({
@@ -607,7 +608,9 @@ router.push({ name: 'user', params: { userId: 123 }})
 router.push({ path: 'register', query: { plan: 'private' }})
 ```
 
-**注意：如果提供了 path，params 会被忽略，上述例子中的 query 并不属于这种情况。取而代之的是下面例子的做法，你需要提供路由的 name 或手写完整的带有参数的 path：**
+**注意：如果提供了 path，params 会被忽略，上述例子中的 query 并不属于这种情况。**
+
+**取而代之的是下面例子的做法，你需要提供路由的 name 或手写完整的带有参数的 path：**
 
 ```js
 const userId = 123
@@ -619,7 +622,9 @@ router.push({ path: '/user', params: { userId }}) // -> /user
 
 同样的规则也适用于 `router-link` 组件的 `to` 属性。
 
-在 2.2.0+，可选的在 `router.push` 或 `router.replace` 中提供 `onComplete` 和 `onAbort` 回调作为第二个和第三个参数。这些回调将会在导航成功完成 (在所有的异步钩子被解析之后) 或终止 (导航到相同的路由、或在当前导航完成之前导航到另一个不同的路由) 的时候进行相应的调用。
+在 2.2.0+，可选的在 `router.push` 或 `router.replace` 中提供 `onComplete` 和 `onAbort` 回调作为第二个和第三个参数。
+
+这些回调将会在导航成功完成 (在所有的异步钩子被解析之后) 或终止 (导航到相同的路由、或在当前导航完成之前导航到另一个不同的路由) 的时候进行相应的调用。
 
 **注意：**如果目的地和当前路由相同，只有参数发生了改变 (比如从一个用户资料到另一个 `/users/1`-> `/users/2`)，你需要使用 `beforeRouteUpdate`来响应这个变化 (比如抓取用户信息)
 
@@ -716,7 +721,7 @@ const routes = [
 
 重定向是指当用户访问 `/home` 时，URL 会被 `/` 替换，然后匹配成 `/`。那么什么是别名呢？
 
-**将 `/` 别名为 `/home`，意味着当用户访问 `/home` 时，URL 仍然是 `/home`，但会被匹配为用户正在访问 `/`。**
+将 `/` 别名为 `/home`，意味着当用户访问 `/home` 时，URL 仍然是 `/home`，但会被匹配为用户正在访问 `/`。
 
 上面对应的路由配置为：
 
@@ -776,6 +781,7 @@ module.exports = defineConfig({
 		host:"127.0.0.1",
         // 代理
 		proxy:{
+            对 `/hanser` 的请求会将请求代理到 `https://i.maoyan.com/hanser`
 			"/hanser":{
 				target:"https://i.maoyan.com"
                 changeOrigin:true,
@@ -795,7 +801,9 @@ module.exports = defineConfig({
 
 当拥有单独的 API 后端开发服务器并且希望在同一域上发送 API 请求时，代理某些 URL 可能会很有用。
 
-开发服务器使用功能强大的 [http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware) 软件包。 查看其 [documentation](https://github.com/chimurai/http-proxy-middleware#options) 了解更多高级用法。 请注意，`http-proxy-middleware` 的某些功能不需要`target`键，例如 它的 `router` 功能，但是仍然需要在此处的配置中包含`target`，否则`webpack-dev-server` 不会将其传递给 `http-proxy-middleware`。
+开发服务器使用功能强大的 [http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware) 软件包。 查看其 [documentation](https://github.com/chimurai/http-proxy-middleware#options) 了解更多高级用法。 
+
+请注意，`http-proxy-middleware` 的某些功能不需要`target`键，例如 它的 `router` 功能，但是仍然需要在此处的配置中包含`target`，否则`webpack-dev-server` 不会将其传递给 `http-proxy-middleware`。
 
 使用后端在 `localhost:3000` 上，可以使用它来启用代理：
 
