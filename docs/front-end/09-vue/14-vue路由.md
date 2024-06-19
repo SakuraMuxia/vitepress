@@ -256,7 +256,7 @@ const router = new VueRouter({
 	// 1- history
 	// 2- hash
 	mode: "history",
-    // 支持地址以m开头
+    // 支持地址以/m/开头
 	base:"m"
 })
 ```
@@ -437,11 +437,50 @@ const User = {
 
 有时候，同一个路径可以匹配多个路由，此时，匹配的优先级就按照路由的定义顺序：谁先定义的，谁的优先级就最高。
 
+## 命名路由
+
+当创建一个路由时，我们可以选择给路由一个 `name`：
+
+```javascript
+const routes = [
+  {
+    path: '/user/:username',
+    name: 'profile', 
+    component: User
+  }
+]
+```
+
+然后我们可以使用 `name` 而不是 `path` 来传递 `to` 属性给 `<router-link>`：
+
+```javascript
+<router-link :to="{ name: 'profile', params: { username: 'erina' } }">
+  User profile
+</router-link>
+```
+
+上述示例将创建一个指向 `/user/erina` 的链接。
+
+使用 `name` 有很多优点：
+
+- 没有硬编码的 URL。
+- `params` 的自动编码/解码。
+- 防止你在 URL 中出现打字错误。
+- 绕过路径排序，例如展示一个匹配相同路径但排序较低的路由。
+
+所有路由的命名**都必须是唯一的**。如果为多条路由添加相同的命名，路由器只会保留最后那一条。你可以在[动态路由](https://router.vuejs.org/zh/guide/advanced/dynamic-routing.html#Removing-routes)章节了解更多。
+
+Vue Router 有很多其他部分可以传入网址，例如 `router.push()` 和 `router.replace()` 方法。我们将在[编程式导航](https://router.vuejs.org/zh/guide/essentials/navigation.html)指南中详细介绍这些方法。就像 `to` 属性一样，这些方法也支持通过 `name` 传入网址：
+
+```javascript
+router.push({ name: 'user', params: { username: 'erina' } })
+```
+
 ## 嵌套路由
 
 实际生活中的应用界面，通常由多层嵌套的组件组合而成。同样地，URL 中各段动态路径也按某种结构对应嵌套的各层组件，例如：
 
-```
+```javascript
 /user/foo/profile                     /user/foo/posts
 +------------------+                  +-----------------+
 | User             |                  | User            |
@@ -619,5 +658,222 @@ router.go(100)
 
 还有值得提及的，Vue Router 的导航方法 (`push`、 `replace`、 `go`) 在各类路由模式 (`history`、 `hash` 和 `abstract`) 下表现一致。
 
+## 命名视图
 
+## 重定向和别名
 
+### 重定向
+
+```javascript
+重定向也是通过 routes 配置来完成，下面例子是从 /home 重定向到 /：
+
+const routes = [{ path: '/home', redirect: '/' }]
+重定向的目标也可以是一个命名的路由：
+
+const routes = [{ path: '/home', redirect: { name: 'homepage' } }]
+```
+
+甚至是一个方法，动态返回重定向目标：
+
+```javascript
+const routes = [
+  {
+    // /search/screens -> /search?q=screens
+    path: '/search/:searchText',
+    redirect: to => {
+      // 方法接收目标路由作为参数
+      // return 重定向的字符串路径/路径对象
+      return { path: '/search', query: { q: to.params.searchText } }
+    },
+  },
+  {
+    path: '/search',
+    // ...
+  },
+]
+```
+
+### 相对重定向
+
+也可以重定向到相对位置：
+
+```javascript
+const routes = [
+  {
+    // 将总是把/users/123/posts重定向到/users/123/profile。
+    path: '/users/:id/posts',
+    redirect: to => {
+      // 该函数接收目标路由作为参数
+      // 相对位置不以`/`开头
+      // 或 { path: 'profile'}
+      return 'profile'
+    },
+  },
+]
+```
+
+### 别名
+
+重定向是指当用户访问 `/home` 时，URL 会被 `/` 替换，然后匹配成 `/`。那么什么是别名呢？
+
+**将 `/` 别名为 `/home`，意味着当用户访问 `/home` 时，URL 仍然是 `/home`，但会被匹配为用户正在访问 `/`。**
+
+上面对应的路由配置为：
+
+```javascript
+const routes = [{ path: '/', component: Homepage, alias: '/home' }]
+```
+
+通过别名，你可以自由地将 UI 结构映射到一个任意的 URL，而不受配置的嵌套结构的限制。使别名以 `/` 开头，以使嵌套路径中的路径成为绝对路径。你甚至可以将两者结合起来，用一个数组提供多个别名：
+
+```javascript
+const routes = [
+  {
+    path: '/users',
+    component: UsersLayout,
+    children: [
+      // 为这 3 个 URL 呈现 UserList
+      // - /users
+      // - /users/list
+      // - /people
+      { path: '', component: UserList, alias: ['/people', 'list'] },
+    ],
+  },
+]
+```
+
+如果你的路由有参数，请确保在任何绝对别名中包含它们：
+
+```javascript
+const routes = [
+  {
+    path: '/users/:id',
+    component: UsersByIdLayout,
+    children: [
+      // 为这 3 个 URL 呈现 UserDetails
+      // - /users/24
+      // - /users/24/profile
+      // - /24
+      { path: 'profile', component: UserDetails, alias: ['/:id', ''] },
+    ],
+  },
+]
+```
+
+## 代理Proxy
+
+在Vue的配置文件`(vue.config.js)`的`devServer`对象中设置，和webpack的配置文件`(webpack.dev.config.js)`的`devServer`一样。Vue配置基于webpack。
+
+```javascript
+// vue.config.js
+const {defineConfig} = require('@vue/cli-service')
+module.exports = defineConfig({
+	transpileDependencies: true,
+    
+	devServer:{
+		open:true,
+		port:8989,
+		host:"127.0.0.1",
+        // 代理
+		proxy:{
+			"/hanser":{
+				target:"https://i.maoyan.com"
+                changeOrigin:true,
+                pathRewrite: {
+					"^/hanser":""
+				}
+			}
+		}
+	}
+})
+
+```
+
+### devServer.proxy
+
+**来源于webpack文档**
+
+当拥有单独的 API 后端开发服务器并且希望在同一域上发送 API 请求时，代理某些 URL 可能会很有用。
+
+开发服务器使用功能强大的 [http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware) 软件包。 查看其 [documentation](https://github.com/chimurai/http-proxy-middleware#options) 了解更多高级用法。 请注意，`http-proxy-middleware` 的某些功能不需要`target`键，例如 它的 `router` 功能，但是仍然需要在此处的配置中包含`target`，否则`webpack-dev-server` 不会将其传递给 `http-proxy-middleware`。
+
+使用后端在 `localhost:3000` 上，可以使用它来启用代理：
+
+```javascript
+// **webpack.config.js**
+module.exports = {
+  //...
+  devServer: {
+    proxy: {
+      '/api': 'http://localhost:3000',
+    },
+  },
+};
+```
+
+现在，对 `/api/users` 的请求会将请求代理到 `http://localhost:3000/api/users`。
+
+如果不希望传递`/api`，则需要重写路径：
+
+```javascript
+// **webpack.config.js**
+module.exports = {
+  //...
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        pathRewrite: { '^/api': '' },
+      },
+    },
+  },
+};
+```
+
+默认情况下，将不接受在 HTTPS 上运行且证书无效的后端服务器。 如果需要，可以这样修改配置：
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'https://other-server.example.com',
+        secure: false,
+      },
+    },
+  },
+};
+```
+
+如果想将多个特定路径代理到同一目标，则可以使用一个或多个带有 `context` 属性的对象的数组：
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    proxy: [
+      {
+        context: ['/auth', '/api'],
+        target: 'http://localhost:3000',
+      },
+    ],
+  },
+};
+```
+
+默认情况下，代理时会保留主机头的来源，可以将 `changeOrigin` 设置为 `true` 以覆盖此行为。 在某些情况下，例如使用 [name-based virtual hosted sites](https://en.wikipedia.org/wiki/Virtual_hosting#Name-based)，它很有用。
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+  },
+};
+```

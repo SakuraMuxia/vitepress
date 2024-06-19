@@ -63,7 +63,7 @@ const router = new VueRouter({
 
 我们也有可能使用命名视图创建嵌套视图的复杂布局。这时你也需要命名用到的嵌套 `router-view` 组件。我们以一个设置面板为例：
 
-```
+```javascript
 /settings/emails                                       /settings/profile
 +-----------------------------------+                  +------------------------------+
 | UserSettings                      |                  | UserSettings                 |
@@ -273,7 +273,7 @@ const router = new VueRouter({
 
 #### Apache
 
-```
+```vue
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
@@ -288,7 +288,7 @@ const router = new VueRouter({
 
 #### nginx
 
-```nginx
+```bash
 location / {
   try_files $uri $uri/ /index.html;
 }
@@ -349,7 +349,7 @@ http.createServer((req, res) => {
 
 #### Caddy
 
-```
+```bash
 rewrite {
     regexp .*
     to {path} /
@@ -421,28 +421,20 @@ router.beforeEach((to, from, next) => {
 
   : 一定要调用该方法来
 
-   
-
   resolve
-
-   
 
   这个钩子。执行效果依赖
 
-   
-
+  ```javascript
+next
   ```
-  next
-  ```
-
-   
 
   方法的调用参数。
 
   - **next()**: 进行管道中的下一个钩子。如果全部钩子执行完了，则导航的状态就是 **confirmed** (确认的)。
   - **next(false)**: 中断当前的导航。如果浏览器的 URL 改变了 (可能是用户手动或者浏览器后退按钮)，那么 URL 地址会重置到 `from` 路由对应的地址。
   - **next('/') 或者 next({ path: '/' })**: 跳转到一个不同的地址。当前的导航被中断，然后进行一个新的导航。你可以向 `next` 传递任意位置对象，且允许设置诸如 `replace: true`、`name: 'home'` 之类的选项以及任何用在 [`router-link` 的 `to` prop](https://router.vuejs.org/zh/api/#to) 或 [`router.push`](https://router.vuejs.org/zh/api/#router-push) 中的选项。
-  - **next(error)**: (2.4.0+) 如果传入 `next` 的参数是一个 `Error` 实例，则导航会被终止且该错误会被传递给 [`router.onError()`](https://router.vuejs.org/zh/api/#router-onerror) 注册过的回调。
+- **next(error)**: (2.4.0+) 如果传入 `next` 的参数是一个 `Error` 实例，则导航会被终止且该错误会被传递给 [`router.onError()`](https://router.vuejs.org/zh/api/#router-onerror) 注册过的回调。
 
 **确保要调用 next 方法，否则钩子就不会被 resolved。**
 
@@ -844,7 +836,7 @@ scrollBehavior (to, from, savedPosition) {
 
 你也可以返回一个 Promise 来得出预期的位置描述：
 
-```
+```javascript
 scrollBehavior (to, from, savedPosition) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -907,105 +899,5 @@ const Baz = () => import(/* webpackChunkName: "group-foo" */ './Baz.vue')
 ```
 
 Webpack 会将任何一个异步模块与相同的块名称组合到相同的异步块中。
-
-
-
-## 代理Proxy
-
-在Vue的配置文件`(vue.config.js)`的`devServer`对象中设置，和webpack的配置文件`(webpack.dev.config.js)`的`devServer`一样。Vue配置基于webpack。
-
-```javascript
-
-```
-
-### devServer.proxy
-
-**来源于webpack文档**
-
-当拥有单独的 API 后端开发服务器并且希望在同一域上发送 API 请求时，代理某些 URL 可能会很有用。
-
-开发服务器使用功能强大的 [http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware) 软件包。 查看其 [documentation](https://github.com/chimurai/http-proxy-middleware#options) 了解更多高级用法。 请注意，`http-proxy-middleware` 的某些功能不需要`target`键，例如 它的 `router` 功能，但是仍然需要在此处的配置中包含`target`，否则`webpack-dev-server` 不会将其传递给 `http-proxy-middleware`。
-
-使用后端在 `localhost:3000` 上，可以使用它来启用代理：
-
-```javascript
-// **webpack.config.js**
-module.exports = {
-  //...
-  devServer: {
-    proxy: {
-      '/api': 'http://localhost:3000',
-    },
-  },
-};
-```
-
-现在，对 `/api/users` 的请求会将请求代理到 `http://localhost:3000/api/users`。
-
-如果不希望传递`/api`，则需要重写路径：
-
-```javascript
-// **webpack.config.js**
-module.exports = {
-  //...
-  devServer: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        pathRewrite: { '^/api': '' },
-      },
-    },
-  },
-};
-```
-
-默认情况下，将不接受在 HTTPS 上运行且证书无效的后端服务器。 如果需要，可以这样修改配置：
-
-```javascript
-module.exports = {
-  //...
-  devServer: {
-    proxy: {
-      '/api': {
-        target: 'https://other-server.example.com',
-        secure: false,
-      },
-    },
-  },
-};
-```
-
-如果想将多个特定路径代理到同一目标，则可以使用一个或多个带有 `context` 属性的对象的数组：
-
-```javascript
-module.exports = {
-  //...
-  devServer: {
-    proxy: [
-      {
-        context: ['/auth', '/api'],
-        target: 'http://localhost:3000',
-      },
-    ],
-  },
-};
-```
-
-默认情况下，代理时会保留主机头的来源，可以将 `changeOrigin` 设置为 `true` 以覆盖此行为。 在某些情况下，例如使用 [name-based virtual hosted sites](https://en.wikipedia.org/wiki/Virtual_hosting#Name-based)，它很有用。
-
-```javascript
-module.exports = {
-  //...
-  devServer: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      },
-    },
-  },
-};
-```
-
 
 
