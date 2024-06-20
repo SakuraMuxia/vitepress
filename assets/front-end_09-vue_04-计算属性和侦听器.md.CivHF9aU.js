@@ -182,11 +182,11 @@ import{_ as s,c as i,o as a,a5 as n}from"./chunks/framework.ysm0ofoH.js";const y
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">watch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:{</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // 写法1 函数形式不指定 选项</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // 写法1 函数形式不指定选项</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    arr</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(newValue,oldValue){</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">		console.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">log</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;arr&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,newValue,oldValue);</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	}</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // 写法2 对象形式指定 选项</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // 写法2 对象形式指定选项</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">	arr</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:{</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">		handler</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(newValue,oldValue){</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">			console.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">log</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;arr&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,newValue,oldValue);</span></span>
