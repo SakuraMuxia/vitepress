@@ -126,31 +126,73 @@ const app = new Vue({
 
 ### RouterLink组件
 
-RouterLink组件将两个CSS类，添加到Activelinks中，exact 准确的
+#### 实现跳转
 
-**设置路由匹配样式**
+方式1：值是一个字符串
 
-方式1：使用`router-link-exact-active`类匹配样式
+```html
+<nav>
+    <router-link to="/">首页</router-link>|
+    <router-link to="/newsList">新闻列表页</router-link>|
+    <router-link to="/goodsList">商品列表页</router-link>|
+    <router-link to="/my">个人中心</router-link>
+</nav>
+```
+
+方式2：值是一个对象，通过path进行跳转
+
+```html
+<nav>
+    <router-link :to="{path:'/'}">首页</router-link>|
+    <router-link :to="{path:'/newsList'}">新闻列表页</router-link>|
+    <router-link :to="{path:'/goodsList'}">商品列表页</router-link>|
+    <router-link :to="{path:'/my'}">个人中心</router-link>
+</nav>
+```
+
+方式3：值是一个对象，通过name进行跳转
+
+```html
+<nav>
+    <router-link :to="{name:'index'}">首页</router-link>|
+    <router-link :to="{name:'newsList'}">新闻列表页</router-link>|
+    <router-link :to="{name:'goodsList'}">商品列表页</router-link>|
+    <router-link :to="{name:'my'}">个人中心</router-link>
+</nav>
+```
+
+
+
+#### 设置样式
+
+给<router-link>标签设置`router-link-exact-active`，`exact`，`exact-active-class`属性后。
+
+<router-view>在渲染后的<a>标签会被Vue自动设置上对应的Class类 ，`router-link-active`和`router-link-exact-active`两个class类，通过这些类进行样式设置。
+
+**精确匹配和非精确匹配**
 
 ```javascript
 精确匹配: 请求地址(https://xxx/hanser) 路由(path:'/hanser')
 非精确匹配: 请求地址(https://xxx/hanser/yousa) 路由(path:'/hanser')
 无匹配: 请求地址(https://xxx/hanseryousa) 路由(path:'/hanser')
+非精确匹配包含了精确匹配
+```
 
-router-link 渲染的后，a标签的自动添加class属性`router-link-active`和`router-link-exact-active`两个class类
-           
-<router-link to="/hanser">Go to Hanser</router-link>
-// router-link 渲染后的a标签，非精确匹配包含了精确匹配
+方式1：使用`router-link-exact-active`类匹配样式
+
+```javascript
+// 当请求地址与路由非精确匹配时，a标签会自动添加这个类 router-link-active
+// 当请求地址与路由精确匹配,a标签会自动添加这个类 router-link-exact-active
+// 非精确匹配包含精确匹配
+
+// index.html
 <a class="router-link-active router-link-exact-active"> </a>
 
-// 当请求地址(https://xxx/hanser)与路由(path:'/hanser')非精确匹配时，添加这个类
-`router-link-active` 
-// 当请求地址(https://xxx/hanser)与路由(path:'/hanser')精确匹配,添加这个类
-`router-link-exact-active` 
 ```
 
 ```vue
 // src=>App.vue
+// 使用 router-link-exact-active 匹配样式
 <stype>
 	a.router-link-exact-active{
     	color:red
@@ -158,24 +200,49 @@ router-link 渲染的后，a标签的自动添加class属性`router-link-active`
 </style>
 ```
 
-方式2：设置exact属性，使用`.active`类匹配样式
+方式2：设置`exact`属性，使用`router-link-active`类匹配样式
 
 ```javascript
-// 在router-link设置exact属性 
-// 只有 请求地址(https://xxx/hanser)与路由(path:'/hanser') 精确匹配时
-<router-link exact to="/hanser">Go to Hanser</router-link>
-// 渲染后的a标签才有 router-link-active 类
-<a class="router-link-active"> </a>
+exact属性特点：
+在router-link标签上设置exact属性，只有当请求地址与路由精确匹配时，a标签才会有 router-link-active 这个类。
+若不适用exact属性，那么地址精确匹配以及非精确匹配a标签都会有router-link-active。
 ```
 
 ```javascript
-// src=>router=>index.js
-export default new VueRouter({
-    mode:""
-    router,
-    // 给非精确匹配设置类名 active
-    linkActiveClass:"acitve",
-})
+<nav>
+    <!--为了规避 / 和 /newsList 后边几个路由，因为非精确匹配，同时都添加router-link-active这个类，造成样式都被匹配上。-->
+    <!--解决办法：给 / 这个路由上单独设置 exact 属性-->
+	<router-link exact to="/">首页</router-link>
+	<router-link to="/newsList">新闻列表页</router-link>
+	<router-link to="/goodsList">商品列表页</router-link>
+	<router-link to="/my">个人中心</router-link>
+</nav>
+```
+
+```vue
+// src=>App.vue
+<stype>
+	a.router-link-active{
+    	color:red
+    }
+</style>
+```
+
+方式3:  设置`active-class `属性和`exact`属性，使用自定义类匹配样式
+
+```javascript
+active-class属性特点：
+无论请求地址与路由精确匹配或非精确匹配时，a标签都会有 active-class 属性设置的类。
+同时在非精确匹配的<router-link>标签上设置 exact 属性，把非精确匹配的标签去掉自定义的类。
+```
+
+```html
+<nav>
+    <router-link exact active-class="active" to="/">首页</router-link> |
+    <router-link active-class="active" to="/newslist">新闻列表</router-link> |
+    <router-link active-class="active" to="/goodslist">商品列表</router-link> |
+    <router-link active-class="active" to="/my">个人中心</router-link> |
+</nav>
 ```
 
 ```vue
@@ -187,25 +254,55 @@ export default new VueRouter({
 </style>
 ```
 
-方式3: 设置`exact-active-class `属性，使用`.active`类匹配样式
+方式4：设置 `exact-active-class`属性，使用自定义类匹配样式。
 
 ```javascript
+exact-active-class属性特点：
+只有精确匹配时，a标签才会使用exact-active-class属性设置的样式，相当于active-class与exact的结合。
+```
+
+```html
+<nav>
+    <router-link exact-active-class="active" to="/">首页</router-link> |
+    <router-link exact-active-class="active" to="/newslist">新闻列表</router-link> |
+    <router-link exact-active-class="active" to="/goodslist">商品列表</router-link> |
+    <router-link exact-active-class="active" to="/my">个人中心</router-link> |
+</nav>
+```
+
+```vue
 // src=>App.vue
-// 在router-link标签设置 exact-active-class 属性 
-// 只有 请求地址(https://xxx/hanser)与路由(path:'/hanser') 精确匹配时
-<router-link exact-active-class to="/hanser">Go to Hanser</router-link>
-// 渲染后的a标签才有 active 类
-<a class="active"> </a>
+<stype>
+	a.active{
+    	color:red
+    }
+</style>
+```
+
+方式5：使用 vue-router配置项`linkActiveClass`和`exact`属性，使用自定义类匹配样式。
+
+```javascript
+linkActiveClass 配置项
+在创建router实例时，设置router的配置项
 ```
 
 ```javascript
-// src=>router=>index.js
-export default new VueRouter({
-    mode:""
-    router,
-    // 给非精确匹配设置类名 active
-    linkActiveClass:"acitve",
+const router = new VueRouter({
+    routes,
+    mode:"",
+    // 设置自定义类 等同于在标签router-link标签上设置active-class属性
+    // <router-link active-class="active" to="/"></router-link> 
+    linkActiveClass:"active"
 })
+```
+
+```javascript
+<nav>
+    <router-link exact to="/">首页</router-link> |
+    <router-link to="/newslist">新闻列表</router-link> |
+    <router-link to="/goodslist">商品列表</router-link> |
+    <router-link to="/my">个人中心</router-link> |
+</nav>
 ```
 
 ```vue
@@ -217,7 +314,43 @@ export default new VueRouter({
 </style>
 ```
 
+方式6：使用 vue-router配置项 `linkExactActiveClass`，使用自定义类匹配样式。
 
+```javascript
+const router = new VueRouter({
+    routes,
+    mode:"",
+    // 设置自定义类 等同于在标签router-link标签上设置active-class属性
+    // <router-link exact-active-class="active" to="/"></router-link> 
+    linkExactActiveClass:"active"
+})
+```
+
+```javascript
+<nav>
+    <router-link to="/">首页</router-link> |
+    <router-link to="/newslist">新闻列表</router-link> |
+    <router-link to="/goodslist">商品列表</router-link> |
+    <router-link to="/my">个人中心</router-link> |
+</nav>
+```
+
+```vue
+// src=>App.vue
+<stype>
+	a.active{
+    	color:red;
+    }
+</style>
+```
+
+### RouterView 和 RouterLink
+
+组件 `RouterView` 和 `RouterLink` 都是[全局注册](https://cn.vuejs.org/guide/components/registration.html#global-registration)的，因此它们不需要在组件模板中导入。但你也可以通过局部导入它们，例如 `import { RouterLink } from 'vue-router'`。
+
+在模板中，组件的名字可以是 PascalCase 风格或 kebab-case 风格的。Vue 的模板编译器支持两种格式，因此 `<RouterView>` 和 `<router-view>` 通常是等效的。此时应该遵循你自己项目中使用的约定。
+
+如果使用 DOM 内模板，那么需要[注意](https://cn.vuejs.org/guide/essentials/component-basics.html#in-dom-template-parsing-caveats)：组件名字必须使用 kebab-case 风格且不支持自闭合标签。因此你不能直接写 `<RouterView />`，而需要使用 `<router-view></router-view>`。
 
 ## 命名路由
 
@@ -248,6 +381,111 @@ src->App.vue
     </router-link>
 </template>
 ```
+
+## 路由传递参数
+
+### 通过query传递
+
+`通过this.$route.query全局属性，父向子传递参数`
+
+```javascript
+// 注意：
+仅查询字符串改变而路由未改变时，路由组件不会重新挂载（mounted）,而会调用(update)钩子函数。
+如果要在修改查询字符串过程中调用函数，可以设置watch，监控this.$route.query属性
+// 例如:
+/one?id=1 切换至 /one?id=2
+```
+
+**方式1**：query的类型是字符串
+
+src=>App.vue 父
+
+```vue
+<router-link to="/newslist?username='hanser'">新闻列表</router-link> |
+<!-- 路由出口 -->
+<router-view></router-view>
+```
+
+src->views->NewsList.vue 子
+
+```vue
+<template>
+    <div>
+        <h3>新闻列表界面</h3>
+        <p>艺人名字:{{this.$route.query.username}},</p>
+    </div>
+</template>
+```
+
+**方式2**：query的类型是对象，路由跳转时会将对象自动转为查询字符串与path进行拼接
+
+```javascript
+JSON.parse(json):将 json 格式的字符串转为对象或数组
+```
+
+src=>App.vue 父
+
+```vue
+// 这里使用 v-bind:to 绑定path等属性
+
+// 主组件(src->App.vue)在入口文件(src->main.js)中作为模版(template)被渲染。
+// 路由器对象router (src->router->index.js)在入口文件(src->main.js)中导入，并挂载。
+
+// 这里的属性绑定是在入口文件(src->main.js)导入的 router (src->router->index.js)中定义的path和vue-router的内置属性。
+
+// 当使用path属性作为路由判断，age:12中的12会作为String类型进行传递
+// 当使用name属性作为路由判断，age:12中的12会作为Number类型进行传递
+<router-link :to="{
+	path:'newslist',
+	query:{
+		username: 'hanser',
+        age:12,
+		friends:{
+			username:'yousa',
+            age:14,
+		},
+	},
+}">新闻列表</router-link>
+```
+
+src->views->NewsList.vue 子
+
+```vue
+<template>
+    <div>
+        <h3>新闻列表界面</h3>
+        <p>艺名: {{this.$route.query.username}}</p>
+        <p>朋友: {{this.$route.query.friends.username}}</p>
+    </div>
+</template>
+```
+
+**方式3**：如果要在修改查询字符串过程中调用函数，使用watch或update钩子函数。
+
+```vue
+<script>
+export default {
+    updated(){
+        console.log("updated",this.$route.query);
+    },
+    watch:{
+        // 监听对象的一个属性,这里的this指向VueComponent的实例vc
+        "this.$route.query":{
+            handler(){
+                console.log("watch",this.$route.query)
+            },
+            immediate:true
+        }
+    }
+}
+</script>
+```
+
+
+
+### 通过params传递
+
+### 通过params和path传递
 
 ## 命名视图
 
@@ -450,7 +688,70 @@ module.exports = {
 
 ## 路由跳转过程
 
+一个路由的初始挂载过程 
 
+Home路由的挂载
 
+```javascript
+1-Home->beforeCreate
+2-Home->created
+3-Home->beforeMount
+4-Home->mounted
+```
 
+从Home路由跳转到newslist路由
 
+```javascript
+1-Home->beforeCreate
+2-Home->created
+3-Home->beforeMount
+4-Home->mounted
+5-NewsList->beforeCreate
+6-NewsList->created
+7-NewsList->beforeMount
+8-Home->beforeDestroy
+9-Home->destroyed
+10-NewsList->mounted
+```
+
+点击路由跳转的瞬间，新路由经过beforeCreate->created->created->beforeMount，在挂载前，旧路由会卸载，然后新路由进行挂载。
+
+## 组件API风格
+
+Vue Router 可以使用组合式 API （函数返回）或选项式 API （this.）
+
+## router 和 route
+
+`在视图中的this可以省略不写`
+
+```html
+<h3>id:{{this.$router}}</h3>
+<h3>id:{{this.$route}}</h3>
+```
+
+ `router`：路由器实例，即由 `createRouter()` 返回的对象。在应用中，访问该对象的方式取决于上下文。
+
+```javascript
+在组合式 API 中，它可以通过调用 `useRouter()` 来访问。
+在选项式 API 中，它可以通过 `this.$router` 来访问。
+```
+
+`$route`：当前路由对象，可以在组件模板中使用 `$route` 来访问当前的路由对象。
+
+```javascript
+$route属性在 Vuecomponent的实例vc的原型Vue的实例vm的原型上，因为在入口文件main.js挂载到了vm上
+```
+
+```javascript
+在组合式 API 中，它可以通过调用 `useRoute()` 来访问。
+在选项式 API 中，它可以通过 `this.$route` 来访问。
+```
+
+**方法**
+
+```javascript
+this.$route.fullPath 完整路径
+this.$route.query 获取查询字符串中的数据
+```
+
+### 

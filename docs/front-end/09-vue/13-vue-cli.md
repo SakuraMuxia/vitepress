@@ -260,6 +260,9 @@ src->App.vue主组件
 <!--
     结构层-不允许省略
     有且只能是一个根元素
+	可以省略this，这里的this指向VueComponent的实例vc
+	因为vue在解析template时使用了with(this)，改变了template中的顶层作用域
+https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/with
 -->
 <template>
     <div>
