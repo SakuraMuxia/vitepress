@@ -481,11 +481,93 @@ export default {
 </script>
 ```
 
+### 通过params传递(动态)
+
+方式1：父组件通过`name属性`和`params属性(对象)`传递参数，子组件通过`this.$route.params`接收参数。刷新页面数据会丢失
+
+```vue
+<!-- src->App.vue -->
+<template>
+	<div>
+         <router-link :to="{
+              name:'newslist',
+              params:{
+                 username:'hanser',
+              }, 
+         }">新闻列表</router-link>
+    </div>
+</template>
+```
+
+```vue
+<!-- src->views->newslist.vue -->
+<template>
+    <div>
+        <h3>新闻列表界面</h3>
+        <p>艺名: {{$route.params.username}}</p>
+        <!-- <p>艺名: {{this}}</p> -->
+        <p>朋友: {{ $route.query.username}}</p>
+    </div>
+</template>
+```
+
+方式2：通过路由中的`path属性`设置形参，父组件设置`path属性`设置实参，子组件通过`this.$route.params`接收参数。刷新页面数据不会丢失
+
+```javascript
+src->route->index.js
+const routes:[
+    {
+        path: '/newslist/:username',
+        name:"newslist",
+        component: NewsList,
+    },
+]
+```
+
+```vue
+src->App.vue
+<router-link to="/newslist/hanser">
+```
+
+```vue
+src->views->newslist.vue
+<script>
+	consolo.log(this.$route.params.username)
+</script>
+```
+
+方式3：通过路由中的`path属性`设置形参，父组件设置`name属性`匹配路由同时设置`params属性`设置实参，子组件通过`this.$route.params`接收参数。刷新页面数据不会丢失
+
+```javascript
+<!-- src->route->index.js -->
+
+const routes:[
+    {
+        path: '/newslist/:username',
+        name:"newslist",
+        component: NewsList,
+    },
+]
+```
+
+```vue
+<!-- src->App.vue -->
+
+<router-link :to="{
+	name:'newslist',
+	params:{
+		username:'yousa'
+	}
+}">新闻资讯</router-link>
+```
+
+```vue
+<!-- src->views->newslist.vue -->
+
+<p>艺名: {{$route.params.username}}</p>
+```
 
 
-### 通过params传递
-
-### 通过params和path传递
 
 ## 命名视图
 
@@ -536,7 +618,7 @@ const routes = [
 ]
 ```
 
-## 定向和别名
+## 路由重定向和别名
 
 ### 重定向
 
@@ -747,9 +829,411 @@ $route属性在 Vuecomponent的实例vc的原型Vue的实例vm的原型上，因
 在选项式 API 中，它可以通过 `this.$route` 来访问。
 ```
 
-**方法**
+### $route方法
 
 ```javascript
 this.$route.fullPath 完整路径
 this.$route.query 获取查询字符串中的数据
 ```
+
+## 编程式导航
+
+除了使用 `<router-link>` 创建 a 标签来定义导航链接，我们还可以借助 router 的实例方法，通过编写代码来实现
+
+```javascript
+注意: 下面的示例中的 `router` 指代路由器实例。
+在组件内部，你可以使用 `$router` 属性访问路由，例如 `this.$router.push(...)`。
+如果使用组合式 API，你可以通过调用 `useRouter()`来访问路由器。
+```
+
+### $router方法
+
+```javascript
+router.push、router.replace 和 router.go 是 window.history.pushState、window.history.replaceState 和 window.history.go 的翻版，它们确实模仿了 window.history 的 API
+```
+
+```javascript
+// 当你点击 `<router-link>` 时，内部会调用这个方法，所以点击 `<router-link :to="...">` 相当于调用 router.push(...);
+// 这个方法会向 history 栈添加一个新的记录，所以，当用户点击浏览器后退按钮时，会回到之前的 URL;
+// 该方法的参数可以是一个字符串路径，或者一个描述地址的对象;
+router.push() 导航到不同的 URL,
+    
+// 它的作用类似于 router.push，唯一不同的是，它在导航时不会向 history 添加新记录，正如它的名字所暗示的那样——它取代了当前的条目 
+// 等同于 <router-link :to="..." replace>
+router.replace(...) 替换当前位置 
+
+// 类似于 window.history.go(n)
+router.go(1) 该方法采用一个整数作为参数，表示在历史堆栈中前进或后退多少步
+
+
+```
+
+无论在创建路由器实例时传递什么 `history` 配置，Vue Router 的导航方法 (`push`、`replace`、`go`) 都能始终正常工作。
+
+**示例1**：router.push()
+
+```javascript
+// 字符串路径
+router.push('/users/eduardo')
+
+// 带有路径的对象
+router.push({ path: '/users/eduardo' })
+
+// 命名的路由，并加上参数，让路由建立 url
+router.push({ name: 'user', params: { username: 'eduardo' } })
+
+// 带查询参数，结果是 /register?plan=private
+router.push({ path: '/register', query: { plan: 'private' } })
+
+// 带 hash，结果是 /about#team
+router.push({ path: '/about', hash: '#team' })
+```
+
+**注意**：如果提供了 `path`，`params` 会被忽略，上述例子中的 `query` 并不受影响
+
+```javascript
+const username = 'eduardo'
+// 我们可以手动建立 url，但我们必须自己处理编码
+router.push(`/user/${username}`) // -> /user/eduardo
+// 同样
+router.push({ path: `/user/${username}` }) // -> /user/eduardo
+// 如果可能的话，使用 `name` 和 `params` 从自动 URL 编码中获益
+router.push({ name: 'user', params: { username } }) // -> /user/eduardo
+// `params` 不能与 `path` 一起使用
+router.push({ path: '/user', params: { username } }) // -> /user
+```
+
+`router.push` 和所有其他导航方法都会返回一个 Promise对象。
+
+**示例2**：router.replace()
+
+```javascript
+router.push({ path: '/home', replace: true })
+// 相当于
+router.replace({ path: '/home' })
+```
+
+**示例3**：router.go()
+
+```javascript
+// 向前移动一条记录，与 router.forward() 相同
+router.go(1)
+
+// 返回一条记录，与 router.back() 相同
+router.go(-1)
+
+// 前进 3 条记录
+router.go(3)
+
+// 如果没有那么多记录，静默失败
+router.go(-100)
+router.go(100)
+```
+
+## 路由嵌套
+
+一些应用程序的 UI 由多层嵌套的组件组成。在这种情况下，URL 的片段通常对应于特定的嵌套组件结构。
+
+通过 Vue Router，你可以使用嵌套路由配置来表达这种关系。
+
+**示例1**：原始界面，vue官方示例。
+
+```vue
+<!-- App.vue -->
+<template>
+  <router-view />
+</template>
+```
+
+```vue
+<!-- User.vue -->
+<template>
+  <div>
+    User {{ $route.params.id }}
+  </div>
+</template>
+```
+
+```js
+import User from './User.vue'
+
+// 这些都会传递给 `createRouter`
+const routes = [{ path: '/user/:id', component: User }]
+```
+
+这里的 `<router-view>` 是一个顶层的 `router-view`。它渲染顶层路由匹配的组件。同样地，一个被渲染的组件也可以包含自己嵌套的 `<router-view>`。例如，如果我们在 `User` 组件的模板内添加一个 `<router-view>`。
+
+```vue
+<!-- User.vue -->
+<template>
+  <div class="user">
+    <h2>User {{ $route.params.id }}</h2>
+    <router-view />
+  </div>
+</template>
+```
+
+要将组件渲染到这个嵌套的 `router-view` 中，我们需要在路由中配置 `children`
+
+```js
+const routes = [
+  {
+    path: '/user/:id',
+    component: User,
+    children: [
+      {
+        // 当 /user/:id/profile 匹配成功
+        // UserProfile 将被渲染到 User 的 <router-view> 内部
+        path: 'profile',
+        component: UserProfile,
+      },
+      {
+        // 当 /user/:id/posts 匹配成功
+        // UserPosts 将被渲染到 User 的 <router-view> 内部
+        // 二级路由path可以省略一级路由地址部分
+        path: 'posts',
+        component: UserPosts,
+      }, 
+    ],
+  },
+]
+```
+
+**注意，以 `/` 开头的嵌套路径将被视为根路径。**
+
+使用空的嵌套路径，渲染没有匹配到嵌套路由页面。
+
+```js
+const routes = [
+  {
+    path: '/user/:id',
+    component: User,
+    children: [
+      // 当 /user/:id 匹配成功
+      // UserHome 将被渲染到 User 的 <router-view> 内部
+      { path: '', component: UserHome },
+
+      // ...其他子路由
+    ],
+  },
+]
+```
+
+### 命名路由
+
+给子路由命名
+
+```js
+const routes = [
+  {
+    path: '/user/:id',
+    component: User,
+    // 请注意，只有子路由具有名称
+    children: [{ path: '', name: 'user', component: UserHome }],
+  },
+]
+```
+
+这将确保导航到 `/user/:id` 时始终显示嵌套路由
+
+在一些场景中，你可能希望导航到命名路由而不导航到嵌套路由，例如，你想导航 `/user/:id` 而不显示嵌套路由。那样的话，你还可以**命名父路由**，但请注意**重新加载页面将始终显示嵌套的子路由**，因为它被视为指向路径`/users/:id` 的导航，而不是命名路由：
+
+```javascript
+const routes = [
+  {
+    path: '/user/:id',
+    name: 'user-parent',
+    component: User,
+    children: [{ path: '', name: 'user', component: UserHome }],
+  },
+]
+```
+
+### 默认显示二级导航
+
+**示例1**：将二级路由地址与上一级地址设置为相同地址。
+
+```javascript
+{
+        path:'/newslist',
+        name:'newslist',
+        component:NewsList,
+        children:[
+            {	
+                // 将二级路由地址与上一级地址设置为相同地址。
+                path:'/newslist/',
+                name:'games',
+                component: games
+            },
+            {
+                path: '/newslist/sports',
+                name: 'sports',
+                component: sports
+            },
+            {
+                path: '/newslist/criminality',
+                name: 'criminality',
+                component: criminality
+            },
+        ],
+    }
+```
+
+**示例2**：设置重定向。
+
+```javascript
+{
+        path:'/newslist',
+        name:'newslist',
+        component:NewsList,
+        children:[
+            {
+                // 重定向到 运动页面
+                path:'/newslist',
+                redirect:'/newslist/sports'
+            },
+            {
+                path:'games',
+                name:'games',
+                component: games
+            },
+            {
+                path: 'sports',
+                name: 'sports',
+                component: sports
+            },
+            {
+                path: 'criminality',
+                name: 'criminality',
+                component: criminality
+            },
+        ],
+    }
+```
+
+
+
+### 隐藏导航栏
+
+**示例1**：原理：通过设置`路由出口`和路由的`父子关系`，把`不需要导航栏`的视图放在`没有导航栏的页面`渲染
+
+```vue
+// src -> App.vue
+
+<router-link active-class="active" to="/nowplaying">正在热映</router-link>    
+<!-- 匹配到 /nowplaying(NowPlaying.vue中的<router-link>标签中的内容)将渲染在这里 -->
+<router-view></router-view>
+```
+
+```javascript
+const routes = [
+    // 没有设置children属性，默认将在 App.vue(主组件)中的 <router-view></router-view> 渲染
+    {
+        path:'/film/:filmId',
+        name:'film',
+        component:Details,
+	}
+    
+    path: '/',
+        component: Home,
+    	// 设置了children属性，将在父组件(Home)的 <router-view></router-view> 渲染
+        children:[
+            // 默认选中热映
+            {
+                path: '/',
+                redirect:'/nowplaying',
+            },
+            {
+                path: 'nowplaying',
+                name: 'nowplaying',
+                component: NowPlaying,
+            },
+            {
+                path: 'comingsoon',
+                name: 'comingsoon',
+                component: ComingSoon,
+            },
+        ]
+]
+
+```
+
+
+
+## meta字段
+
+在 Vue Router 的上下文中，meta 字段是您为路由定义的自定义字段，它可以用来存储路由相关的一些额外信息。您可以把它理解为附加在路由上的标签或属性，这些标签或属性对应的信息可以在路由守卫、组件等地方被访问和利用。
+
+```javascript
+标记某个路由需要用户认证。
+为某个路由设置特定的页面标题。
+标记某个路由是否需要加载特定的数据。
+```
+
+定义路由时，添加meta字段
+
+```javascript
+在定义路由的时候，给特定路由添加 meta 字段：
+
+ const routes = [
+   {
+     path: '/dashboard',
+     component: DashboardComponent,
+     meta: { requiresAuth: true, title: 'User Dashboard' }
+   }
+ ]
+
+ 
+ 	{
+        path:'/film/:filmId',
+        name:'film',
+        component:Details,
+        meta:{
+            isHide:true,
+        }
+    }
+```
+
+```javascript
+在路由守卫或组件内访问这些 meta 字段：
+router.beforeEach((to, from, next) => {
+   // 使用 to.meta 来访问目标路由的 meta 字段
+   if (to.meta.requiresAuth && !isUserLoggedIn()) {
+     next('/login');
+   } else {
+     next();
+   }
+ });
+```
+
+
+
+**示例2**：隐藏导航栏：隐藏导航标签，在需要隐藏路由上设置meta信息。然后通过样式控制，隐藏导航
+
+```javascript
+// 	// 隐藏导航标签，在需要隐藏路由上设置meta信息。然后通过样式控制，隐藏导航
+// src->router->index.js
+...
+{
+    path:'/film/:filmId',
+    name:'film',
+    component:Details,
+    meta:{
+        isHide:true,
+    }
+}
+```
+
+```vue
+<!-- src->App.vue -->
+<template>
+    <div id="app">
+        <nav v-show="!$route.meta.isHide">
+            <router-link active-class="active" to="/nowplaying">正在热映</router-link> |
+            <router-link active-class="active" to="/comingsoon">即将上映</router-link>
+        </nav>
+        <router-view></router-view>
+    </div>
+</template>
+```
+

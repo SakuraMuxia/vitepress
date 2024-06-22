@@ -239,10 +239,13 @@ createElement函数是用来生成HTML DOM元素的，也就是generate HTML str
 
 ## 组件的使用
 
+### 组件命名
+
+组件的命名: 首字母大写
+
 ### 单文件组件
 
 ```bash
-组件的命名: 首字母大写
 组件内分为三层
 	结构层-<template> 
 		不允许省略
@@ -370,10 +373,12 @@ public->index.html
 </body>
 ```
 
-### Vscode组件插件
+### 组件省略this
 
-```bash
-
+```javascript
+可以省略this，这里的this指向VueComponent的实例vc；
+因为vue在解析template时使用了with(this)，改变了template中的顶层作用域；
+https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/with；
 ```
 
 
