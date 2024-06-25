@@ -567,7 +567,70 @@ const routes:[
 <p>艺名: {{$route.params.username}}</p>
 ```
 
+### 响应路由参数的变化
 
+提醒一下，当使用路由参数时，例如从 `/user/foo` 导航到 `/user/bar`，**原来的组件实例会被复用**。因为两个路由都渲染同个组件，比起销毁再创建，复用则显得更加高效。**不过，这也意味着组件的生命周期钩子不会再被调用**。
+
+复用组件时，想对路由参数的变化作出响应的话，你可以简单地 watch (监测变化) `$route` 对象
+
+```javascript
+const User = {
+  template: '...',
+  watch: {
+    $route(to, from) {
+      // 对路由变化作出响应...
+    }
+  }
+}
+```
+
+或者使用 2.2 中引入的 `beforeRouteUpdate` 导航守卫
+
+```javascript
+const User = {
+  template: '...',
+  beforeRouteUpdate(to, from, next) {
+    // react to route changes...
+    // don't forget to call next()
+  }
+}
+```
+
+### 捕获所有路由或 404 Not found 路由
+
+常规参数只会匹配被 `/` 分隔的 URL 片段中的字符。如果想匹配**任意路径**，我们可以使用通配符 (`*`)
+
+```javascript
+{
+  // 会匹配所有路径
+  path: '*'
+}
+{
+  // 会匹配以 `/user-` 开头的任意路径
+  path: '/user-*'
+}
+```
+
+当使用通配符路由时，请确保路由的顺序是正确的，也就是说含有通配符的路由应该放在最后。路由 { path: '*' } 通常用于客户端 404 错误。如果你使用了History 模式，请确保正确配置你的服务器。
+
+当使用一个通配符时，$route.params 内会自动添加一个名为 pathMatch 参数。它包含了 URL 通过通配符被匹配的部分：
+
+```javascript
+// 给出一个路由 { path: '/user-*' }
+this.$router.push('/user-admin')
+this.$route.params.pathMatch // 'admin'
+// 给出一个路由 { path: '*' }
+this.$router.push('/non-existing')
+this.$route.params.pathMatch // '/non-existing'
+```
+
+### 高级匹配模式
+
+vue-router 使用 path-to-regexp (opens new window)作为路径匹配引擎，所以支持很多高级的匹配模式，例如：可选的动态路径参数、匹配零个或多个、一个或多个，甚至是自定义正则匹配。查看它的文档 (opens new window)学习高阶的路径匹配，还有这个例子  (opens new window)展示 vue-router 怎么使用这类匹配
+
+### 匹配优先级
+
+有时候，同一个路径可以匹配多个路由，此时，匹配的优先级就按照路由的定义顺序：路由定义得越早，优先级就越高。
 
 ## 命名视图
 
@@ -860,7 +923,7 @@ router.push() 导航到不同的 URL,
     
 // 它的作用类似于 router.push，唯一不同的是，它在导航时不会向 history 添加新记录，正如它的名字所暗示的那样——它取代了当前的条目 
 // 等同于 <router-link :to="..." replace>
-router.replace(...) 替换当前位置 
+router.replace(...) 导航到不同的 URL,但不会向 history 添加新记录
 
 // 类似于 window.history.go(n)
 router.go(1) 该方法采用一个整数作为参数，表示在历史堆栈中前进或后退多少步
@@ -873,37 +936,38 @@ router.go(1) 该方法采用一个整数作为参数，表示在历史堆栈中�
 **示例1**：router.push()
 
 ```javascript
-// 字符串路径
-router.push('/users/eduardo')
+// 字符串
+router.push('home')
 
-// 带有路径的对象
-router.push({ path: '/users/eduardo' })
+// 对象
+router.push({ path: 'home' })
 
-// 命名的路由，并加上参数，让路由建立 url
-router.push({ name: 'user', params: { username: 'eduardo' } })
+// 命名的路由
+router.push({ name: 'user', params: { userId: '123' }})
 
-// 带查询参数，结果是 /register?plan=private
-router.push({ path: '/register', query: { plan: 'private' } })
-
-// 带 hash，结果是 /about#team
-router.push({ path: '/about', hash: '#team' })
+// 带查询参数，变成 /register?plan=private
+router.push({ path: 'register', query: { plan: 'private' }})
 ```
 
 **注意**：如果提供了 `path`，`params` 会被忽略，上述例子中的 `query` 并不受影响
 
+**取而代之的是下面例子的做法，你需要提供路由的 `name` 或手写完整的带有参数的 `path`：**
+
 ```javascript
-const username = 'eduardo'
-// 我们可以手动建立 url，但我们必须自己处理编码
-router.push(`/user/${username}`) // -> /user/eduardo
-// 同样
-router.push({ path: `/user/${username}` }) // -> /user/eduardo
-// 如果可能的话，使用 `name` 和 `params` 从自动 URL 编码中获益
-router.push({ name: 'user', params: { username } }) // -> /user/eduardo
-// `params` 不能与 `path` 一起使用
-router.push({ path: '/user', params: { username } }) // -> /user
+const userId = '123'
+router.push({ name: 'user', params: { userId }}) // -> /user/123
+router.push({ path: `/user/${userId}` }) // -> /user/123
+// 这里的 params 不生效
+router.push({ path: '/user', params: { userId }}) // -> /user
 ```
 
+同样的规则也适用于 `router-link` 组件的 `to` 属性；
+
 `router.push` 和所有其他导航方法都会返回一个 Promise对象。
+
+在 2.2.0+，可选的在 `router.push` 或 `router.replace` 中提供 `onComplete` 和 `onAbort` 回调作为第二个和第三个参数。这些回调将会在导航成功完成 (在所有的异步钩子被解析之后) 或终止 (导航到相同的路由、或在当前导航完成之前导航到另一个不同的路由) 的时候进行相应的调用。在 3.1.0+，可以省略第二个和第三个参数，此时如果支持 Promise，`router.push` 或 `router.replace` 将返回一个 Promise。
+
+**注意**： 如果目的地和当前路由相同，只有参数发生了改变 (比如从一个用户资料到另一个 `/users/1` -> `/users/2`)，你需要使用 [`beforeRouteUpdate`](https://v3.router.vuejs.org/zh/guide/essentials/dynamic-matching.html#响应路由参数的变化) 来响应这个变化 (比如抓取用户信息)。
 
 **示例2**：router.replace()
 
@@ -929,6 +993,8 @@ router.go(3)
 router.go(-100)
 router.go(100)
 ```
+
+Vue Router 的导航方法 (`push`、 `replace`、 `go`) 在各类路由模式 (`history`、 `hash` 和 `abstract`) 下表现一致
 
 ## 路由嵌套
 
@@ -1001,7 +1067,7 @@ const routes = [
 
 **注意，以 `/` 开头的嵌套路径将被视为根路径。**
 
-使用空的嵌套路径，渲染没有匹配到嵌套路由页面。
+此时，基于上面的配置，当你访问 `/user/foo` 时，`User` 的出口是不会渲染任何东西，这是因为没有匹配到合适的子路由。如果你想要渲染点什么，可以提供一个 空的 子路由：
 
 ```js
 const routes = [
@@ -1158,82 +1224,146 @@ const routes = [
 
 ```
 
+## HTML5 History模式
 
+`vue-router` 默认 hash 模式 —— 使用 URL 的 hash 来模拟一个完整的 URL，于是当 URL 改变时，页面不会重新加载。
 
-## meta字段
+如果不想要很丑的 hash，我们可以用路由的 **history 模式**，这种模式充分利用 `history.pushState` API 来完成 URL 跳转而无须重新加载页面。
 
-在 Vue Router 的上下文中，meta 字段是您为路由定义的自定义字段，它可以用来存储路由相关的一些额外信息。您可以把它理解为附加在路由上的标签或属性，这些标签或属性对应的信息可以在路由守卫、组件等地方被访问和利用。
-
-```javascript
-标记某个路由需要用户认证。
-为某个路由设置特定的页面标题。
-标记某个路由是否需要加载特定的数据。
+```js
+const router = new VueRouter({
+  mode: 'history',
+  routes: [...]
+})
 ```
 
-定义路由时，添加meta字段
+当你使用 history 模式时，URL 就像正常的 url，例如 `http://yoursite.com/user/id`，也好看！
 
-```javascript
-在定义路由的时候，给特定路由添加 meta 字段：
+不过这种模式要玩好，还需要后台配置支持。因为我们的应用是个单页客户端应用，如果后台没有正确的配置，当用户在浏览器直接访问 `http://oursite.com/user/id` 就会返回 404，这就不好看了。
 
- const routes = [
-   {
-     path: '/dashboard',
-     component: DashboardComponent,
-     meta: { requiresAuth: true, title: 'User Dashboard' }
-   }
- ]
+所以呢，你要在服务端增加一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，则应该返回同一个 `index.html` 页面，这个页面就是你 app 依赖的页面。
 
- 
- 	{
-        path:'/film/:filmId',
-        name:'film',
-        component:Details,
-        meta:{
-            isHide:true,
-        }
-    }
+## 后端配置例子
+
+**注意**：下列示例假设你在根目录服务这个应用。如果想部署到一个子目录，你需要使用 [Vue CLI 的 `publicPath` 选项 (opens new window)](https://cli.vuejs.org/zh/config/#publicpath)和相关的 [router `base` property (opens new window)](https://router.vuejs.org/zh/api/#base)。你还需要把下列示例中的根目录调整成为子目录 (例如用 `RewriteBase /name-of-your-subfolder/` 替换掉 `RewriteBase /`)。
+
+### Apache
+
+```text
+<IfModule mod_negotiation.c>
+  Options -MultiViews
+</IfModule>
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
 ```
 
-```javascript
-在路由守卫或组件内访问这些 meta 字段：
-router.beforeEach((to, from, next) => {
-   // 使用 to.meta 来访问目标路由的 meta 字段
-   if (to.meta.requiresAuth && !isUserLoggedIn()) {
-     next('/login');
-   } else {
-     next();
-   }
- });
-```
+除了 `mod_rewrite`，你也可以使用 [`FallbackResource` (opens new window)](https://httpd.apache.org/docs/2.2/mod/mod_dir.html#fallbackresource)。
 
+### nginx
 
-
-**示例2**：隐藏导航栏：隐藏导航标签，在需要隐藏路由上设置meta信息。然后通过样式控制，隐藏导航
-
-```javascript
-// 	// 隐藏导航标签，在需要隐藏路由上设置meta信息。然后通过样式控制，隐藏导航
-// src->router->index.js
-...
-{
-    path:'/film/:filmId',
-    name:'film',
-    component:Details,
-    meta:{
-        isHide:true,
-    }
+```nginx
+location / {
+  try_files $uri $uri/ /index.html;
 }
 ```
 
-```vue
-<!-- src->App.vue -->
-<template>
-    <div id="app">
-        <nav v-show="!$route.meta.isHide">
-            <router-link active-class="active" to="/nowplaying">正在热映</router-link> |
-            <router-link active-class="active" to="/comingsoon">即将上映</router-link>
-        </nav>
-        <router-view></router-view>
-    </div>
-</template>
+### 原生 Node.js
+
+```js
+const http = require('http')
+const fs = require('fs')
+const httpPort = 80
+
+http.createServer((req, res) => {
+  fs.readFile('index.html', 'utf-8', (err, content) => {
+    if (err) {
+      console.log('We cannot open "index.html" file.')
+    }
+
+    res.writeHead(200, {
+      'Content-Type': 'text/html; charset=utf-8'
+    })
+
+    res.end(content)
+  })
+}).listen(httpPort, () => {
+  console.log('Server listening on: http://localhost:%s', httpPort)
+})
 ```
 
+### 基于 Node.js 的 Express
+
+对于 Node.js/Express，请考虑使用 [connect-history-api-fallback 中间件 (opens new window)](https://github.com/bripkens/connect-history-api-fallback)。
+
+### Internet Information Services (IIS)
+
+1. 安装 [IIS UrlRewrite(opens new window)](https://www.iis.net/downloads/microsoft/url-rewrite)
+2. 在你的网站根目录中创建一个 `web.config` 文件，内容如下：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <system.webServer>
+    <rewrite>
+      <rules>
+        <rule name="Handle History Mode and custom 404/500" stopProcessing="true">
+          <match url="(.*)" />
+          <conditions logicalGrouping="MatchAll">
+            <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+            <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+          </conditions>
+          <action type="Rewrite" url="/" />
+        </rule>
+      </rules>
+    </rewrite>
+  </system.webServer>
+</configuration>
+```
+
+### Caddy
+
+```text
+rewrite {
+    regexp .*
+    to {path} /
+}
+```
+
+### Firebase 主机
+
+在你的 `firebase.json` 中加入：
+
+```json
+{
+  "hosting": {
+    "public": "dist",
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
+```
+
+### 警告
+
+给个警告，因为这么做以后，你的服务器就不再返回 404 错误页面，因为对于所有路径都会返回 `index.html` 文件。为了避免这种情况，你应该在 Vue 应用里面覆盖所有的路由情况，然后再给出一个 404 页面。
+
+```js
+const router = new VueRouter({
+  mode: 'history',
+  routes: [
+    { path: '*', component: NotFoundComponent }
+  ]
+})
+```
+
+或者，如果你使用 Node.js 服务器，你可以用服务端路由匹配到来的 URL，并在没有匹配到路由的时候返回 404，以实现回退。

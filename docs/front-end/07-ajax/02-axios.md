@@ -178,6 +178,18 @@ params: {
 },
 ```
 
+### params使用JSON.stringify()
+
+将对象转为 json 格式的字符串
+
+```javascript
+params: {
+    
+    // 将对象转为 json 格式的字符串
+    X-client-Info:JSON.stringify({"a":"3000","b":"1000"})
+},
+```
+
 
 
 ### 每次发送请求时设置配置项
