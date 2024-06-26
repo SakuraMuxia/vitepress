@@ -91,9 +91,9 @@ this.$route
 
 记住**参数或查询的改变并不会触发进入/离开的导航守卫**。你可以通过观察 `$route` 对象来应对这些变化，或使用 `beforeRouteUpdate` 的组件内守卫。
 
-## 全局守卫
+## 全局前置守卫
 
-### 全局前置守卫
+### beforeEach
 
 所有路由进入之前执行的钩子函数。此时还没有创建实例。
 
@@ -118,14 +118,13 @@ next:(类型:Function): 一定要调用该方法来 resolve 这个钩子。执�
 ```
 
 ```javascript
-// next方法
+// next方法 ：作用：当前的导航被中断，然后进行一个新的导航。
 
 1 next(): 进行管道中的下一个钩子。如果全部钩子执行完了，则导航的状态就是 confirmed (确认的)。
 2 next(false): 中断当前的导航。如果浏览器的 URL 改变了 (可能是用户手动或者浏览器后退按钮)，那么 URL 地址会重置到 from 路由对应的地址。
 3 next('/') 或者 next({ path: '/' }): 跳转到一个不同的地址。
-4 当前的导航被中断，然后进行一个新的导航。
-5 你可以向 next 传递任意位置对象，且允许设置诸如 replace: true、name: 'home' 之类的选项以及任何用在 router-link 的 to prop 或 router.push 中的选项。
-6 next(error): (2.4.0+) 如果传入 next 的参数是一个 Error 实例，则导航会被终止且该错误会被传递给 router.onError() 注册过的回调。
+4 你可以向 next 传递任意位置对象，且允许设置诸如 replace: true、name: 'home' 之类的选项以及任何用在 router-link 的 to prop 或 router.push 中的选项。
+5 next(error): (2.4.0+) 如果传入 next 的参数是一个 Error 实例，则导航会被终止且该错误会被传递给 router.onError() 注册过的回调。
 ```
 
 **确保 `next` 函数在任何给定的导航守卫中都被严格调用一次。它可以出现多于一次，但是只能在所有的逻辑路径都不重叠的情况下，否则钩子永远都不会被解析或报错**
@@ -145,11 +144,78 @@ router.beforeEach((to, from, next) => {
 })
 ```
 
-### 全局解析守卫
+```javascript
+router.beforeEach(function (to, from, next) {
+    console.log("beforeEach");
+    console.log("to", to);  //即将要进入的路由
+    console.log("from", from); //当前导航正要离开的路由
+    console.log("next", next);  //函数
+    console.log("this", this);  //undefined
+    next(); //放行
+    // next(),不支持回调函数
+})
+```
+
+
+
+## 全局解析守卫
+
+### beforeResolve
 
 你可以用 `router.beforeResolve `注册一个全局守卫。这和` router.beforeEach `类似，区别是在导航被确认之前，同时在所有组件内守卫和异步路由组件被解析之后，解析守卫就被调用。
 
-### 全局后置钩子
+**执行时机**
+
+```javascript
+// 进入一个新路由'/my'时
+路由钩子顺序：
+全局：
+	1-beforeEach
+'/my'路由独享：
+	2-beforeEnter
+'/my'组件内：
+	3-beforeRouteEnter
+全局：
+	4-beforeResolve
+'/my'组件内挂载：
+	5-beforeCreate
+	6-created
+	7-BeforeMonted
+	8-mounted
+```
+
+```javascript
+// 在组件内路由跳转时，
+路由钩子顺序：
+全局：
+	1-beforeEach
+'/my'组件内：
+	2-beforeRouteUpdate
+全局：
+	3-beforeResolve
+```
+
+```javascript
+// 离开一个路由'/my'时：
+路由钩子顺序：
+'/my'组件内：
+	1-beforeRouteLeave
+全局：
+	2-beforeEach
+全局：
+	3-beforeResolve
+```
+
+```javascript
+router.beforeResolve(function(to,from,next){
+	console.log("beforeResolve")
+	next();
+})
+```
+
+## 全局后置钩子
+
+### afterEach
 
 你也可以注册全局后置钩子`router.afterEach`，然而和守卫不同的是，这些钩子不会接受 `next` 函数也不会改变导航本身：
 
@@ -157,9 +223,75 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to, from) => {
   // ...
 })
+// 用于设置网页标题
+router.afterEach(function(to,from,next){
+	// console.log("afterEach",next);// undefined
+	// console.log("afterEach->from",from); // 来自的路由
+	// console.log("afterEach->to",to);	//去往的路由
+	// console.log(to.meta.title)	// 去往的路由的meta的title属性
+	console.log("afterEach");
+	const {title = "vue"} = to.meta;
+	document.title = title;
+})
+```
+
+**执行时机**
+
+```javascript
+// 进入一个新路由'/my'时
+路由钩子顺序：
+全局：
+	1-beforeEach
+'/my'路由独享：
+	2-beforeEnter
+'/my'组件内：
+	3-beforeRouteEnter
+全局：
+	4-beforeResolve
+	5-afterEach
+'/my'组件内挂载：
+	6-beforeCreate
+	7-created
+	8-BeforeMonted
+	9-mounted
+```
+
+```javascript
+// 在组件内路由跳转时Update，
+路由钩子顺序：
+全局：
+	1-beforeEach
+'/my'组件内：
+	2-beforeRouteUpdate
+全局：
+	3-beforeResolve
+	4-afterEach
+```
+
+```javascript
+// 离开一个路由'/my'时：
+路由钩子顺序：
+'/my'组件内：
+	1-beforeRouteLeave
+全局：
+	2-beforeEach
+全局：
+	3-beforeResolve
+	4-afterEach
+```
+
+```javascript
+router.beforeResolve(function(to,from,next){
+	console.log("beforeResolve")
+	next();
+})
 ```
 
 ## 路由独享的守卫
+
+### beforeEnter
+
+在组件路由守卫`beforeRouteEnter`之前执行
 
 你可以在路由配置上直接定义 `beforeEnter` 守卫：
 
@@ -170,7 +302,11 @@ const router = new VueRouter({
       path: '/foo',
       component: Foo,
       beforeEnter: (to, from, next) => {
-        // ...
+        	console.log("beforeEnter", this);//undefined
+          	console.log("beforeEnter->to", to);//去哪个路由
+          	console.log("beforeEnter->from", from);// 来自哪个路由
+          	next();//放行
+          // next()不支持接收回调函数
       }
     }
   ]
@@ -183,44 +319,63 @@ const router = new VueRouter({
 
 最后，你可以在路由组件内直接定义以下路由导航守卫：
 
-- `beforeRouteEnter`
-- `beforeRouteUpdate`
-- `beforeRouteLeave`
+### beforeRouteEnter
+
+在进入路由之前可以进行调用拦截
 
 ```js
+
 const Foo = {
   template: `...`,
-  beforeRouteEnter (to, from, next) {
+    // 在进入路由之前可以进行拦截。在组件的1-beforeCreate之前执行
+    // next:是一个函数。作用：决定是否允许进入到路由to，放行。
+    beforeRouteEnter (to, from, next) {
     // 在渲染该组件的对应路由被 confirm 前调用
-    // 不！能！获取组件实例 `this`
+    // 不！能！获取组件实例 `this`，注意不是回调函数中的this，回调函数是在beforMount与mounted之间执行
     // 因为当守卫执行前，组件实例还没被创建
-  },
-  beforeRouteUpdate (to, from, next) {
-    // 在当前路由改变，但是该组件被复用时调用
-    // 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候，
-    // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
-    // 可以访问组件实例 `this`
-  },
-  beforeRouteLeave (to, from, next) {
-    // 导航离开该组件的对应路由时调用
-    // 可以访问组件实例 `this`
-  }
-}
+},
 ```
 
 `beforeRouteEnter` 守卫 **不能** 访问 `this`，因为守卫在导航确认前被调用,因此即将登场的新组件还没被创建。
 
-不过，你可以通过传一个回调给 `next`来访问组件实例。在导航被确认的时候执行回调，并且把组件实例作为回调方法的参数。
+不过，你可以通过传一个`回调函数`给 `next`来访问组件实例。在导航被确认的时候执行回调，并且把组件实例作为回调方法的参数。
 
 ```js
+// 当回调函数是箭头函数,回调函数会在组件的beforMount与mounted之间执行
 beforeRouteEnter (to, from, next) {
-  next(vm => {
-    // 通过 `vm` 访问组件实例
+  next(vc => {
+    // 通过 `vc` 访问组件实例，这时vc.$route === to
+  })
+}
+
+// 当回调函数是普通函数时,回调函数会在组件的beforMount与mounted之间执行
+beforeRouteEnter (to, from, next) {
+  next(function(){
+      // 
+      this // 这里的this指向自己这个回调函数
   })
 }
 ```
 
 注意 `beforeRouteEnter` 是支持给 `next` 传递回调的唯一守卫。
+
+### beforeRouteUpdate
+
+在当前路由改变，但是该组件被复用时调用并拦截
+
+```javascript
+from：当前的路由对象
+to：去哪里的路由对象
+这里的this.$route === from
+
+beforeRouteUpdate (to, from, next) {
+    // 在当前路由改变，但是该组件被复用时调用
+    // 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候，
+    // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
+    // 可以访问组件实例 `this`
+    console.log(this.$route === from) // true 
+},
+```
 
 对于 `beforeRouteUpdate` 和 `beforeRouteLeave` 来说，`this` 已经可用了，所以**不支持**传递回调，因为没有必要了。
 
@@ -229,6 +384,22 @@ beforeRouteUpdate (to, from, next) {
   // just use `this`
   this.name = to.params.name
   next()
+}
+```
+
+### beforeRouteLeave
+
+导航离开该组件的对应路由时调用并拦截
+
+```javascript
+from：当前的路由对象
+to：去哪里的路由对象
+this.$route:当前的路由对象
+
+beforeRouteLeave (to, from, next) {
+        // 导航离开该组件的对应路由时调用
+        // 可以访问组件实例 `this`
+	}
 }
 ```
 

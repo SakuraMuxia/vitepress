@@ -798,6 +798,32 @@ PATCH http://localhost:6100/news/2		修改单个数据中的属性
 DELETE http://localhost:6100/news/2
 ```
 
+news.json
+
+```json
+{
+    "news":[
+        {
+            "id":1,
+            "title":"A-SOUL",
+            "content":"A-SOUL是2020年11月23日公开的字节跳动朝夕光年工作室旗下、与乐华娱乐合作打造的虚拟偶像团体，主要于Bilibili和抖音上开展活动。企划前身为“Project V”虚拟偶像女团，未证实疑似前身企划为虚拟偶像“蓝闪Menelaus"
+        },
+        {
+            "id": 2,
+            "title": "虚研社",
+            "content":"虚研社是中国最早进行虚拟UP主活动的社团之一，由微笑科技创建，2017年推出了大陆最早同时也是偶像组合企划“虚拟次元计划”的首位虚拟UP主——小希，同时“虚拟UP主”一词的概念也是由小希于出道视频中提出"
+        },
+        {
+            "id": 3,
+            "title": "psplive",
+            "content":"psplive（又称Project SP，简称P-SP）是在中国诞生的虚拟艺人团体，于2019年9月24日正式公开"
+        }
+    ]
+}
+```
+
+
+
 ## 配置 hosts 文件
 
 windows 系统的 hosts 文件一般位于 `C:\Windows\System32\drivers\etc\` 下， macos 系统的 host 文件一般位于 `/etc` 目录下。

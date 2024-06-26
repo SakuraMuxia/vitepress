@@ -584,6 +584,17 @@ const User = {
 }
 ```
 
+```javascript
+const User = {
+  template: '...',
+	watch:{
+        "$route.query":function(to){
+            console.log(to);
+        }
+    }
+}
+```
+
 或者使用 2.2 中引入的 `beforeRouteUpdate` 导航守卫
 
 ```javascript
