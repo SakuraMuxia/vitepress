@@ -516,21 +516,36 @@ export default {
 ```javascript
 src->route->index.js
 const routes:[
+形式1：
     {
         path: '/newslist/:username',
         name:"newslist",
         component: NewsList,
     },
 ]
+形式2：
+{
+    path: "/film/comingsoon",
+    component: ComingSoon,
+    children:[
+        {
+            path:"/film/comingsoon:id",
+            // 路由匹配到 "/film/comingsoon/1234",跳转到Details组件中。
+            component:Details
+        }
+    ]
+},
 ```
 
 ```vue
-src->App.vue
+src->App.vue 父组件
 <router-link to="/newslist/hanser">
+形式2：
+<router-link :to="'/film/comingsoon/' + item.filmId"></router-link>
 ```
 
 ```vue
-src->views->newslist.vue
+src->views->newslist.vue 子组件
 <script>
 	consolo.log(this.$route.params.username)
 </script>
