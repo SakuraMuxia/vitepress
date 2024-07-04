@@ -91,6 +91,24 @@ npm install vuex --save
 安装Vuex 之后，让我们来创建一个 store。创建过程直截了当——仅需要提供一个初始 state 对象和一些 mutation：
 
 ```javascript
+const state = {
+    taskList:[],
+}
+const mutations = {
+    
+}
+const getters = {
+    
+}
+// 定义store对象
+const store = new Vuex.Store({
+    state,
+    mutations,
+    getters,
+})
+```
+
+```javascript
 import Vue from 'vue'
 // 导入vuex
 import Vuex from 'vuex'
@@ -530,7 +548,7 @@ const store = new Vuex.Store({
 `store.commit方法`
 
 ```js
-// 通过store.commit调用store对象中mutations属性中的方法
+// 通过store.commit调用store对象中mutations属性中的方法 同步操作
 store.commit('increment')
 store.commit(type,Payload,option)
 参数：
@@ -643,7 +661,7 @@ mutations: {
 
 现在想象，我们正在 debug 一个 app 并且观察 devtool 中的 mutation 日志。每一条 mutation 被记录，devtools 都需要捕捉到前一状态和后一状态的快照。然而，在上面的例子中 mutation 中的异步函数中的回调让这不可能完成：因为当 mutation 触发的时候，回调函数还没有被调用，devtools 不知道什么时候回调函数实际上被调用——实质上任何在回调函数中进行的状态的改变都是不可追踪的。
 
-### 在组件中提交 Mutation
+### mapMutations辅助函数
 
 你可以在组件中使用 `this.$store.commit('xxx')` 提交 mutation，或者使用 `mapMutations` 辅助函数将组件中的 methods 映射为 `store.commit` 调用（需要在根节点注入 `store`）。
 
@@ -666,8 +684,6 @@ export default {
   }
 }
 ```
-
-### 下一步：Action
 
 在 mutation 中混合异步调用会导致你的程序很难调试。例如，当你调用了两个包含异步回调的 mutation 来改变状态，你怎么知道什么时候回调和哪个先回调呢？这就是为什么我们要区分这两个概念。在 Vuex 中，**mutation 都是同步事务**：
 
@@ -854,6 +870,27 @@ actions: {
 
 > 一个 `store.dispatch` 在不同模块中可以触发多个 action 函数。在这种情况下，只有当所有触发函数完成后，返回的 Promise 才会执行。
 
+### action补充
+
+```javascript
+// actions是一个对象，对象的属性名即是action的名字，类型是一个函数，
+// 该函数的第一个参数是 store 实例具有相同方法和属性的 context 对象，
+// 该函数的第二个参数是 payload 荷载数据
+// 该函数可以通过$store.dispatch('action的名字',payload)调用。
+actions:{
+    getItems:function(){
+        
+    }
+}
+// context->state在此处可以获取，但不建议修改。
+// dispatch：调用actions下的方法
+// commit:调用mutations下的方法
+// state：获取state下的数据
+// getters：获取getters中定义的计算属性。
+```
+
+
+
 ## Module
 
 由于使用单一状态树，应用的所有状态会集中到一个比较大的对象。当应用变得非常复杂时，store 对象就有可能变得相当臃肿。
@@ -937,9 +974,27 @@ const moduleA = {
 }
 ```
 
+### 模块抽离
+
+```javascript
+
+```
+
+### 访问模块中的state
+
+```javascript
+
+```
+
+
+
 ### 命名空间
 
 默认情况下，模块内部的 action、mutation 和 getter 是注册在**全局命名空间**的——这样使得多个模块能够对同一 mutation 或 action 作出响应。
+
+```javascript
+如果在未使用命名空间的情况下，通过commit会同时调用所有模块中的mutation同名方法
+```
 
 如果希望你的模块具有更高的封装度和复用性，你可以通过添加 `namespaced: true` 的方式使其成为带命名空间的模块。当模块被注册后，它的所有 getter、action 及 mutation 都会自动根据模块注册的路径调整命名。例如：
 
@@ -1183,3 +1238,11 @@ const MyReusableModule = {
   // mutation, action 和 getter 等等...
 }
 ```
+
+## 总结
+
+```javascript
+// methods结合使用的是：mapMutations,mapActions
+// computed结合使用的是：mapState,mapGetters
+```
+
