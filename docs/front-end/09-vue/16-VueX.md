@@ -976,14 +976,87 @@ const moduleA = {
 
 ### 模块抽离
 
+src->store->cart->index.js(子模块)
+
 ```javascript
+// 数据状态
+const state = {
+    cartList:[]
+}
+// 计算属性
+const getters = {
+
+}
+// 操作数据状态
+const mutations = {
+
+}
+// 异步的方法
+const actions = {
+
+}
+// 模块
+const modules = {
+
+}
+// 暴漏数据
+export default {
+    state,
+    getters,
+    mutations,
+    actions,
+    modules
+}
+```
+
+src->store->ndex.js（父模块）
+
+```javascript
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+// 导入模块
+
+Vue.use(Vuex)
+
+// 定义store对象
+const store = new Vuex.Store({
+    state: {
+
+    },
+    getters: {
+
+    },
+    mutations: {
+
+    },
+    actions: {
+
+    },
+    modules: {
+        // goods模块
+        goods,
+        // 购物车模块
+        cart,
+        // 用户模块
+        user
+    }
+})
 
 ```
 
 ### 访问模块中的state
 
 ```javascript
-
+// 方式1： 通过mapState函数传入数组，访问模块中的state（无效）
+computed:{
+	...mapState(["goodsList"]), // 默认是在store的对象中，而这个是在store中的模块中定义，所以无法访问
+},
+mounted(){
+    console.log(this.goodsList); // 直接访问 undefined
+},
+// 方式2：通过mapState函数传入对象， 访问模块中的state
+    
 ```
 
 
