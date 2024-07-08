@@ -615,7 +615,7 @@ mutations: {
 
 - 使用 `Vue.set(obj, 'newProp', 123)`, 或者
 
-- 以新对象替换老对象。例如，利用[对象展开运算符 (opens new window)](https://github.com/tc39/proposal-object-rest-spread)我们可以这样写：
+- 以新对象替换老对象。例如，利用对象展开运算符我们可以这样写：
 
   ```js
   state.obj = { ...state.obj, newProp: 123 }
@@ -721,7 +721,7 @@ const store = new Vuex.Store({
 
 Action 函数接受一个与 store 实例具有相同方法和属性的 context 对象，因此你可以调用 `context.commit` 提交一个 mutation，或者通过 `context.state` 和 `context.getters` 来获取 state 和 getters。当我们在之后介绍到 [Modules](https://v3.vuex.vuejs.org/zh/guide/modules.html) 时，你就知道 context 对象为什么不是 store 实例本身了。
 
-实践中，我们会经常用到 ES2015 的 [参数解构 (opens new window)](https://github.com/lukehoban/es6features#destructuring)来简化代码（特别是我们需要调用 `commit` 很多次的时候）：
+实践中，我们会经常用到 ES2015 的 `参数解构` 来简化代码（特别是我们需要调用 `commit` 很多次的时候）：
 
 ```js
 actions: {
@@ -736,7 +736,7 @@ actions: {
 Action 通过 `store.dispatch` 方法触发：
 
 ```js
-store.dispatch('increment')
+store.dispatch('increment') // 默认会执行所有 同名的 increment actions方法
 ```
 
 乍一眼看上去感觉多此一举，我们直接分发 mutation 岂不更方便？实际上并非如此，还记得 **mutation 必须同步执行**这个限制么？Action 就不受约束！我们可以在 action 内部执行**异步**操作：
@@ -852,7 +852,7 @@ actions: {
 }
 ```
 
-最后，如果我们利用 [async / await (opens new window)](https://tc39.github.io/ecmascript-asyncawait/)，我们可以如下组合 action：
+最后，如果我们利用 async / await，我们可以如下组合 action：
 
 ```js
 // 假设 getData() 和 getOtherData() 返回的是 Promise
@@ -877,6 +877,7 @@ actions: {
 // 该函数的第一个参数是 store 实例具有相同方法和属性的 context 对象，
 // 该函数的第二个参数是 payload 荷载数据
 // 该函数可以通过$store.dispatch('action的名字',payload)调用。
+// dispatch运行action函数是同步的，action中的方法是异步的，返回一个Promise对象。
 actions:{
     getItems:function(){
         
@@ -1067,6 +1068,14 @@ mounted(){
 
 ```javascript
 如果在未使用命名空间的情况下，通过commit会同时调用所有模块中的mutation同名方法
+
+为模块增加命名空间，与未使用命名空间的区别：
+未简写
+使用：this.$store.dispatch("模块名/action的名字")  未使用：this.$store.dispatch('action的名字')
+使用：this.$store.commit("模块名/mutation的名字") 未使用：this.$store.commit("mutation的名字")
+使用：this.$store.getters["模块名/getter的名字"] 未使用：this.$store.getters["getter的名字"]
+简写
+
 ```
 
 如果希望你的模块具有更高的封装度和复用性，你可以通过添加 `namespaced: true` 的方式使其成为带命名空间的模块。当模块被注册后，它的所有 getter、action 及 mutation 都会自动根据模块注册的路径调整命名。例如：
@@ -1080,13 +1089,13 @@ const store = new Vuex.Store({
       // 模块内容（module assets）
       state: () => ({ ... }), // 模块内的状态已经是嵌套的了，使用 `namespaced` 属性不会对其产生影响
       getters: {
-        isAdmin () { ... } // -> getters['account/isAdmin']
+        isAdmin () { ... } // -> 调用 $store.getters['account/isAdmin']
       },
       actions: {
-        login () { ... } // -> dispatch('account/login')
+        login () { ... } // -> 调用 $store.dispatch('account/login')
       },
       mutations: {
-        login () { ... } // -> commit('account/login')
+        login () { ... } // -> 调用 $store.commit('account/login')
       },
 
       // 嵌套模块
@@ -1170,7 +1179,6 @@ modules: {
   modules: {
     foo: {
       namespaced: true,
-
       actions: {
         someAction: {
           root: true,
@@ -1182,18 +1190,20 @@ modules: {
 }
 ```
 
-#### 带命名空间的绑定函数
+#### 带命名空间的绑定函数(简写)
 
 当使用 `mapState`, `mapGetters`, `mapActions` 和 `mapMutations` 这些函数来绑定带命名空间的模块时，写起来可能比较繁琐：
 
 ```js
 computed: {
-  ...mapState({
+    // 对象形式
+  	...mapState({
     a: state => state.some.nested.module.a,
     b: state => state.some.nested.module.b
   })
 },
 methods: {
+    // 数组形式
   ...mapActions([
     'some/nested/module/foo', // -> this['some/nested/module/foo']()
     'some/nested/module/bar' // -> this['some/nested/module/bar']()
@@ -1205,12 +1215,14 @@ methods: {
 
 ```js
 computed: {
+    // 对象形式
   ...mapState('some/nested/module', {
     a: state => state.a,
     b: state => state.b
   })
 },
 methods: {
+    // 数组形式
   ...mapActions('some/nested/module', [
     'foo', // -> this.foo()
     'bar' // -> this.bar()
