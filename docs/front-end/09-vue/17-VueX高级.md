@@ -247,6 +247,79 @@ const store = createStore({
 })
 ```
 
+## 缓存
+
+### 使用缓存插件
+
+```javascript
+cnpm install vuex-persistedstate 将store中的数据缓存到localStore中
+
+https://www.npmjs.com/package/vuex-persistedstate
+```
+
+使用方式
+
+```javascript
+import createPersistedState from "vuex-persistedstate";
+
+const store = new Vuex.Store({
+  // ...
+  plugins: [
+      // 默认缓存vuex中的所有数据，保存至key为vuex的localStorage中
+      createPersistedState()
+      // 可以通过key指定保存至localStorage中
+      createPersistedState({
+      	key:"NewKey",
+      	// 保存根模块中的数据liuDeHua,保存goods模块中的所有数据,保存cart模块下的cartList数据
+      	paths:["liuDeHua","goods","cart.cartList"]
+      })
+  ],
+});
+```
+
+### 使用缓存组件
+
+```javascript
+使用vue内置组件 <keep-alive></keep-alive> 把页面上的信息缓存下来
+```
+
+使用方式
+
+```javascript
+// 在路由出口处，用keeplive标签包裹，默认缓存所有从路由出口出去的组件
+<keep-alive>
+	<router-view></router-view>
+</keep-alive>
+
+// 使用include属性指定缓存的路由。
+<keep-alive include="AddGoods">
+	<router-view></router-view>
+</keep-alive>
+
+// 使用exclude属性指定排除缓存的路由。
+<keep-alive exclude="AddGoods,My">
+	<router-view></router-view>
+</keep-alive>
+
+// 通过路由meta和v-if配合，指定缓存的路由。
+<keep-alive>
+	<router-view v-if="$route.meta.isKeep"></router-view>
+</keep-alive>
+<router-view v-if="!$route.meta.isKeep"></router-view>
+...
+{
+    path:"/",
+    component:AddGoods,
+    meta:{
+        // 1
+        isKeep:true,
+        title:"添加商品界面"
+    },
+}
+```
+
+
+
 ## 表单处理
 
 当在严格模式中使用 Vuex 时，在属于 Vuex 的 state 上使用 `v-model` 会比较棘手：

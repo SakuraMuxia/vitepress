@@ -859,6 +859,7 @@ import('./Foo.vue') // 返回 Promise
 
 ```js
 const Foo = () => import('./Foo.vue')
+引入函数的形式来引入组件。
 ```
 
 在路由配置中什么都不需要改变，只需要像往常一样使用 `Foo`：

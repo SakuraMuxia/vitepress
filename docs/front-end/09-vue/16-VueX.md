@@ -1070,12 +1070,20 @@ mounted(){
 如果在未使用命名空间的情况下，通过commit会同时调用所有模块中的mutation同名方法
 
 为模块增加命名空间，与未使用命名空间的区别：
-未简写
-使用：this.$store.dispatch("模块名/action的名字")  未使用：this.$store.dispatch('action的名字')
-使用：this.$store.commit("模块名/mutation的名字") 未使用：this.$store.commit("mutation的名字")
-使用：this.$store.getters["模块名/getter的名字"] 未使用：this.$store.getters["getter的名字"]
-简写
 
+使用：this.$store.dispatch("模块名/action的名字")  
+未使用：this.$store.dispatch('action的名字')
+
+使用：this.$store.commit("模块名/mutation的名字") 
+未使用：this.$store.commit("mutation的名字")
+
+使用：this.$store.getters["模块名/getter的名字"] 
+未使用：this.$store.getters["getter的名字"]
+
+使用辅助函数调用
+computed:mapGetters("模块名",["getter的名字"]),
+computed:mapState("模块名",{"state别名": state => state.state名字}),
+methods:mapActions("模块名",["action的名字"])
 ```
 
 如果希望你的模块具有更高的封装度和复用性，你可以通过添加 `namespaced: true` 的方式使其成为带命名空间的模块。当模块被注册后，它的所有 getter、action 及 mutation 都会自动根据模块注册的路径调整命名。例如：
