@@ -946,7 +946,22 @@ router.push、router.replace 和 router.go 是 window.history.pushState、window
 // 这个方法会向 history 栈添加一个新的记录，所以，当用户点击浏览器后退按钮时，会回到之前的 URL;
 // 该方法的参数可以是一个字符串路径，或者一个描述地址的对象;
 router.push() 导航到不同的 URL,
-    
+router.push() 返回的是一个promise对象，push，replace接收的参数第一个参数是地址（字符串，对象）
+第二个参数是成功回调，第三个参数是失败回调
+
+this.$router是VueRouter的实例
+this.$router.push是VueRouter.prototype中的方法
+//重写push方法
+//备份push函数
+const nativePush = VueRouter.prototype.push
+//重写push方法
+VueRouter.prototype.push = function(location, onComplete, onAbort){
+    //使用call方法调用，并设置this的指向,把this设置为当前页面(src->router->index)中的this
+    return nativePush.call(this,location, onComplete, onAbort)
+}
+
+
+
 // 它的作用类似于 router.push，唯一不同的是，它在导航时不会向 history 添加新记录，正如它的名字所暗示的那样——它取代了当前的条目 
 // 等同于 <router-link :to="..." replace>
 router.replace(...) 导航到不同的 URL,但不会向 history 添加新记录
