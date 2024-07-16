@@ -1083,6 +1083,7 @@ mounted(){
 使用辅助函数调用
 computed:mapGetters("模块名",["getter的名字"]),
 computed:mapState("模块名",{"state别名": state => state.state名字}),
+computed:mapState("模块名",{"state别名",["state.state名字"]),
 methods:mapActions("模块名",["action的名字"])
 ```
 

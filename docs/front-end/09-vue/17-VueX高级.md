@@ -429,7 +429,7 @@ Action 应对起来略微棘手，因为它们可能需要调用外部的 API。
 
 下面是一个测试异步 action 的例子：
 
-```
+```javascript
 // actions.js
 import shop from '../api/shop'
 
@@ -500,7 +500,7 @@ describe('actions', () => {
 
 如果在测试环境下有可用的 spy (比如通过 [Sinon.JS](http://sinonjs.org/))，你可以使用它们替换辅助函数 `testAction`：
 
-```
+```javascript
 describe('actions', () => {
   it('getAllProducts', () => {
     const commit = sinon.spy()
@@ -522,7 +522,7 @@ describe('actions', () => {
 
 测试一个 getter 的示例：
 
-```
+```javascript
 // getters.js
 export const getters = {
   filteredProducts (state, { filterCategory }) {
@@ -568,7 +568,7 @@ describe('getters', () => {
 
 创建以下 webpack 配置（配置好 [`.babelrc`](https://babeljs.io/docs/usage/babelrc/)）:
 
-```
+```javascript
 // webpack.config.js
 module.exports = {
   entry: './test.js',
@@ -590,7 +590,7 @@ module.exports = {
 
 然后：
 
-```
+```javascript
 webpack
 mocha test-bundle.js
 ```
@@ -753,7 +753,7 @@ export const store = createStore<State>({
 
 然后，将 store 安装到 Vue 应用时传入定义好的 injection key。
 
-```
+```javascript
 // main.ts
 import { createApp } from 'vue'
 import { store, key } from './store'
