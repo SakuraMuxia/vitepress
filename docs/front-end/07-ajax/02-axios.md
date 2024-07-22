@@ -458,7 +458,7 @@ instance.interceptors.request.use(function () {/*...*/});
 
 **基本流程：**
 
-```
+```js
 1. 请求配置项中配置 cancelToken 对象
 2. 用变量保存用于取消请求的 cancel 函数
 3. 在后面特定时机调用 cancel 函数实现取消请求
@@ -722,6 +722,15 @@ Read   读取：GET http://127.0.0.1/news
 
 > 1. 所有的操作使用相同的 URL 路径，由请求方式决定哪一种操作
 > 2. 请求方式会用到 GET、POST、PUT、DELETE 等
+
+```js
+// 删除请求配置项
+functionA(){
+    delete this.$route.query.categoryName
+}
+```
+
+
 
 ## json-server
 
