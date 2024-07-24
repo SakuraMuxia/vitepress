@@ -481,6 +481,26 @@ export default {
 </script>
 ```
 
+### query传递一个数组
+
+```vue
+请求地址：http://zhangpeiyue.com/search?a=1&a=2&a=3&a=4
+方式1：
+<router-link :to="{
+                      path:'/search',
+                      query:{
+                        a:[1,2,3,4]
+                      }
+                  }" class="register">搜索2</router-link>
+方式2：
+<a @click.prevent="$router.push({
+                   path:'/search',
+                   query:{
+                       a:[1,2,3,4]
+                   }
+                   })" href="">搜索3</a>
+```
+
 ### 通过params传递(动态)
 
 方式1：父组件通过`name属性`和`params属性(对象)`传递参数，子组件通过`this.$route.params`接收参数。刷新页面数据会丢失
