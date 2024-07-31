@@ -743,6 +743,9 @@ export default {
 当创建一个 Router 实例，你可以提供一个 `scrollBehavior` 方法：
 
 ```js
+函数什么时候执行：切换路由时执行
+参数：to, from,
+返回的结果：返回一个对象，对象可以决定滚动条的位置
 const router = new VueRouter({
   routes: [...],
   scrollBehavior (to, from, savedPosition) {
