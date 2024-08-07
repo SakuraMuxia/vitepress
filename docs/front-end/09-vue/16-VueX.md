@@ -888,6 +888,8 @@ actions:{
 // commit:调用mutations下的方法
 // state：获取state下的数据
 // getters：获取getters中定义的计算属性。
+// content: actionFunction(content)：可以传递的参数有dispatch commit state getters rootGetter
+// action 对象里方法的参数 content 拥有 store 实例的方法和属性，但不是 store 本体
 ```
 
 
