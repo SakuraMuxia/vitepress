@@ -491,6 +491,23 @@ ownerDocument     元素所属的文档对象（document）
 const passWord = document.adminForm.passWord.value.trim();
 ```
 
+```vue
+获取表单from标签中的对象
+<form @submit.prevent="login" > 
+    <input type="text" name="phone" ></input>
+</form>
+
+<script>
+	methods:{
+        // login
+        login(e){
+            // 可以获得目标元素对象的值
+            e.target.phone.value
+        }
+    }
+</script>
+```
+
 
 
 ### 读写设置在标签代码上的属性
