@@ -692,6 +692,24 @@ export default {
 }
 ```
 
+v-loading实现加载效果
+
+```vue
+使用v-loading在接口未请求到数据之前，显示加载中，直到请求到数据后消失。
+//全局loading
+<template>
+   <div v-loading="loading"> </div>
+</template>
+```
+
+```vue
+在data 中定义初始化， loading: false，同时在mounted()中将 this.loading设置为true,再去请求接口.,
+在接口的回调函数中，将 this.loading 设为false，到达加载动画效果。
+如果写在template下的顶层元素上的话，就不会触发全屏loading。
+```
+
+
+
 ### 在导航完成前获取数据
 
 通过这种方式，我们在导航转入新的路由前获取数据。我们可以在接下来的组件的 `beforeRouteEnter`守卫中获取数据，当数据获取成功后只调用 `next` 方法。
