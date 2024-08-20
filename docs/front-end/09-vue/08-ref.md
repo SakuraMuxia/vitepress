@@ -95,7 +95,7 @@ new Vue({
 
 #### ref和组件
 
-子组件上的ref引用信息将会注册在父组件的 $refs 对象上。=== vm.$refs也可以访问
+子组件上的ref引用信息将会注册在父组件的 $refs 对象上。=== vm.$refs可以得到子组件实例。
 
 ```javascript
 Vue.component("hanser",{
