@@ -10,6 +10,7 @@
 
 ```js
 yarn add pinia
+npm i pinia
 ```
 
 创建一个Store：/stores/counter.js
@@ -37,13 +38,13 @@ export const useCounterStore = defineStore('counter', {
 ```vue
 <script setup>
 import { useCounterStore } from '@/stores/counter'
-
+// 这里counter是一个Proxy对象
 const counter = useCounterStore()
-
+// 直接使用store，修改state的值
 counter.count++
-// 自动补全！ ✨
+// 调用store的$patch方法，修改state的值，自动补全
 counter.$patch({ count: counter.count + 1 })
-// 或使用 action 代替
+// 调用store的action中的方法，修改state的值 
 counter.increment()
 </script>
 
@@ -101,6 +102,30 @@ export default defineComponent({
 })
 ```
 
+### 使用案例
+
+1. 创建大仓库。src->store->index.ts
+
+```js
+// 创建大仓库。
+import {createPinia} from "pinia";
+export default createPinia();
+
+```
+
+2. 挂载到入口文件：src->main.ts
+
+```js
+import {createApp} from "vue";
+import App from "@/App.vue";
+import store from "./store";
+createApp(App)
+    .use(store)
+    .mount("#app");
+```
+
+> 目的是为了可以使用 createPinia()
+
 ## 对比Vuex
 
 Pinia 起源于一次探索 Vuex 下一个迭代的实验，因此结合了 Vuex 5 核心团队讨论中的许多想法。最后，我们意识到 Pinia 已经实现了我们在 Vuex 5 中想要的大部分功能，所以决定将其作为新的推荐方案来代替 Vuex。
@@ -128,7 +153,7 @@ export const useAlertsStore = defineStore('alerts', {
 defineStore() 的第二个参数可接受两类值：Setup 函数或 Option 对象。
 ```
 
-### Option Store
+### 选项式定义Store
 
 与 Vue 的选项式 API 类似，我们也可以传入一个带有 state、actions 与 getters 属性的 Option 对象
 
@@ -148,7 +173,7 @@ export const useCounterStore = defineStore('counter', {
 
 你可以认为 `state` 是 store 的数据 (`data`)，`getters` 是 store 的计算属性 (`computed`)，而 `actions` 则是方法 (`methods`)。为方便上手使用，Option Store 应尽可能直观简单。
 
-### Setup Store
+### 组合式定义Store
 
 也存在另一种定义 store 的可用语法。与 Vue 组合式 API 的 [setup 函数](https://cn.vuejs.org/api/composition-api-setup.html) 相似，我们可以传入一个函数，该函数定义了一些响应式属性和方法，并且返回一个带有我们想暴露出去的属性和方法的对象。
 
@@ -216,7 +241,7 @@ const store = useCounterStore()
 <script setup>
 import { useCounterStore } from '@/stores/counter'
 import { computed } from 'vue'
-
+// 调用函数 得到一个store对象
 const store = useCounterStore()
 // ❌ 这将不起作用，因为它破坏了响应性
 // 这就和直接解构 `props` 一样
@@ -249,27 +274,7 @@ const { increment } = store
 </script>
 ```
 
-**使用案例**
 
-1. 创建大仓库。src->store->index.ts
-
-```js
-// 创建大仓库。
-import {createPinia} from "pinia";
-export default createPinia();
-
-```
-
-2. 挂载到入口文件：src->main.ts
-
-```js
-import {createApp} from "vue";
-import App from "@/App.vue";
-import store from "./store";
-createApp(App)
-    .use(store)
-    .mount("#app");
-```
 
 ## State
 
@@ -307,7 +312,7 @@ store.count++
 
 ### 重置 state
 
-使用[选项式 API](https://pinia.vuejs.org/zh/core-concepts/#option-stores) 时，你可以通过调用 store 的 `$reset()` 方法将 state 重置为初始值。
+使用选项式 API时，你可以通过调用 store 的 `$reset()` 方法将 state 重置为初始值。
 
 ```js
 const store = useStore()
@@ -317,7 +322,7 @@ store.$reset()
 
 在 `$reset()` 内部，会调用 `state()` 函数来创建一个新的状态对象，并用它替换当前状态。
 
-在 [Setup Stores](https://pinia.vuejs.org/core-concepts/#setup-stores) 中，您需要创建自己的 `$reset()` 方法：
+在 Setup Stores 中，您需要创建自己的 `$reset()` 方法：
 
 ```js
 export const useCounterStore = defineStore('counter', () => {
@@ -355,7 +360,21 @@ export default {
 
 ### 变更 state
 
-除了用 `store.count++` 直接改变 store，你还可以调用 `$patch` 方法。它允许你用一个 `state` 的补丁对象在同一时间更改多个属性：
+方式1：用 `store.count++` 直接改变 store，
+
+方式2：你还可以调用 `$patch` 方法。
+
+**$patch()**
+
+```js
+// $patch接收一个对象，对象的属性名即是要修改的状态名，对应的属性值即是要修改的状态值。
+store.$patch()
+返回值：void
+参数：state的数据状态:{}
+$patch<F>(stateMutator): void
+```
+
+它允许你用一个 `state` 的补丁对象在同一时间更改多个属性：
 
 ```js
 store.$patch({
@@ -374,11 +393,13 @@ store.$patch((state) => {
 })
 ```
 
-两种变更 store 方法的主要区别是，`$patch()` 允许你将多个变更归入 devtools 的同一个条目中。同时请注意，**直接修改 `state`，`$patch()` 也会出现在 devtools 中**，而且可以进行 time travel (在 Vue 3 中还没有)。
+两种变更 store 方法的主要区别是，`$patch()` 允许你将多个变更归入 devtools 的同一个条目中。
+
+同时请注意，**直接修改 `state`，`$patch()` 也会出现在 devtools 中**，而且可以进行 time travel (在 Vue 3 中还没有)。
 
 ### 替换 state
 
-你**不能完全替换掉** store 的 state，因为那样会破坏其响应性。但是，你可以 *patch* 它。
+你**不能完全替换掉** store 的 state，因为那样会破坏其响应性。但是，你可以 patch 它。
 
 ```js
 // 这实际上并没有替换`$state`
@@ -395,23 +416,25 @@ pinia.state.value = {}
 
 ### 使用案例
 
-1. src->store->modules->counter.ts
+1. 定义一个Store模块：src->store->modules->counter.ts
 
 ```js
 import {defineStore} from "pinia";
 // 通过defineStore可以定义小仓库（模块）
-// defineStore返回的值一般保存至以use开头的常量中。
-// 第一个参数是模块的标识,第二个参数是配置对象
+// defineStore()返回的值一般保存至以use开头的常量中。
+// defineStore()第一个参数是模块的标识,第二个参数是配置项
 const useCounterStore = defineStore("counter",{
     // 通过state函数可以定义状态，返回的值即是该模块中的数据状态。
-    // state(){
-    //     return {
-    //         num:100
-    //     }
-    // }
+    state(){
+         return {
+             num:100
+         }
+    }
     // 上方代码也可以写为：
     state:()=>({
+        // 支持响应式
         num:200,
+        // 支持响应式
         arr:[1,2,3,4,5]
     })
 });
@@ -425,10 +448,15 @@ export default useCounterStore;
 ```vue
 <template>
     <h3>练习Pinia</h3>
+	<!--template解析-->
+	<!--counter:"$id":"counter","num":"203","arr":"[10,2,3,5,4],"_isOptionsAPI":"true"-->
     <p>counter:{{counter}}</p>
+	<!--模块的标识-->
     <p>counter.$id:{{counter.$id}}</p>
+	<!--数据状态-->
     <p>num:{{counter.num}}</p>
     <p>arr:{{counter.arr}}</p>
+	<!--是否是选项时API-->
     <p>_isOptionsAPI:{{counter._isOptionsAPI}}</p>
 </template>
 
@@ -436,14 +464,11 @@ export default useCounterStore;
 import useCounterStore from "@/store/modules/counter";
 const counter = useCounterStore();
 // 输出counter模块中的数据状态num
-// console.log(counter.num);
-console.log(counter)
+// 返回一个Proxy对象，Proxy对象中存在Target属性，Target中有定义的state数据对象
+console.log(counter) 
+// 获取state中的数据
+console.log(counter.num); // 200
 </script>
-
-<style scoped>
-
-</style>
- 
 ```
 
 ## Action
@@ -563,7 +588,7 @@ export default defineComponent({
 </script>
 ```
 
-不适用setup()
+**不使用setup()**
 
 如果你不喜欢使用组合式 API，你也可以使用 mapActions() 辅助函数将 action 属性映射为你组件中的方法。
 
@@ -582,9 +607,39 @@ export default {
 }
 ```
 
-订阅action
+### $onAction()
 
-你可以通过 `store.$onAction()` 来监听 action 和它们的结果。传递给它的回调函数会在 action 本身之前执行。`after` 表示在 promise 解决之后，允许你在 action 解决后执行一个回调函数。同样地，`onError` 允许你在 action 抛出错误或 reject 时执行一个回调函数。这些函数对于追踪运行时错误非常有用，类似于[Vue docs 中的这个提示](https://cn.vuejs.org/guide/best-practices/production-deployment#tracking-runtime-errors)。
+可以通过 `store.$onAction()` 来监听 action 和它们的结果。
+
+```js
+$onAction(callback, detached?): () => void
+```
+
+```js
+设置一个回调，当一个 action 即将被调用时，就会被调用。回调接收一个对象，其包含被调用 action 的所有相关信息：
+
+store: 被调用的 store
+name: action 的名称
+args: 传递给 action 的参数
+除此之外，它会接收两个函数，允许在 action 完成或失败时执行的回调。
+
+它还会返回一个用来删除回调的函数。 请注意，当在组件内调用 store.$onAction() 时，除非 detached 被设置为 true， 否则当组件被卸载时，它将被自动清理掉。
+
+store.$onAction(({ after, onError}) => {
+  // 你可以在这里创建所有钩子之间的共享变量，
+  // 同时设置侦听器并清理它们。
+  after((resolvedValue) => {
+    // 可以用来清理副作用
+    // `resolvedValue` 是 action 返回的值，
+    // 如果是一个 Promise，它将是已经 resolved 的值
+  })
+  onError((error) => {
+    // 可以用于向上传递错误
+  })
+})
+```
+
+你传递给它的回调函数会在 action 本身之前执行。`after` 表示在 promise 解决之后，允许你在 action 解决后执行一个回调函数。同样地，`onError` 允许你在 action 抛出错误或 reject 时执行一个回调函数。这些函数对于追踪运行时错误非常有用。
 
 这里有一个例子，在运行 action 之前以及 action resolve/reject 之后打印日志记录。
 
@@ -641,27 +696,29 @@ someStore.$onAction(callback, true)
 
 ```tsx
 import {defineStore} from "pinia";
-// 通过defineStore可以定义小仓库（模块）
+// 通过defineStore可以定义模块
 // defineStore返回的值一般保存至以use开头的常量中。
 // 第一个参数是模块的标识,第二个参数是配置对象
 const useCounterStore = defineStore("counter",{
     // 通过state函数可以定义状态，返回的值即是该模块中的数据状态。
-    // state(){
-    //     return {
-    //         num:100
-    //     }
-    // }
+    state(){
+         return {
+             num:100
+         }
+    }
     // 上方代码也可以写为：
     state:()=>({
         num:200,
         arr:[1,2,3,4,5]
     }),
-    // 1
+    // 定义store中的方法
     actions:{
+        // 同步修改state
         addOne(a:number,b:number,c:number,d:number){
             console.log(a,b,c,d);
             this.num+=1;
         },
+        // 异步修改state
         delaySet(){
             setTimeout(()=>{
                 this.num=900
@@ -678,52 +735,39 @@ export default useCounterStore;
 
 ```vue
 <template>
-    <h3>练习Pinia</h3>
-    <p>counter:{{counter}}</p>
-    <p>模块的标识->counter.$id:{{counter.$id}}</p>
-    <hr/>
-    <h3>数据状态</h3>
-    <p>num:{{counter.num}}</p>
-    <p>arr:{{counter.arr}}</p>
-    <hr/>
-    <h3>是否使用了组合式API</h3>
-    <p>_isOptionsAPI:{{counter._isOptionsAPI}}</p>
-    <hr/>
-    <h3>支持双向绑定</h3>
+    <!--支持双向绑定-->
     <input type="text" v-model.number="counter.num">
-    <hr/>
-    <h3>更改数据状态方案一：直接修改</h3>
+    <!--更改数据状态方案一：直接修改-->
     <button @click="counter.num++">{{counter.num}}</button>
-    <hr/>
-    <h3>更改数据状态方案二：借助counter.$patch</h3>
+    <!--更改数据状态方案二：通过函数调用counter.$patch-->
     <button @click="setNum">{{counter.num}}</button>
-    <hr/>
-    <h3>更改数据状态方案三：actions</h3>
+    <!--更改数据状态方案三：使用actions中的方法-->
     <button @click="counter.addOne">{{counter.num}}</button>
     <button @click="counter.addOne(1,2,3,4)">{{counter.num}}</button>
-    <button @click="actionAddOne">{{counter.num}}</button>
     <button @click="counter.delaySet">异步更新{{counter.num}}</button>
+	<button @click="actionAddOne">{{counter.num}}</button>
 </template>
 
 <script lang="ts" setup>
 import useCounterStore from "@/store/modules/counter";
+// 得到conter的store
 const counter = useCounterStore();
-// 输出counter模块中的数据状态num
-// console.log(counter.num);
-// console.log(counter)
+// 更改数据状态方案一：直接修改
+    counter.num+=2;    
+// 更改数据状态方案二：借助$patch
 const setNum = function(){
-    // counter.num+=2;
-
-    // counter.$patch({
-    //     num:counter.num+3
-    // })
-
+    // 通过$patch修改state
+    counter.$patch({
+         num:counter.num+3
+    })
+	// 通过$patch修改state
     const num = counter.num+3;
     // $patch接收一个对象，对象的属性名即是要修改的状态名，对应的属性值即是要修改的状态值。
     counter.$patch({
         num
     })
 }
+// 更改数据状态方案三：调用store中的action
 const actionAddOne = function(){
     counter.addOne(10,11,12,13);
 }
@@ -965,6 +1009,8 @@ export default {
 getters:{
     sum(){
         console.log("sum");
+        // ts语法：定义value的类型，
+        // 累加运算
         const value:number = this.arr.reduce((s:number,item:number)=>{
             return s+item;
         },0)
@@ -987,32 +1033,39 @@ getters:{
 import {defineStore} from "pinia";
 import {computed, reactive, ref, watch} from "vue";
 const useTodosStore = defineStore("todos",()=>{
+    
     // 响应式的ref,reactive----->state
     let taskList = ref([1,2,3,4]);
     let obj = reactive({
         userName:"zhangsan",
         age:12
     })
+    
     // 定义的方法相当于------------>actions
     const addTaskList = function(num:number){
         taskList.value.push(num);
     }
+    
     // 计算属性------------------->getters
     const sum = computed(()=>taskList.value.reduce((v:number,item:number)=>v=v+item,0));
-    // watch
-    // watch(taskList,()=>{
-    //     console.log("taskList改变了")
-    // },{
-    //     immediate:true,
-    //     deep:true
-    // })
-
+    
+    // 使用侦听器方式1 侦听taskList
+    watch(taskList,()=>{
+         console.log("taskList改变了")
+     },{
+         immediate:true,
+        // 深度侦听
+         deep:true
+    })
+    
+	// 使用侦听器方式2 侦听taskList中的value值
     watch(()=>taskList.value,()=>{
         console.log("taskList改变了")
     },{
         immediate:true,
         deep:true
     })
+    
     // 切记一定一定一定要返回！
     return {
         taskList,
@@ -1107,7 +1160,31 @@ router.beforeEach((to) => {
 
 ### 使用案例
 
-1. src->test.ts
+2. 大仓库。src->store->index.ts
+
+```js
+// 创建大仓库。
+import {createPinia} from "pinia";
+export default createPinia();
+
+```
+
+3. 引入到入口文件：src->main.ts
+
+```js
+import {createApp} from "vue";
+import App from "@/App.vue";
+import store from "./store";
+// 引入到入口文件
+import "@/module.ts";
+createApp(App)
+    .use(store)
+    .mount("#app");
+```
+
+> 目的是为了可以使用 createPinia()
+
+1. src->module.ts
 
 ```js
 // 1- 引入大仓库
@@ -1117,14 +1194,6 @@ import useTodosStore from "@/store/modules/todos";
 const todos = useTodosStore(store);
 console.log(todos.taskList);
 ```
-
-2. src->main.ts
-
-```tsx
-import "@/test";
-```
-
-
 
 ## 插件
 
