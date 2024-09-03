@@ -865,3 +865,93 @@ th {
 </html>
 ```
 
+## Vue3中使用bootstrap@3
+
+1. 安装Jquery
+
+```js
+npm install jquery --save
+```
+
+2. 配置Jquery：vue.config.js文件配置
+
+```js
+const { defineConfig } = require('@vue/cli-service')
+const webpack = require("webpack")
+module.exports = defineConfig({
+    transpileDependencies: true,
+    devServer: {
+        open: true,// 自动打开浏览器
+        port: 8080,// 指定端口号
+        host: "127.0.0.1",// 指定host
+    },
+    // 关闭编译时的特征标志
+    chainWebpack: (config) => {
+        config.plugin('define').tap((definitions) => {
+            Object.assign(definitions[0], {
+                __VUE_OPTIONS_API__: 'true',
+                __VUE_PROD_DEVTOOLS__: 'false',
+                __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false'
+            })
+            return definitions
+        })
+    },
+    // 配置Jquery
+    configureWebpack: {
+        plugins: [
+            new webpack.ProvidePlugin({
+                $: "jquery",
+                jQuery: "jquery",
+                "windows.jQuery": "jquery",
+                "windows.$": "jquery",
+                Popper: ["popper.js", "default"]
+            })
+        ]
+    },
+})
+```
+
+3. 安装bootstrap：
+
+```js
+npm install bootstrap@3
+```
+
+4. 在入口文件引入：main.ts
+
+```js
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
+import "../node_modules/bootstrap/dist/js/bootstrap.min.js"
+```
+
+问题：
+
+```js
+这个引入就跟上面的vue2全局引入一样了
+如果运行报如下错误，可以在项目根目录下新建一个.eslintignore文件
+文件中只写一个 *
+```
+
+5. 也可以按照html静态页面link引入：public->index.html
+
+```html
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="stylesheet" href="/bootstrap.css">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
+```
+
