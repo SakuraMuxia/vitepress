@@ -13,13 +13,50 @@ yarn add pinia
 npm i pinia
 ```
 
+```js
+创建一个 pinia 实例 (根 store) 并将其传递给应用：
+
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import App from './App.vue'
+
+const pinia = createPinia()
+const app = createApp(App)
+
+app.use(pinia)
+app.mount('#app')
+```
+
+如果你使用的是 Vue 2，你还需要安装一个插件，并在应用的根部注入创建的 `pinia`：
+
+```js
+import { createPinia, PiniaVuePlugin } from 'pinia'
+
+Vue.use(PiniaVuePlugin)
+const pinia = createPinia()
+
+new Vue({
+  el: '#app',
+  // 其他配置...
+  // ...
+  // 请注意，同一个`pinia'实例
+  // 可以在同一个页面的多个 Vue 应用中使用。
+  pinia,
+})
+```
+
+这样才能提供 devtools 的支持。在 Vue 3 中，一些功能仍然不被支持，如 time traveling 和编辑，这是因为 vue-devtools 还没有相关的 API，但 devtools 也有很多针对 Vue 3 的专属功能，而且就开发者的体验来说，Vue 3 整体上要好得多。在 Vue 2 中，Pinia 使用的是 Vuex 的现有接口 (因此不能与 Vuex 一起使用) 。
+
 创建一个Store：/stores/counter.js
 
 ```js
 // stores/counter.js
 import { defineStore } from 'pinia'
 
+// defineStore返回的值一般保存至以use开头的常量中。
+// 第一个参数是模块的标识,第二个参数是配置对象
 export const useCounterStore = defineStore('counter', {
+  // 通过state函数可以定义状态，返回的值即是该模块中的数据状态。
   state: () => {
     return { count: 0 }
   },
@@ -31,6 +68,8 @@ export const useCounterStore = defineStore('counter', {
     },
   },
 })
+// 或这种方式导出在组件可以通过运行useCounterStore函数操作该模块中的数据状态。
+export default useCounterStore;
 ```
 
 然后你就可以在一个组件中使用该 store 了
@@ -52,6 +91,31 @@ counter.increment()
   <!-- 直接从 store 中访问 state -->
   <div>Current Count: {{ counter.count }}</div>
 </template>
+```
+
+或这种方式使用：
+
+```vue
+<template>
+    <h3>练习Pinia</h3>
+    <p>counter:{{counter}}</p>
+    <p>counter.$id:{{counter.$id}}</p>
+    <p>num:{{counter.num}}</p>
+    <p>arr:{{counter.arr}}</p>
+    <p>_isOptionsAPI:{{counter._isOptionsAPI}}</p>
+</template>
+
+<script lang="ts" setup>
+import useCounterStore from "@/store/modules/counter";
+const counter = useCounterStore();
+// 输出counter模块中的数据状态num
+// console.log(counter.num);
+console.log(counter)
+</script>
+
+<style scoped>
+
+</style>
 ```
 
 为实现更多高级用法，你甚至可以使用一个函数 (与组件 setup() 类似) 来定义一个 Store
@@ -715,7 +779,7 @@ const useCounterStore = defineStore("counter",{
     actions:{
         // 同步修改state
         addOne(a:number,b:number,c:number,d:number){
-            console.log(a,b,c,d);
+            console.log(a,b,c,d); //a:PointerEvent,b:undefine,c:undefine,d:undefine
             this.num+=1;
         },
         // 异步修改state
@@ -1019,7 +1083,7 @@ getters:{
 }
 ```
 
-2. src->APP.vue
+2. src->App.vue
 
 ```vue
 <template>2    
@@ -1027,7 +1091,9 @@ getters:{
 </template> 
 ```
 
-3. src->store->modules->todos.ts
+#### 组合式API写法
+
+1. src->store->modules->todos.ts
 
 ```js
 import {defineStore} from "pinia";
@@ -1077,7 +1143,7 @@ const useTodosStore = defineStore("todos",()=>{
 export default useTodosStore;
 ```
 
-4. src->App.vue
+2. src->App.vue
 
 ```vue
 <template>
@@ -1160,7 +1226,7 @@ router.beforeEach((to) => {
 
 ### 使用案例
 
-2. 大仓库。src->store->index.ts
+1. 创建仓库入口。src->store->index.ts
 
 ```js
 // 创建大仓库。
@@ -1169,14 +1235,13 @@ export default createPinia();
 
 ```
 
-3. 引入到入口文件：src->main.ts
+2. 引入到入口文件：src->main.ts
 
 ```js
 import {createApp} from "vue";
 import App from "@/App.vue";
 import store from "./store";
-// 引入到入口文件
-import "@/module.ts";
+
 createApp(App)
     .use(store)
     .mount("#app");
@@ -1184,15 +1249,14 @@ createApp(App)
 
 > 目的是为了可以使用 createPinia()
 
-1. src->module.ts
+3. 在外部文件test.js中使用store仓库中的数据：src->utils->test.js
 
 ```js
-// 1- 引入大仓库
-import store from "@/store";
-import useTodosStore from "@/store/modules/todos";
-// 2- 参数传入大仓库：告知模块todos是属于哪一个大仓库下的。
+import store from "@/store"
+import useTodosStore from "@/store/modules/todos"
+// 把store对象作为 useTodoStore的参数传入。
 const todos = useTodosStore(store);
-console.log(todos.taskList);
+console.log(todos.taskList)
 ```
 
 ## 插件
