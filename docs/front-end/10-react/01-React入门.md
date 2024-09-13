@@ -7,9 +7,9 @@
 
 ### React 概述
 
-React 是一个用于`构建(动态显示)用户界面`的 JavaScript 库。 
+React 是一个用于构建(动态显示)用户界面的 JavaScript 库。 
 
-> React 起源于 `Facebook` ,并于 2013 年 5 月开源 
+> React 起源于 Facebook ,并于 2013 年 5 月开源 
 >
 > React本身只关注界面, 其它如：前后台交互、路由管理、状态管理等都由其扩展插件或其它第三方插件搞定
 >
@@ -848,7 +848,7 @@ root.render((
 
 > 通过标签属性绑定事件
 >
-> 1. 语法：on事件名="事件回调函数()" 例如：`onclick='fn()'`
+> 1. 语法：on事件名="事件回调函数()" 例如：onclick='fn()'
 > 2. 事件回调函数的调用者是 window，所以this指向window
 > 3. 通过传递实参event（window.event），获取事件对象
 > 4. 阻止默认行为：e.preventDefault();
@@ -934,7 +934,10 @@ root.render((
 
 > 绑定事件的语法：【通过标签属性的方式绑定】，函数名用插值表达式包裹
 >
-> `<button onClick={函数名}>click</button>`
+
+```js
+<button onClick={函数名}>click</button>
+```
 
 ```jsx
 *事件回调函数研究：
