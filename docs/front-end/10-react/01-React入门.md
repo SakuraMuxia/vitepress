@@ -50,7 +50,7 @@ React 是一个用于构建(动态显示)用户界面的 JavaScript 库。
 2. 复制粘贴以下内容
 ```
 
-```
+```shell
 字段解释
 prefix:唤醒词
 scope: 生效的文件
@@ -379,7 +379,7 @@ xml：使用自定义标签的形式表示数据属性，后来被json格式取�
 
 **使用案例**
 
-```jsx
+```js
 <!DOCTYPE html>
 <html lang="en">
 
@@ -446,7 +446,7 @@ js语句包括
 4. 循环语句等
 ```
 
-```jsx
+```js
 jsx 中的 插值表达式语法： { js表达式 }
 
 js表达式的类型如果是：
@@ -462,7 +462,7 @@ null,undefined:不输出内容
 
 **使用案例**
 
-```jsx
+```js
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -506,7 +506,7 @@ null,undefined:不输出内容
 
 插值表达式给标签属性赋值
 
-```jsx
+```js
 const root = ReactDOM.createRoot(document.querySelector("#root"));
 let width = 200;
 let height = 100;
@@ -549,7 +549,7 @@ root.render((
 
 **jsx中注释的写法**
 
-```jsx
+```js
 {/*
 	在插值表达式之中写js注释
 	<p>对象：<span>{{username:'atguigu',age:20}}</span></p>
@@ -560,7 +560,7 @@ root.render((
 
 插值表达式也可渲染 react元素
 
-```jsx
+```js
 通过js表达式的条件判断 插值表达式渲染哪部分 react 元素
 
 单分支: 逻辑运算符实现
@@ -570,7 +570,7 @@ root.render((
 
 **使用案例**
 
-```jsx
+```js
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -633,7 +633,7 @@ root.render((
 
 **使用案例**
 
-```jsx
+```js
 const root = ReactDOM.createRoot(document.querySelector("#root"));
 let style = {
     color: 'red',
@@ -660,7 +660,7 @@ root.render((
 
 **使用案例**
 
-```jsx
+```js
 const root = ReactDOM.createRoot(document.querySelector("#root"));
 let class1 = "box c1 f1"
 let class2 = ['box','c1','f1']; 
@@ -801,7 +801,7 @@ root.render((
 
 把数据的id作为Key的值。
 
-```jsx
+```js
 const root = ReactDOM.createRoot(document.querySelector("#root"));
 /**
  * 需求：实现评论列表功能
@@ -856,7 +856,7 @@ root.render((
 > 6. 如果想获取指向按钮的this，需要通过实参传递
 >
 
-```jsx
+```js
 原生 oninput 事件 和 onchange事件的区别
 
 1. 触发时机不同：
@@ -869,7 +869,7 @@ root.render((
 
 原生DOM事件使用案例
 
-```jsx
+```js
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -939,7 +939,7 @@ root.render((
 <button onClick={函数名}>click</button>
 ```
 
-```jsx
+```js
 *事件回调函数研究：
 
 *this指向问题：react的事件回调函数的调用者是window，所以this指向window（同原生DOM一致），因为react使用的是严格模式，所以，this指向undefined
@@ -961,7 +961,7 @@ root.render((
 2. 事件对象是 InputEvent
 ```
 
-```jsx
+```js
 
 * 在标签属性上通过 on事件名=事件回调函数 进行绑定
 1. 事件名首字母大写
@@ -984,7 +984,7 @@ root.render((
 
 事件回调函数的绑定及调用使用案例
 
-```jsx
+```js
 <script type="text/babel">
     const root = ReactDOM.createRoot(document.querySelector("#root"));
     function click1() {
@@ -1060,7 +1060,7 @@ root.render((
 
 使用案例
 
-```jsx
+```js
 const root = ReactDOM.createRoot(document.querySelector("#root"));
 root.render((
     <div>
@@ -1135,7 +1135,7 @@ root.render((
 
 React.Fragment 用法有三种
 
-```jsx
+```js
 const root = ReactDOM.createRoot(document.querySelector("#root"));
 const { Fragment } = React;
 root.render((
