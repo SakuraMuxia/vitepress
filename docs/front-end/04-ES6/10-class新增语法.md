@@ -194,6 +194,137 @@ p1.buy(12);                 //购买了12件华为p40
 2. 私有属性需要在赋值前提前声明
 ```
 
+## 类方法的几种形式
+
+```js
+class Person{
+    // say定义在Person的原型对象(Person.prototype)上,类本身无法用,实例可以用,
+    // this指向:谁调用指向谁
+    say(){
+        console.log("say is running,name: ",this)
+    }
+    // sleep定义在实例化对象(Person)上,类本身无法用,实例可以用,
+    // this指向:谁调用指向谁
+    sleep = function(){
+        console.log("sleep is running,age: ", this)
+    }
+    // 箭头函数定义在 实例化对象上，类本身无法用,实例可以用
+    // this指向：箭头函数没有this,this的指向取决于上层作用域中的this指向
+    // 上层作用域中的this是CLass类，this的指向是实例，所以是Person实例
+    rap = () => {
+        console.log("rap is running,rap_this ",this)
+    }
+    // 静态方法，定义在Person的原型对象中(Person.prototype)的constructor属性中
+    // 类本身的方法，类本身可以用，实例无法用,
+    // this指向:指向类本身
+    static eat(){
+        console.log("eat is running,eat_this ",this)
+    }
+}
+
+const p1 = new Person()
+const p2 = new Person()
+
+// 验证引用地址是否相同
+console.log(p1.say === p2.say) //true 说明是在原型对象(Person.prototype)上
+console.log(p1.sleep === p2.sleep) //false 说明是在实例化对象(Person)上，每一个实例对象都有一个自己的sleep方法
+// 查看实例
+console.log("info->p1",p1)  // 也能看到say方法和sleep方法的位置不同
+
+// 只能类本身调用eat方法
+Person.eat()
+```
+
+使用案例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Class功能验证</title>
+</head>
+<body>
+    <div id="root">Class功能验证</div>
+</body>
+<script>
+    class Person{
+        constructor(name,age){
+            this.name = name;
+            this.age = age
+        }
+        state={
+            name:"Hanser",
+            age:18
+        }
+        // 函数形式中 this 谁调用，指向谁
+        // say在Person的原型对象上，类本身无法用，实例可以用
+        say(){
+            console.log("say is running,name: ",this.state.name)
+        }
+        // sleep在实例化对象上p，类本身无法用，实例可以用
+        sleep = function(){
+            console.log("sleep is running,age: ", this.state.name)
+        }
+        // 使用static 设置eat为静态的方法，eat只会在Persion本身类上，实例上用不了
+        static eat(){
+            console.log("eat is running,eat_this ",this)
+        }
+        sing(){
+            console.log("sing is running, sing_this ",this)
+        }
+        dance = function(){
+            console.log("dance is running,dance_this ",this)
+        }
+        // 箭头函数中的this，箭头函数没有this,this的指向取决于上层作用域中的this指向
+        // 上层作用域中的this是CLass类，this的指向是实例，所以是Person实例
+        rap = () => {
+            console.log("rap is running,rap_this ",this)
+        }
+    }
+    // 实例化对象
+    const p1 = new Person()
+    const p2 = new Person()
+    // 调用方法
+    p1.say()
+    p2.say()
+    p1.sleep()
+    p2.sleep()
+
+    // 验证引用地址是否相同
+    console.log(p1.say === p2.say) //true 说明是在原型对象(Person.prototype)上
+    console.log(p1.sleep === p2.sleep) //false 说明是在实例化对象(Person)上，每一个实例对象都有一个自己的sleep方法
+    // 查看实例
+    console.log("info->p1",p1)  // 也能看到say方法和sleep方法的位置不同
+
+    // static 语法调用
+    // 只能类本身调用eat方法
+    Person.eat() //  this 指向Person类本身，谁调用，this指向谁
+    // 实例上调用static 静态方法
+    // p1.eat() // 报错
+
+    // this指向的问题
+    // 定义一个对象，把say的引用地址和eat的引用地址赋值给f1和f2属性
+    const obj = {
+        name: "Yousa",
+        f1: p1.sing,
+        f2: p1.dance,
+        f3:p1.rap
+    }
+    p1.sing() // this 指向Person实例，谁调用，指向谁
+    p1.dance() // this 指向Person实例，谁调用，指向谁
+    p1.rap() // this 指向Person实例，谁调用，指向谁
+
+    obj.f1() // this 指向obj对象，谁调用，指向谁
+    obj.f2() // this 指向obj对象，谁调用，指向谁
+    obj.f3() // this 指向Person实例，原因因为箭头函数没有this,this的指向取决于上层作用域中的this指向，
+    // 上层作用域中的this是CLass类，this的指向是实例，所以是Person实例
+</script>
+</html>
+```
+
+
+
 ## 静态方法
 
 构造函数本身的方法就是静态方法。
@@ -407,5 +538,4 @@ class MyArray extends Array {
 const ma = new MyArray('xiaole', 10,20,30,40,50,60);
 console.log(ma);
 ```
-
 
