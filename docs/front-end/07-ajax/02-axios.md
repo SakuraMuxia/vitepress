@@ -852,12 +852,66 @@ Fetch就是一个方法或者函数，返回一个Promise对象
 
 Fetch 被设计用来取代 XMLHttpRequest，它提供了许多与 XMLHttpRequest 相同的功能，但被设计成更具可扩展性和高效性。
 
+
+
+
+
 ## fetch 方法返回一个 Promise 对象
 
 ```js
 fetch('http://example.com/movies.json')
 .then(response => response.json()) // 调用响应体的json（）方法 把响应体处理为json格式，读取响应体 ，等待读取流读取结束。
 .then(data => console.log(data));
+```
+
+使用案例
+
+```js
+let LocString = String(location.search);
+const name = getQueryStr(LocString);
+// 获取json对象，并调用函数
+fetch('./skin/js/data.json')
+    .then(function(response){
+    if(!response.ok){
+        throw new Error('Failed to load data', + response.status);
+    }
+    return response.json();
+})
+    .then(function(jsonData){
+    var jsonObject = jsonData.businessDetail[name];
+    generateDiv(jsonObject);
+})
+    .catch(function(error) {
+    console.error('Error:', error);
+}
+);
+```
+
+.skin/js/data.json
+
+```json
+{
+
+    "businessDetail":{
+        "jiangwen":{
+            "businessName":"基站降温设备安装业务",
+            "title":"通过“通信基站机柜精准热管理系统”精准解决基站机柜高温报警，同时为基站机柜内设备提供洁净安全稳定的运行环境，为整个基站带来的精准的降温节能效果。",
+            "imgsrc":["./skin/images/business-jiangwen-2.png","./skin/images/business-jiangwen-3.jpg"],
+            "describe": ["", ""]
+        }
+    },
+
+    "certificateDetail":{
+        "1":"./skin/images/certificate-yingyezhizhao.png",
+        "2":"./skin/images/certificate-jianzhuzizhi.png",
+        
+    },
+    "productInfoLd":{
+        "imgsrc":[
+            { "b": "./skin/images/product-ld-l.png", "s": "./skin/images/product-ld-s.png" },
+        ]
+    }
+}
 ```
 
 

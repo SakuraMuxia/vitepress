@@ -1,10 +1,10 @@
 # localStorage
 
-### 介绍
+## 介绍
 
 localStorage 是一种 Web 存储机制，可以用于在浏览器中存储和访问数据。它允许前端开发人员在客户端存储键值对，并且在用户关闭浏览器后，数据仍然可以保留。
 
-### 方法
+## 方法
 
 | 方法                | 描述                                                         |
 | ------------------- | ------------------------------------------------------------ |
@@ -30,13 +30,13 @@ localStorage.clear();
 
 
 
-## sessionStorage
+# sessionStorage
 
-### 介绍
+## 介绍
 
 sessionStorage 是一种 Web 存储机制，类似于 localStorage。它允许开发人员在客户端存储键值对，并且在用户关闭浏览器标签页或浏览器窗口后，数据将被删除。sessionStorage 通常用于存储临时数据，比如用户在网站上填写表单时，可以将表单数据存储在 sessionStorage 中，以便在用户提交表单时使用。 
 
-### 方法
+## 方法
 
 | 方法                | 描述                                                         |
 | ------------------- | ------------------------------------------------------------ |
@@ -59,9 +59,43 @@ console.log(sessionStorage.getItem('address'));
 
 仅存放在同一个网页，已关闭网页就无了
 
+## 注意
+
+```js
+本地存储，存储的数据只能存基本数据类型，存不了对象和数组
+
+想存对象和数组怎么办？
+
+JSON.stringify 将对象或数组转化为 json格式的字符串
+读取数据：
+JSON.parse(JSON格式字符串)===》 JSON格式字符串还原成 对象或数组
+```
+
+```js
+let todos = [
+    {
+        id:1,
+        title:'吃饭',
+        isDone:false
+    }
+]
+
+localStorage.setItem('todos', todos); // [object Object] 读取数据的时候还原不了
+localStorage.setItem('todos', JSON.stringify(todos)) // 存储为json格式字符串
+
+// 读取数据
+let res = localStorage.getItem('todos')
+let resTodos = JSON.parse(res) // json格式字符串转换为对象
+
+// 如果读取一个不存在的 key 返回null
+let res = localStorage.getItem('tssssx') // tssssx 是一个不存在的key,getItem方法的返回值是一个null
+```
+
+
+
 ## 区别
 
-### localStorage 和 sessionStorage 的区别
+## localStorage 和 sessionStorage 的区别
 
  localStorage 和 sessionStorage 的主要区别在于它们的作用域和生命周期。   
 
@@ -71,7 +105,7 @@ console.log(sessionStorage.getItem('address'));
 
 因此，localStorage 适合用于存储长期有效的数据，比如用户的偏好设置、历史记录等；而 sessionStorage 适合用于存储短期有效的数据，比如表单数据、临时状态等。 
 
-### localStorage、sessionStorage 与 cookie 的区别
+## localStorage、sessionStorage 与 cookie 的区别
 
 localStorage 和 sessionStorage 是 HTML5 中提供的 Web 存储机制，而 cookie 是 HTTP 协议中的一种机制，它们之间有以下区别： 
 
