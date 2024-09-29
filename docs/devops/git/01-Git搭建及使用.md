@@ -974,3 +974,134 @@ fetch upstream: git -c http.proxy="127.0.0.1:xxxx" fetch upstream
 *注意： fetch 后面不能 -c，clone 是可以的
 ```
 
+## git提交问题
+
+### 删除远程提交
+
+```js
+本地回退到之前的提交
+git reset xxx --hard
+本地强制推送到远程
+git push origin 分支名 --force
+```
+
+### git pull
+
+```shell
+git pull = git fetch + git merge
+```
+
+### git fork
+
+```shell
+在git中，fork是“分叉”、“复制”的意思；fork可以复制出一个仓库的新拷贝，包含了原有库中的所有提交记录，fork后这个代码库是完全独立的，可以在自己的库中做任何修改，也可以向原来的库提交合并请求
+```
+
+### 撤销提交
+
+```shell
+# Undo Commit
+适用情况：代码修改完了，已经Commit了，但是还未push，然后发现还有地方需要修改，但是又不想增加一个新的Commit记录。这时可以进行Undo Commit，修改后再重新Commit。
+
+如果已经进行了Push，线上的Commit记录还是会存在的 确认Commit之后（未进行push）
+
+# Revert Commit
+会新建一个 Revert “xxx Commit”的Commit记录，该记录进行的操作是将"xxx Commit"中对代码进行的修改全部撤销掉。
+首先，对项目进行了代码修改，然后进行commit操作
+Commit之后：
+进行Revert Commit
+可以看到，新增了Commit 记录【Revert “测试Revert Commit”】，该记录中将【测试Revert Commit】中对代码进行的修改删除了。
+# Drop Commit（慎用）
+未push的Commit记录:
+会删除Commit记录，同时Commit中对代码进行的修改也会全部被删除
+已push的Commit记录:
+区别在于线上的Commit记录不会被删除
+
+进行Drop Commit操作后
+Commit 记录被删除，代码修改也被删除。
+```
+
+![image-20240929165349150](https://kano-1303231448.cos.ap-nanjing.myqcloud.com//hanser/image-20240929165349150.png)
+
+### git reset
+
+```shell
+//操作方法
+git reset --hard 目标版本号
+
+//撤销commit,并且保存提交过的内容到暂存区
+git reset --soft HEAD^
+//撤销commit,并且保存提交过的内容到工作区
+git reset --mix HEAD^
+//撤销commit,并且不保存提交过的内容（慎用）真用了不用慌，可以git reflog查看所有的提交记录，再次reset
+git reset --hard HEAD^
+```
+
+### git cherry-pick
+
+```shell
+Git中cherry-pick 多个commit操作
+经常需要从一个分支选择性的合并commit到另一个分支，具体可使用cherry-pick实现
+
+经常需要从一个分支选择性的合并commit到另一个分支，具体可使用cherry-pick实现：
+1.单个commit合并
+
+git cherry-pick commit_id
+2.多个连续commit合并
+commit_id到commit_idn之间，包括两端
+
+git cherry-pick commit_id..commit_idn
+commit_id到commit_idn之间，非闭包
+
+git cherry-pick （commit_id..commit_idn]
+挑选多个commit:
+
+git cherry-pick commit_id commit_idx commit_idy
+3.合并过程中依次解决冲突后，继续合并
+git cherry-pick --continue
+```
+
+### 常见问题
+
+git pull 只会拉取本分支的最新代码还是 全部分支的代码
+
+```shell
+git pull 只会拉取当前分支的最新代码，而不会拉取所有分支的代码。它相当于执行了 git fetch 和 git merge，首先从远程仓库获取当前分支的更新，然后将这些更新合并到你的本地分支。如果你想要拉取所有分支的信息，可以使用 git fetch --all，但这不会自动合并。
+```
+
+git fetch 和 git pull的区别
+
+```
+git fetch 和 git pull 的主要区别在于它们的功能和目的：
+
+git fetch：
+
+只从远程仓库下载最新的提交和分支信息。
+不会修改你的本地分支。你需要手动查看和合并这些更新。
+用于获取远程状态，但保留你的本地工作状态。
+git pull：
+
+实际上是 git fetch 和 git merge 的组合。
+首先拉取远程仓库的最新提交，然后将这些更新自动合并到你的当前分支。
+更加直接，适合希望快速更新当前分支的情况。
+总结来说，如果你想查看更新而不影响本地工作，使用 git fetch；
+如果你想直接更新当前分支，可以使用 git pull
+```
+
+如何把dev分支上的最新代码合并到当前分支
+
+```shell
+要将 dev 分支上的最新代码合并到当前分支，你可以按照以下步骤操作：
+
+确保你在当前分支上：
+git checkout 当前分支名
+
+拉取 dev 分支的最新代码：
+git fetch origin dev
+
+合并 dev 分支到当前分支：
+git merge origin/dev
+
+这将把 dev 分支的更新合并到你当前的分支上。根据合并的内容，可能会出现冲突，需要手动解决。
+```
+

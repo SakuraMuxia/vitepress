@@ -109,6 +109,18 @@ const countSlice = createSlice({
         changeMsg(state, action){
             state.msg += action.payload
         }
+        // 附加
+        // 增加购买数量
+        addBuyNum(state,{payload}){ // 从action属性中结构payload
+            // console.log('addBuyNum payload: ', payload)
+            // 找到这个id对应的购物车商品
+            let index = state.cartList.findIndex(car => car.id === payload)
+            state.cartList[index].buyNum += 1
+            
+			// 和Vue3 reactive()函数相似
+            console.log(state.cartList[index]) // 这里返回的每一个元素 是Proxy类型的对象
+            
+        },
     }
 })
 
@@ -526,7 +538,7 @@ let res = useSelector(state=>{
      return state;
 })
 let count = useSelector(state=>state.count) // 获取count切片的数据:{num:...,msg:...}
-let user = useSelector(state=>state.user);// 获取user切片的数据
+let user = useSelector(state=>state.user);// 获取userSlice 切片的数据[name属性] userSlice 切片
 let {num} = useSelector(state=>state.count);
 ```
 
