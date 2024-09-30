@@ -51,7 +51,7 @@ import {createSlice, configureStore} from '@reduxjs/toolkit'
 
 
 
-<img src="https://kano-1303231448.cos.ap-nanjing.myqcloud.com//hanser/image-20240927094726733.png" alt="image-20240927094726733" style="zoom:67%;" />
+<img src="https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240927094726733.png"/>
 
 ## 运作过程
 

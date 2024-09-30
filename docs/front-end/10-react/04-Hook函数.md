@@ -516,7 +516,7 @@ setTodos(todos => todos.filter(todo=>!todo.isDone))
 
 更新组件时，函数被重新创建的图示：如下图：App函数更新调用时， addCount会被重复创建。
 
-![image-20240924162308525](https://kano-1303231448.cos.ap-nanjing.myqcloud.com//hanser/image-20240924162308525.png)
+![image-20240924162308525](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240924162308525.png)
 
 ```shell
 

@@ -46,7 +46,9 @@ https://git-scm.com/download/mac
 
 ### Git 仓库的三个区域
 
-![git三个区域](https://kano-1303231448.cos.ap-nanjing.myqcloud.com/hanser/%E7%89%88%E6%9C%AC%E4%BB%93%E5%BA%93.png)
+![image-20240930100817345](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240930100817345.png)
+
+
 
 **工作区：** 代码编辑区，编辑代码的地方。
 
@@ -295,7 +297,7 @@ git rm --cached 文件名
 
 分支可以给使用者提供多个环境的可以，意味着你可以把你的工作从开发主线上分离开来，以免影响开发主线。
 
-![分支](https://kano-1303231448.cos.ap-nanjing.myqcloud.com/hanser/%E5%88%86%E6%94%AF.jpg)
+![image-20240930100836627](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240930100836627.png)
 
 ### 分支操作
 
@@ -869,9 +871,11 @@ git fetch origin 获取代码
 git merge origin/dev 合并到分支上
 ```
 
-![image-20240112195903183](https://kano-1303231448.cos.ap-nanjing.myqcloud.com//hanser/image-20240112195903183.png)
+![](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240112195903183.png)
 
-![image-20240112195919441](https://kano-1303231448.cos.ap-nanjing.myqcloud.com//hanser/image-20240112195919441.png)
+![](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240112195919441.png)
+
+
 
 ```shell
 小总结
@@ -1021,7 +1025,9 @@ Commit之后：
 Commit 记录被删除，代码修改也被删除。
 ```
 
-![image-20240929165349150](https://kano-1303231448.cos.ap-nanjing.myqcloud.com//hanser/image-20240929165349150.png)
+![image-20240930103822537](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240930103822537.png)
+
+
 
 ### git reset
 
