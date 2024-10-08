@@ -111,7 +111,7 @@ const countSlice = createSlice({
         }
         // 附加
         // 增加购买数量
-        addBuyNum(state,{payload}){ // 从action属性中结构payload
+        addBuyNum(state,{payload}){ // 从action属性中解构出payload
             // console.log('addBuyNum payload: ', payload)
             // 找到这个id对应的购物车商品
             let index = state.cartList.findIndex(car => car.id === payload)
@@ -576,6 +576,16 @@ createAsyncThunk()是`react-redux`包中的一个Hook函数
 1. 异步操作的代码，卸载异步的 actionCreator中
 2. extraReducers ==> fulfilled 分支 action.payload 值就是 异步actionCreator 成功promise的结果值。
 ```
+
+```shell
+createAsyncThunk()
+作用：返回一个异步的actionCreator
+参数：
+第一个参数是'切片名/程序员名',第二个参数是一个回调函数：回调函数中的参数是 actionCreator调用后返回的action对象中的payload。
+返回值：
+```
+
+
 
 1. 创建异步actionCreator：src->
 

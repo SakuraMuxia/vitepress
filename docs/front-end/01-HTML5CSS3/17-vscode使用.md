@@ -77,3 +77,17 @@ Vue 3 Snippets -> hollowtree
 npm Intellisense -> Christian Kohler
 ```
 
+```shell
+vscode 插件推荐
+GitLens。便于查看代码提交记录，甩锅专用
+Todo Tree。可以高亮一些个人自定义的注释，比如 TODO、NOTE 等
+ES7 React/Redux/GraphQL/React-Native snippets。react 支持
+Volar。Vue 支持
+Import Cost。查看引入文件的大小，比如 import、require 引入的依赖
+filesize。查看当前文件的大小，右下角显示
+Paste JSON as Code。能快速生成 JSON 数据的 ts 数据类型
+Markdown Preview Enhanced。markdown 预览增强版，比默认的预览工具好用
+tree-generator。快速生成目录树
+koroFileHeader。生成文件头部注释和函数注释
+```
+
