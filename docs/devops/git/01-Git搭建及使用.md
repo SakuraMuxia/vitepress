@@ -1,3 +1,5 @@
+# Git搭建及使用
+
 # Git 介绍
 
 Git 是一款开源免费的分布式的**版本控制系统**。是 Linux 之父 Linus Torvalds（林纳斯·托瓦兹）为了方便管理 linux 代码代码而开发的。
@@ -1172,12 +1174,91 @@ git checkout -t origin/branch_name
 
 ```
 
-删除远程分支
+### 删除远程分支
 
 ```shell
 删除远程分支命令：git push origin --delete branch_name
 更新本地远程分支信息：git fetch -p
 这样就可以删除远程分支并更新本地的分支列表了。
 -p 选项表示 "prune"（修剪），会删除那些远程已经不存在的分支在本地的引用
+```
+
+## git提交多个远程仓库
+
+Git 允许你为一个仓库配置多个远程仓库，并可以给它们不同的名称。你可以通过以下步骤添加多个远程仓库
+
+```shell
+# 查看当前远程仓库
+git remote -v
+# 添加新的远程仓库 假设你已经有一个名为 origin 的远程仓库，现在想添加另一个远程仓库（例如 GitLab 的），可以这样做
+git remote add gitlab https://gitlab.com/yourusername/your-repo.git
+现在，gitlab 就是你新添加的远程仓库
+# 推送到特定的远程仓库 如果你想推送到特定的远程仓库，可以指定它的名称
+git push origin main
+git push gitlab main
+这样你可以分别推送到 origin（例如 GitHub）和 gitlab
+```
+
+你还可以配置一个别名，将多个远程仓库设置在一起，以便一次性推送到所有仓库
+
+```shell
+# 为多个远程仓库创建一个别名： 打开 .git/config 文件，并为 origin 添加多个 URL
+[remote "origin"]
+    url = https://github.com/yourusername/your-repo.git
+    url = https://gitlab.com/yourusername/your-repo.git
+# 推送到所有远程仓库： 使用以下命令即可一次性推送到所有配置在 origin 下的远程仓库
+git push origin main
+```
+
+```js
+git remote add github git@github.com:SakuraMuxia/document.git
+```
+
+### 更改远程仓库的别名
+
+```shell
+# 使用 git remote rename 命令 执行以下命令，将 origin 更改为 gitee
+git remote rename origin gitee
+# 验证更改
+git remote -v
+# 输出应该类似于以下内容，显示新的远程别名
+gitee  git@gitee.com:sakuramuxia/documents.git (fetch)
+gitee  git@gitee.com:sakuramuxia/documents.git (push)
+# 推送到新的远程别名
+git push gitee main
+```
+
+**main分支和master分支**
+
+```js
+在 Git 中，main 和 master 分支并不具有技术上的差异，它们都是分支的名称。master 是 Git 默认的主分支名称，历史上大多数项目都会使用这个名称。然而，近年来，尤其是由于对语言和用词敏感性的增加，许多项目开始将主分支名称更改为 main
+
+名称变化的背景
+
+master 分支: 在 Git 的早期版本中，master 是默认的主分支名称。这一名称在过去的几年中因其潜在的种族歧视含义而受到关注。
+main 分支: 作为对这一关注的回应，许多开源项目和开发者开始将默认主分支改名为 main。例如，GitHub 在 2020 年开始将新的仓库的默认分支名称设置为 main，以促进更包容的语言使用。
+
+2. 使用上的差异
+默认分支: 在新项目中，你可能会看到 main 作为默认分支，而在旧项目中，依然可能使用 master。
+操作和功能: 无论是 main 还是 master，它们的功能是相同的，都是用于主开发线的分支。
+
+3. 如何更改默认分支名称
+如果你有一个项目使用 master 分支，并希望将其更改为 main，可以使用以下命令：
+
+git branch -m master main  # 将 master 重命名为 main
+git push -u origin main    # 推送新的 main 分支并设置跟踪
+```
+
+```js
+在许多情况下，用户会将命令简化。例如：
+git push 如果没有指定远程仓库和分支，Git 会推送到配置的默认远程仓库和分支。
+```
+
+### 删除远程仓库
+
+```shell
+# 删除指定的远程仓库
+git remote -v
+git remote remove origin
 ```
 
