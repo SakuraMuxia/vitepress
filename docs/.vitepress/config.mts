@@ -69,7 +69,7 @@ export default defineConfig({
           },
           {
             text: 'TypeScript',
-            link: '/front-end/'
+            link: '/front-end/11-typescript/'
           },
           {
             text: 'Vue',
@@ -166,6 +166,7 @@ sidebar: {
     "/front-end/08-webpack/": set_sidebar("/docs/front-end/08-webpack/"),
     "/front-end/09-vue/": set_sidebar("/docs/front-end/09-vue/"),
     "/front-end/10-react/": set_sidebar("/docs/front-end/10-react/"),
+    "/front-end/11-typescript/": set_sidebar("/docs/front-end/11-typescript/"),
     "/blogs/01-technology/": set_sidebar("/docs/blogs/01-technology/"),
     "/devops/git/": set_sidebar("/docs/devops/git/"),
 },
