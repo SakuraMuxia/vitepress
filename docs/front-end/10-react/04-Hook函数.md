@@ -228,6 +228,10 @@ export default function Aqua() {
 
 ### context通信
 
+#### useContext
+
+> :sparkles:在接收context传递数据的组件中，使用useContext快速拿到数据
+
 (爷-父-孙)
 
 **通过 context组件 和 useContext Hook函数实现组件通信**
@@ -512,14 +516,33 @@ setTodos(todos => todos.filter(todo=>!todo.isDone))
 
 > 作用：缓存一个函数，避免组件更新后，函数被重复创建
 >
+> 优化函数组件中堆内存重复创建问题
+>
 > 语法: useCallback(()=>{}, [])
+>
+> 参数：参数是一个回调函数和一个空数组，回调函数执行逻辑代码
+>
+> 用法如同 useEffect()，回调函数中的第二个参数空数组代表只在挂载的时候执行一次，更新时不执行。
 
 更新组件时，函数被重新创建的图示：如下图：App函数更新调用时， addCount会被重复创建。
 
 ![image-20240924162308525](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240924162308525.png)
 
 ```shell
+App函数组件的执行过程：
+App函数是一个函数，是一个引用类型，
 
+1. 在window作用域中定义一个函数组件App，数据类型是引用数据类型，浏览器会开辟一个堆内存xxxfff111;
+2. 堆内存中会存放着App函数代码(以字符串的形式存放),并产生一个内存地址xxxfff111;
+3. App函数名对应的是一个内存地址:xxxfff111,指向堆内存
+4. 第一次运行App函数组件时,内存会开辟一个调用执行栈的内存空间,会把App函数代码从堆内存中取出来按顺序执行
+5. 当执行useState(88)时,useState Hook函数会开辟一个缓存空间,把88存入，
+6. 同时setCount也是一个函数，也会开辟一个堆内存存放setCount的代码
+7. 执行到 const addCount...时这也是一个函数,也会开辟一个堆内存存放addCount的代码
+8. 当触发了数据更新,数据发生改变,App组件重新渲染,默认情况下会重新开辟空间放置一样的堆内存代码,造成了性能浪费
+9. 于是通过useCallback Hook函数缓存函数，这样每次重新渲染，react就可以从缓存中读取代码不需要重新开辟空间存放。
+10. 但是需要注意 useCallback(()=>{}) 这种形式产生了闭包,结合react的特性,永远只能读取到初始值
+11. 所以需要使用useState的第二种修改数据方法：通过回调函数的形式；
 ```
 
 ```jsx
@@ -553,684 +576,449 @@ export default function App() {
 
 ### React.memo
 
-> 类似于类的纯组件，当函数组件的 state 和 props没有改变的时候，不会触发重新渲染
+> 类似于类的纯组件，优化当函数组件的 state 和 props没有改变的时候，不会触发重新渲染
 >
 > 语法：React.memo(函数组件)
 
-使用案例
-
-```jsx
-
-```
-
-### useMemo
-
-> 作用：缓存一个函数计算的结果
->
-> 语法： useMemo(函数,[监听的值])
-
-使用案例
-
-```jsx
-
-```
-
-
-
-# axios请求
-
-Axios 是前端最流行的 ajax 请求库
-
-```shell
-基于 XMLHttpRequest(JS原生) + Promise(JS原生) 的异步的 Ajax 请求库
-
-react项目中使用axios发送ajax请求
-```
-
-```shell
-# 如果是首屏数据渲染
-发送请求的位置 ==> componentDidMount
-
-# 如果是用户交互
-用户点击了一个按钮、用户做了xxx操作
-```
-
-## 创建axios实例
-
-创建axios实例（request对象）,设置axios请求的请求配置项
-
-```shell
-# request 是一个简化版的 axios对象，没有cancelToken、all方法
-const request = axios.create({
-    baseURL:'xxxx.com:8080',
-    timeout:20000
-})
-```
-
-## 请求默认全局配置
-
-```shell
-每次发送请求设置的配置项
-# 设置默认路径 baseURL 属性
-axios.defaults.baseURL = 'xxx.com:8080'
-# 设置超时时间 baseURL 属性
-axios.defaults.timeout = 5000
-```
-
-> defaults属性是基础路径配置，只能配置一个基础路径
->
-> create() 方法可以创建多个request对象，配置多个基础路径
-
-## 发送请求Api
-
-使用axios（或axios的实例:request）发送请求有两种写法
-
-> request 是一个简化版的 axios对象，没有cancelToken、all方法
-
-```
-axios(request)函数式用法
-axios(request)对象式用法
-```
-
-axios（或axios的实例:request）函数式用法
-
-```shell
-# axios函数式用法：
-语法：
-axios(config)
-config:{
-    method			请求方式:  get 、post、patch、put、delete
-    url				请求地址
-    headers			请求头
-    params			query参数
-    data			请求体
-    cancelToken		取消请求
-    timeout			请求超时
-}
-```
-
-axios（或axios的实例:request）对象式用法
-
-```shell
-# axios对象式用法：按照请求方式分成两类 [,config] 代表可选参数 空或者一个config对象
-get、delete
-    axios.get(url,[,config])
-    axios.delete(url,[,config])
-post、put、patch
-    axios.post(url,data,[,config])
-    axios.put(url,data,[,config])
-    axios.patch(url,data,[,config])
-```
-
-**axios（或axios的实例:request）使用案例：两种写法**
-
-```shell
-# axios函数式用法
-axios({
-    method:'get',
-    url:'zyx.com',
-    params:{
-        a:1,
-        b:2
-    }
-})
-axios({
-    method:'post',
-    url:'zyx.com',
-    data:{
-        username:'zyx',
-        age:20
-    }
-})
-# axios对象式用法
-axios.get('/api/getDate',config)
-```
-
-## 设置拦截器
-
-**请求拦截器**
-
-```shell
-在请求头里可以携带公共的参数 token
-开启loading效果 NProgress
- 	安装 
- 		npm i nprogress
- 	导入nprogress 
- 		import NProgress from 'nprogress'
-		import 'nprogress/nprogress.css'
-```
-
-```js
-const request = axios.create({
-    baseURL:'http://localhost:8080',
-    timeout:2000
-})
-
-request.interceptors.request.use(config=>{
-    // 1. 公共请求参数在请求头的携带，此处以token举例
-    let token = localStorage.getItem('token');
-    if(token){
-        config.headers.token = token;
-    }
-    // 2. 开启loading效果
-    NProgress.start();
-    return config;
-})
-```
-
-**响应拦截器**
-
-```shell
-关闭loading
-简化响应数据
-进行token鉴权，重定向到 登录页面
-进行统一错误处理
-```
-
-```js
-const request = axios.create({
-    baseURL:'http://localhost:8080',
-    timeout:2000
-})
-request.interceptors.response.use(response=>{
-    // token鉴权，重定向处理
-    if(response.statusCode === 401){ // 说明token过期或token异常
-        // 重定向到login页面重新登录重新生成token
-        // 清除掉本地存储的token
-        localStorage.removeItem('token');
-        //
-        location.href = '/login.html'// 重定向到登录页
-    }
-    NProgress.done();// 关闭loading
-    return response.data;// 简化响应数据
-},error=>{
-    // 进行统一错误处理
-    console.log("error：",error);
-    // 阻止promise链条向下传递
-    return new Promise(()=>{})
-})
-```
-
-**axios使用案例:项目中使用**
-
-```js
-1. 在src/request目录中对 axios对象设置请求配置项
-2. 使用配置后的request对象发送ajax请求
-```
-
-1. 封装request请求对象：src/request/index.js
-
-```js
-// 做axios的基本配置：baseURL timeout  请求和响应拦截器
-import axios from 'axios'
-// 1. 安装nprogress  npm i nprogress
-// 2. 导入nprogress
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
-
-const request = axios.create({
-    baseURL:'https://api.github.com',
-    timeout:2000
-})
-
-// 配置请求拦截器
-request.interceptors.request.use(config=>{
-    // 1. 请求头中携带公共参数 token
-    // 2. 开启loading效果
-    NProgress.start()
-    return config;
-})
-
-// 配置响应拦截器
-request.interceptors.response.use(response=>{
-    // 1. 关闭loading
-    NProgress.done()
-    // 2. 简化服务器数据
-    return response.data;
-})
-
-export default request; // 将配置好的axios暴露
-```
-
-2. 在组件中使用请求配置对象发送请求：src->App.jsx
-
-```jsx
-import React, { useState } from 'react'
-// 导入配置号的request
-import request from './request'
-export default function App() {
-    let [count, setCount] = useState(100);
-    return (
-        <div>
-            <p>count: {count}</p>
-            <p><button onClick={async () => {
-                let res = await request.get('/search/users', {
-                    params: {
-                        q: 'aa'
-                    }
-                })
-                let totalCount = res.total_count
-                console.log(totalCount);
-                setCount(count + totalCount);
-
-            }}>count+</button></p>
-        </div>
-    )
-}
-```
-
-**axios使用案例:axios-repo案例**
-
-```shell
-学习目标及知识点：
-
-1. request.js， 封装axios基础配置
-2. useEffect的回调函数不能使用async直接修饰，需要单独定义async函数，手动调用
-3. loading 条件渲染
-```
-
-1. 封装request请求对象：src/request/index.js
-
-```js
-// 做axios的基本配置：baseURL timeout  请求和响应拦截器
-import axios from 'axios'
-// 1. 安装nprogress  npm i nprogress
-// 2. 导入nprogress
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
-
-const request = axios.create({
-    baseURL:'https://api.github.com',
-    timeout:2000
-})
-
-// 配置请求拦截器
-request.interceptors.request.use(config=>{
-    // 1. 请求头中携带公共参数 token
-    // 2. 开启loading效果
-    NProgress.start()
-    return config;
-})
-
-// 配置响应拦截器
-request.interceptors.response.use(response=>{
-    // 1. 关闭loading
-    NProgress.done()
-    // 2. 简化服务器数据
-    return response.data;
-})
-
-export default request; // 将配置好的axios暴露
-```
-
-2. 在组件中使用请求配置对象发送请求：src->App.jsx
-
-```jsx
-import React, { useEffect, useState } from 'react'
-import request from './request';
-
-export default function App() {
-    let [loading, setLoading] = useState(false);// 请求加载中的标识符
-    let [repo, setRepo] = useState({});  // undefined.html_url
-    // componentDidMount
-    useEffect( () => { // useEffect中 的回调不能直接写 async， 需要单独定义async函数，在手动调用
-        // 定义函数
-        async function main(){
-            // 开启loading
-            setLoading(true);
-            let {items} = await request.get('/search/repositories', {
-                params: {
-                    q: 'vue',
-                    sort: 'stars'
-                }
-            })
-            // 设置仓库状态
-            setRepo(items[0])
-            setLoading(false);
-        }
-        // 调用函数
-        main()
-    }, [])
-    return (
-        <div>
-            {loading ? <h1>loading.....</h1> : <div>most star repo is <a href={repo.html_url}>{repo.name}</a></div>}
-        </div>
-    )
-}
-```
-
-## 发送请求思路
-
-```js
-1. 查看api接口地址：【请求方式、url、请求的参数、响应内容】
-   请求参数：
-   1-1. query参数： 			axios.get(url, {params:{query参数}})
-   1-2. path[params]参数: 	axios.get('url/1/3')后端是有占位符的
-   1-3. 请求体参数body
-   		- get/delete: 		 axios.get(url,{data:请求体参数})
-   		- post、put、patch:   axios.post(url, 请求体参数对象)
-
-2. 封装api 请求的函数【使用该函数向api接口地址发送请求或取数据】
-   请求函数返回的都是Promise对象
-
-3. 调用api函数获取数据
-   3-1. 在生命周期钩子中调用【首屏数据渲染】，一般是componentDidMount
-   3-2. 用户交互调用：用户点击了一个按钮、用户做了xxx操作
-
-4. 用请求回来的数据渲染页面：
-   4-1. 定义响应状态，使用插值语法渲染
-```
-
-## 使用案例
-
-**github获取用户数据案例**
-
-封装request请求对象：src/request/index.js
-
-```js
-// 做axios的基本配置：baseURL timeout  请求和响应拦截器
-import axios from 'axios'
-// 1. 安装nprogress  npm i nprogress
-// 2. 导入nprogress
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
-
-const request = axios.create({
-    baseURL:'https://api.github.com',
-    timeout:2000
-})
-
-// 配置请求拦截器
-request.interceptors.request.use(config=>{
-    // 1. 请求头中携带公共参数 token
-    // 2. 开启loading效果
-    NProgress.start()
-    return config;
-})
-
-// 配置响应拦截器
-request.interceptors.response.use(response=>{
-    // 1. 关闭loading
-    NProgress.done()
-    // 2. 简化服务器数据
-    return response.data;
-})
-export default request; // 将配置好的axios暴露
-```
-
-封装api接口请求对象：src/api/github.js
-
-```js
-/**
- * 封装所有的github相关的请求函数
- * 
- */
-import request from '../request'
-/**
- * 
- * @param {*} keyword  关键字
- * @param {*} sortType  排序方式
- * @returns Promise对象
- * 
- */
-export function getRepo(keyword, sortType='stars'){
-    return request.get('/search/repositories',{
-        params:{
-            q:keyword,
-            sort:sortType
-        }
-    })
-}
-```
-
-在组件中调用api请求发送请求：src->App.jsx
-
-```jsx
-import React, { useEffect, useState } from 'react'
-import { getRepo } from './api/github';
-export default function App() {
-    useEffect(()=>{// componentDidMount
-        async function main(){
-            // 发送请求之前开启 loading
-            setLoading(true);
-            let res = await getRepo('vue')
-            console.log('res: ', res);
-            // 设置状态
-            setRepo(res.items[0])
-            // 请求结果回来之后，关闭loading
-            setLoading(false);
-        }
-        main();
-    },[])
-    // 定义状态
-    let [repo, setRepo] = useState({});
-    // 定义一个条件渲染的状态
-    let [loading, setLoading] = useState(false);
-
-    
-    // 也可以在这里拦截，实现条件渲染
-    // if (loading) {
-    //     return <h1>Loadding...</h1>
-    // }
-    
-    return (
-        <div>
-            {loading ? <h1>loading....</h1> : <div>most stars repo is <a href={repo.html_url}>{repo.name}</a></div>}
-        </div>
-    )
-}
-```
-
-**github获取用户案例**
-
-引入Bootstrap：public->index.html
-
-```html
-<title>React App</title>
-<link rel="stylesheet" href="/css/bootstrap.css">
-```
+**使用案例**
 
 主组件：src->App.jsx
 
 ```jsx
+import React, { Component,PureComponent } from 'react'
+import Hanser from './components/Hanser';
+
+export default class App extends PureComponent {
+    state = {
+        count: 88
+    }
+    render() {
+        console.log('App render');
+        let { count } = this.state;
+        return (
+            <div>
+                <h3>App</h3>
+                <p>App state count: {count}</p>
+                <p><button onClick={() => {
+                    this.setState({
+                        count: count + 1
+                    })
+                }}>count ++</button></p>
+                <p><button onClick={() => {
+                    this.setState({
+                        count: 99
+                    })
+                }}>count == 99</button></p>
+                <hr />
+                <Hanser count={count} />
+            </div>
+        )
+    }
+}
+```
+
+子组件：src->components->Hanser.jsx
+
+```jsx
+import React, { useState } from 'react'
+/**
+ * 函数组件：state已经做过优化了， 当状态不变时，只多渲染一次
+ *           props没有优化，外部数据不改变的时候，也会重新render
+ * 
+ * React.memo: 作用：函数组件 state 和 props 不发生改变的时候，不会触发重新render
+ */
+function Hanser({ count }) {
+    console.log('Hanser render');
+    let [money, setMoney] = useState(88)
+    return (
+        <div>
+            <h3>Hanser</h3>
+            <p>Hanser state money: {money}</p>
+            <p>Hanser props count: {count}</p>
+            <p><button onClick={() => {
+                setMoney(money + 100)
+
+            }}>money++</button></p>
+
+            <p><button onClick={() => {
+                setMoney(10000)
+            }}>money == 10000</button></p>
+        </div>
+    )
+
+}
+
+export default React.memo(Hanser)
+```
+
+### useMemo
+
+> 作用：缓存一个函数计算的结果，优化函数组件中重新渲染时无关方法重复执行问题
+>
+> 语法： useMemo(逻辑代码,[监听的值])
+>
+> 使用方法如同 useEffect() Hook函数 update+mounted
+
+**使用案例**
+
+App.jsx
+
+```jsx
 import React from 'react'
-import './App.css'
-import Header from './components/Header'
-import Main from './components/Main'
+import WithMemo from './components/WithMemo'
+import WithoutMemo from './components/WithoutMemo'
 
 export default function App() {
     return (
-        <div className="container">
-            <Header />
-            <Main />
+        <div>
+            <h3>without memo</h3>
+            <WithoutMemo/>
+            <h3>With memo</h3>
+            <WithMemo/>
         </div>
     )
 }
 ```
 
-样式文件：src->App.css
+WithMemo.jsx
+
+```jsx
+import { useMemo, useState } from "react";
+
+/**
+ * useMemo 缓存一个函数计算的结果
+ * @returns 
+ */
+export default function WithMemo() {
+    const [count, setCount] = useState(1);
+    const [val, setValue] = useState('');
+    const expensive = useMemo(() => {
+        console.log('compute');
+        let sum = 0;
+        for (let i = 0; i < count * 100; i++) {
+            sum += i;
+        }
+        return sum;
+    }, [count]);
+
+    return <div>
+        <h4>{count}-{expensive}</h4>
+        {val}
+        <div>
+            <button onClick={() => setCount(count + 1)}>+c1</button>
+            <input value={val} onChange={event => setValue(event.target.value)} />
+        </div>
+    </div>;
+}
+```
+
+WithoutMemo.jsx
+
+```jsx
+// 使用前
+import React, { useState } from 'react';
+
+export default function WithoutMemo() {
+    const [count, setCount] = useState(1);
+    const [val, setValue] = useState('');
+
+    function expensive() { // expensive 昂贵的
+        console.log('compute');
+        let sum = 0;
+        for (let i = 0; i < count * 100; i++) {
+            sum += i;
+        }
+        return sum;
+    }
+
+    return <div>
+        <h4>{count}-{val}-{expensive()}</h4>
+        <div>
+            <button onClick={() => setCount(count + 1)}>+c1</button>
+            <input value={val} onChange={event => setValue(event.target.value)} />
+        </div>
+    </div>;
+}
+```
+
+### useReducer
+
+> 作用：组件中有大量数据,使用useState,略显繁琐,使用useReducer更方便的管理数据
+
+> 语法：类似于简化版的redux
+>
+> 参数：
+>
+> ​	第一个参数是 reducer函数，
+>
+> ​	第二个参数是数据 initalState
+>
+> 返回值：返回一个数组，从数组中解构出 数据状态和dispatch函数，通过调用dispatch函数来执行reducer中的方法。
+
+```js
+使用方法如同 redux
+let [state,dispatch] = useReducer(reducer, initalState) //arr对象为 [{…}, ƒ]
+
+定义reducer函数
+function reducer(state,action){
+    switch(action.type){
+        case '方法名':{
+            return{
+                ...state,
+                num:state.num + action.payload
+            }
+        }
+        ...
+    }
+}
+
+调用dispatch(),参数是一个action对象(需要手动定义,区别于redux,redux自动创建)
+dispatch({type:'方法名',payload:3})
+```
+
+**使用示例：**
+
+src->App.jsx
+
+```jsx
+import React from 'react'
+import { useReducer } from 'react'
+
+const initalState = {
+    num: 88,
+    msg: 'atguigu'
+}
+function reducer(state, action) {
+    switch (action.type) {
+        case 'addNum':
+            return {
+                ...state,
+                num: state.num + action.payload
+            }
+        case 'decNum':
+            return {
+                ...state,
+                num: state.num - action.payload
+            }
+    }
+}
+export default function App() {
+    let [state, dispatch] = useReducer(reducer, initalState)
+    console.log('state: ', state)
+    let { num, msg } = state;
+    return (
+        <div>
+            <p>state num: {num}</p>
+            <p>state msg: {msg}</p>
+            <p><button onClick={() => {
+                dispatch({ type: 'addNum', payload: 3 })
+            }}>num++</button></p>
+
+            <p><button onClick={() => {
+                dispatch({ type: 'decNum', payload: 5 })
+            }}>num--</button></p>
+        </div>
+    )
+}
+
+
+```
+
+### useDebugValue
+
+> 可用于在 React 开发者工具中显示 自定义 hook 的标签
+>
+> 注意:只能在自定义hook中使用
+>
+> 参数：useDebugValue(数据状态)
+>
+> 返回值：undefined
+
+使用示例：
+
+src->hook->useFriendStatus.js(自定义hook)
+
+```js
+import { useState, useDebugValue } from 'react'
+
+// 创建一个方法：在最小值和最大值之间取随机整数
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min)
+    max = Math.floor(max)
+    return Math.floor(Math.random() * (max - min + 1)) + min //含最大值，含最小值
+}
+
+// 定义一个自定义hook函数
+export default function useFriendStatus() {
+    // 定义一个数据状态
+    const [isOnline, setIsOnline] = useState(null)
+    // 设置一个定时器，每秒会随机变化为online和offline
+    setTimeout(() => {
+        let result = getRandomIntInclusive(0, 1)// [0 | 1]
+        console.log(result)
+        setIsOnline(result ? 'online' : 'offline')
+    }, 1000)
+
+    // 在react开发者工具中的这个 Hook 旁边显示标签
+    // "FriendStatus: Online"
+    // 调用useDebugValue(数据状态)
+    useDebugValue(isOnline)
+
+    return isOnline
+}
+```
+
+入口文件：src->App.js
+
+```jsx
+import React from 'react'
+import useFriendStatus from './hook/useFriendStatus'
+
+export default function App() {
+    useFriendStatus()
+    return (
+        <div>App</div>
+    )
+}
+```
+
+### useImpretiveHandle
+
+> 作用：封装公共组件的时候,可以给使用公共组件的组件提供指定的API. 有条件的操作公共组件的真实dom
+>
+> `useImperativeHandle` 可以让你在使用 `ref` 时自定义暴露给父组件的实例值. `useImperativeHandle` 应当与 [`forwardRef`]一起使用
+
+```shell
+函数组件本身不能绑定ref，会报错，但是配合React.forwardRef就可以绑定ref属性了
+可以实现在父组件上操作子组件中的dom元素
+我们希望父组件的ref，只能有限的操作子组件的真实dom，那就需要能够在子组件中自定义父组件ref的current属性，实现有限的功能===>useImpretiveHandle
+```
+
+**使用示例**
+
+App.jsx
+
+```jsx
+import React ,{useRef} from 'react'
+import FunTest from './components/FunTest';
+
+export default function App() {
+    const funRef = useRef('我是谁？');
+    return (
+        <div>
+            <h3>函数组件 绑定ref</h3>
+            <FunTest ref={funRef} />
+            <hr />
+            <button onClick={() => {
+                // 操作子组件中的dom
+                // funRef.current.style.color='red'
+                // funRef.current.style.fontSize = '30px'
+                funRef.current.changeColor();
+                funRef.current.changeFontSize();
+            }}>获取ref</button>
+        </div>
+    )
+}
+```
+
+src->component->FunTest.jsx
+
+```jsx
+import React, { useRef } from 'react'
+import { useImperativeHandle } from 'react';
+
+// 通过函数组件中的第二个参数接收父组件传过来的 ref属性
+function FunTest(props, ref) {
+    console.log('ref:', ref); // 父组件传过来的 ref对象
+    const myselfRef = useRef();
+
+    // 设置父组件ref的权限，参数是 父组件ref和回调函数
+    // 回调函数中的返回值是一个对象，对象中的方法就是给父组件ref使用的方法
+    useImperativeHandle(ref, () => ({
+        changeColor() {
+            // 使用自己的ref对象绑定元素
+            myselfRef.current.style.color = 'green';
+        },
+        changeFontSize() {
+            myselfRef.current.style.fontSize = '30px';
+        }
+    }))
+    return (
+        // 未使用useImperativeHandle，父组件会完全控制子组件
+        // <div ref={ref}>FunTest</div>
+        // 使用useImperativeHandle，父组件只能操作useImperativeHandle中回调函数返回的对象中的方法
+        <div ref={myselfRef}>FunTest</div>
+    )
+}
+// 通过forwardRef()函数 让可以在函数组件上设置ref属性
+export default React.forwardRef(FunTest)
+```
+
+### useLayoutEffect
+
+> 作用与 `useEffect` 相同，但它会在所有的 DOM 变更之后同步调用 effect。
+>
+> 作用：可以使用它来读取 DOM 布局并同步触发重渲染。
+>
+> 在浏览器执行绘制之前，`useLayoutEffect` 内部的更新计划将被同步刷新。
+
+```shell
+useEffect
+这个是在render结束后,你的callback函数执行,但是不会阻塞浏览器渲染
+
+useLayoutEffect
+这个是用在处理DOM的时候,当你的useEffect里面的操作需要处理DOM,并且会改变页面的样式,就需要用这个,否则可能会出现出现闪屏问题, useLayoutEffect里面的callback函数会在DOM更新完成后立即执行,但是会在浏览器进行任何绘制之前运行完成,阻塞了浏览器的绘制
+```
+
+**使用案例：**
+
+src->component->Animate.jsx
+
+```jsx
+import React, { useEffect, useLayoutEffect, useRef } from 'react'
+import TweenMax from 'gsap' // npm i gsap@3.7.0
+import './index.css'
+
+const Animate = () => {
+    const REl = useRef(null)
+    useLayoutEffect(() => {
+        /*下面这段代码的意思是当组件加载完成后,在0秒的时间内,将方块的横坐标位置移到600px的位置*/
+        TweenMax.to(REl.current, 0, { x: 600 })
+    }, [])
+    return (
+        <div className="animate">
+            <div ref={REl} className="square">
+                square
+            </div>
+        </div>
+    )
+}
+
+export default Animate
+```
+
+src->component->index.css
 
 ```css
-.card {
-    float: left;
-    width: 33.333%;
-    padding: .75rem;
-    margin-bottom: 2rem;
-    border: 1px solid #efefef;
-    text-align: center;
-}
-
-.card>img {
-    margin-bottom: .75rem;
-    border-radius: 100px;
-}
-
-.card-text {
-    font-size: 85%;
+.square {
+    width: 100px;
+    height: 100px;
+    background-color: aqua;
 }
 ```
 
-子组件：src->components->Header.jsx
+src->App.jsx
 
 ```jsx
 import React from 'react'
-import PubSub from 'pubsub-js'
-import { useRef } from 'react'
+import Animate from './components/Animate'
 
-export default function Header() {
-    const inputRef = useRef();
-
+export default function App() {
     return (
-        <section className="jumbotron">
-            <h3 className="jumbotron-heading">Search Github Users</h3>
-            <div>
-                <input ref={inputRef} type="text" placeholder="请输入用户名" />
-                <button onClick={() => {
-                    // 1. 获取input文本框的输入
-                    // 2. 将username数据 传递给兄弟组件 Main
-                    let username = inputRef.current.value.trim()
-                    // 发布消息
-                    PubSub.publish('search', username);
-                }}>Search</button>
-            </div>
-        </section>
-    )
-}
-```
-
-子组件：src->components->Item.jsx
-
-```jsx
-import React from 'react'
-
-export default function Item({user}) {
-
-    return (
-        <div className="card" key={user.id}>
-            <a href={user.html_url} target="_blank" rel="noreferrer">
-                <img src={user.avatar_url} alt="" style={{ width: 100 }} />
-            </a>
-            <p className="card-text">{user.login}</p>
+        <div>
+            <Animate />
         </div>
     )
-}
-```
-
-子组件：src->components->Main.jsx
-
-```jsx
-import React from 'react'
-import PubSub from 'pubsub-js'
-import { getUsers } from '../api/github'
-import { useEffect,useState } from 'react'
-import Item from './Item'
-export default function Main() {
-    // 定义状态
-    let [users, setUsers] = useState([]) // 防止undefined
-    let [loading, setLoading] = useState(false);
-    let [first, setFirst] = useState(true);// 是否是第一次进入该页面
-    useEffect(()=>{
-        // 订阅消息
-        PubSub.subscribe('search',async (msg,data)=>{
-            // 判断first是否第一次
-            first && setFirst(false)
-            // 设置加载状态
-            setLoading(true)
-            // 发送请求,接收数据
-            console.log(data)
-            let {items} = await getUsers(data)
-            console.log(items)
-            // 设置数据状态
-            setUsers(items)
-            setLoading(false);
-        })
-    },[])
-
-
-    // 首次提示渲染
-    if (first) {
-        return <h4>请输入用户名搜索</h4>
-    }
-    // 加载中渲染
-    if (loading) {
-        return <h1>Loading.....</h1>
-    }
-
-    return (
-        <div className="row">
-            {users.map(user=>(
-                <Item user={user} key={user.id}/>
-            ))}
-        </div>
-        
-    )
-}
-
-```
-
-封装axios实例：src->request->github.js
-
-```js
-import axios from 'axios'
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
-
-const request = axios.create({
-    baseURL: 'https://api.github.com',
-    timeout: 2000
-})
-
-// 配置请求拦截器
-request.interceptors.request.use(config => {
-    // 1. 请求头中携带公共参数 token
-    // 2. 开启loading效果
-    NProgress.start()
-    return config;
-})
-
-// 配置响应拦截器
-request.interceptors.response.use(response => {
-    // 1. 关闭loading
-    NProgress.done()
-    // 2. 简化服务器数据
-    return response.data;
-})
-
-export default request; // 将配置好的axios暴露
-```
-
-封装api请求：src->api->github.js
-
-```js
-/**
- * 封装所有的github相关的请求函数
- * 
- */
-import githubReq from '../request/github'
-
-/**
- * 
- * @param {*} keyword  关键字
- * @param {*} sortType  排序方式
- * @returns Promise对象
- * 
- */
-
-export function getRepositories(keyword, sortType ='stars'){
-    return githubReq.get('/search/repositories',{
-        params: {
-            q: keyword,
-            sort: sortType
-        }
-    })
-}
-
-export function getUsers(username){
-    return githubReq.get('/search/users', {
-        params: {
-            q: username
-        }
-    })
 }
 ```
 

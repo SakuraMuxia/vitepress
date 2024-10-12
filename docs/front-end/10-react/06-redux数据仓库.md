@@ -1,4 +1,4 @@
-# Redux
+# Redux数据仓库
 
 ```js
 在已有的东西上验证着学习
@@ -28,7 +28,7 @@ redux toolkit: 官方提供的redux工具包
 在react中更方便的使用redux
 ```
 
-# redux-toolkit使用
+## redux-toolkit使用
 
 ```shell
 数据仓库是由切片组成的，创建切片过程
@@ -38,7 +38,7 @@ npm install @reduxjs/toolkit
 import {createSlice, configureStore} from '@reduxjs/toolkit'
 ```
 
-## 核心概念
+### 核心概念
 
 | 概念          | 名称           | 别称               | 数据类型        |
 | ------------- | -------------- | ------------------ | --------------- |
@@ -53,7 +53,7 @@ import {createSlice, configureStore} from '@reduxjs/toolkit'
 
 <img src="https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20240927094726733.png"/>
 
-## 运作过程
+### 运作过程
 
 通俗的理解：
 
@@ -74,16 +74,16 @@ import {createSlice, configureStore} from '@reduxjs/toolkit'
 要指定状态树如何响应 action 来进行更新，你可以编写纯 reducer 函数，这些函数根据旧 state 和 action 来计算新 state
 ```
 
-## 创建切片(slice)实例
+### 创建切片(slice)实例
 
-### createSlice()
+#### createSlice()创建实例
 
 ```js
 const countSlice = createSlice()
 作用：创建切片的函数
 
 参数：
-传入一个对象 对象中包含有name属性(切片名称),initialState属性(定义数据),reducers属性(执行者)
+传入一个对象 对象中包含有name属性(切片名称),initialState属性(定义数据state),reducers属性(执行者)
 例如:
 
 const countSlice = createSlice({
@@ -128,9 +128,9 @@ const countSlice = createSlice({
 返回一个切片对象 命名规则为: [切片名]Slice 如: counterSlice
 ```
 
-## 切片实例属性
+### 切片实例属性
 
-### acitons
+#### acitons
 
 ```
 countSlice.actions
@@ -173,13 +173,19 @@ console.log(countSlice.actions); // {addNum: ƒ, changeMsg: ƒ}
 let {addNum, changeMsg} = countSlice.actions; // 此处 addNum 和 changeMsg身份都是actionCreator
 
 // actionCreator函数，调用的结果，会返回一个 action对象 {type:'切片名/reducer名', payload:调用actionCreator传的参数}
+console.log(countSlice)// 是一个对象
+// {name: 'count', actions: {…}, caseReducers: {…}, reducer: ƒ, getInitialState: ƒ, …}
+// 把reducer暴漏出去
+export default countSlice.reducer
+// 把actionCreator暴漏出去
+export const { addNum, decNum } = countSlice.actions;
 
 // 调用actionCreator函数
 console.log('addNum(10): ',addNum(10));// {type: 'count/addNum', payload: 10}
 console.log('changeMsg("+")', changeMsg('+')); //{type: 'count/changeMsg', payload: '+'}
 ```
 
-### reducer
+#### reducer
 
 ```
 countSlice.reducer
@@ -190,9 +196,9 @@ countSlice.reducer
 
 
 
-## 创建仓库(store)对象
+### 创建仓库(store)对象
 
-### configureStore()
+#### configureStore()
 
 ```js
 import {createSlice, configureStore} from '@reduxjs/toolkit'
@@ -270,22 +276,22 @@ console.log('store.getState(): ', store.getState()); // {count: {…}, user: {�
 
 
 
-## 仓库对象(store)方法
+### 仓库对象(store)方法
 
-### getState()
+#### getState()获取
 
-```
+```shell
 store.getState()
 作用：获取仓库中的数据
 参数是：无
 返回值：返回一个对象，每个对象是由切片名和数据State组成
 示例：
-store.getState() // {count: {…}, user: {…}}
+store.getState() // {count: { … }, user: { … }}
 ```
 
-### dispatch()
+#### dispatch()修改
 
-只有reducer中的方法才能修改数据
+**只有reducer中的方法才能修改数据**
 
 ```js
 store.dispatch()
@@ -307,7 +313,7 @@ store.dispatch(actionCreator(payload))
 store.dispatch(addNum(3));// addNum(3) ==> {type:'count/addNum',payload:3}
 ```
 
-使用案例
+**使用案例**
 
 ```js
 // 1. 导入 createSlice包
@@ -368,7 +374,7 @@ store.dispatch(addNum(3));// addNum(3) ==> {type:'count/addNum',payload:3}
 console.log(store.getState().count.num); // 102
 ```
 
-### subscribe()
+#### subscribe()监听
 
 ```js
 作用：
@@ -388,9 +394,9 @@ store.dispatch(addNum(5)) // 控制台输出
 unsubscribe();// 取消监听
 ```
 
-## 仓库(store)模块化
+### 仓库(store)模块化
 
-### 目录结构
+#### 目录结构
 
 ```shell
 # 目录结构
@@ -401,7 +407,7 @@ src
   |    |    |- countSlice.js  切片模块文件
 ```
 
-### 使用案例
+#### 使用案例
 
 仓库入口：src/store/index.js
 
@@ -442,6 +448,9 @@ const countSlice = createSlice({
         }
     }
 })
+
+console.log(countSlice) // 是一个对象
+// {name: 'count', actions: {…}, caseReducers: {…}, reducer: ƒ, getInitialState: ƒ, …}
 // 暴漏actionCreator
 export const { addNum, changeMsg } = countSlice.actions; 
 // 暴漏reducer
@@ -489,13 +498,17 @@ store.dispatch(addNum(5)) // 回调函数执行
 store.dispatch(addNum(7))
 ```
 
-# react-redux
+## react-redux使用
 
 > react-redux是一个在react中更方便的使用redux的包
 >
 > 原因：在react中使用redux-toolkit包时，数据更新页面并没有发生重新渲染，数据更新页面并没有更新，于是出现了react-redux包。
 
-## 基本使用
+### 基本使用
+
+#### Provider
+
+使用Provider组件包裹根组件,绑定store属性,把store对象传递给所有被包裹的组件可用。
 
 ```shell
 # 安装
@@ -514,9 +527,9 @@ import {useSelector,useDispatch} from 'react-redux'
 
 ```
 
-## 读取数据
+### 读取数据
 
-### useSelector()
+#### useSelector()获取
 
 useSelector是`react-redux`包中的一个Hook函数
 
@@ -542,9 +555,9 @@ let user = useSelector(state=>state.user);// 获取userSlice 切片的数据[nam
 let {num} = useSelector(state=>state.count);
 ```
 
-## 修改数据
+### 修改数据
 
-### useDispatch()
+#### useDispatch()修改
 
 useDispatch()是`react-redux`包中的一个Hook函数
 
@@ -564,7 +577,7 @@ dispatch(actionCreator(payload))
 
 当出现需要异步操作的方法时，需要创建异步的reducer，异步的reducer需要搭配异步的actoinCreator生成action
 
-createAsyncThunk()是`react-redux`包中的一个Hook函数
+createAsyncThunk()是`react-redux`包中的一个Hook函数，用于创建异步的actionCreator（异步的需要手动创建，同步的自动创建）
 
 ### 操作步骤
 
@@ -573,21 +586,22 @@ createAsyncThunk()是`react-redux`包中的一个Hook函数
 2. 创建异步的reducer: extraReducers:
 
 注意：
-1. 异步操作的代码，卸载异步的 actionCreator中
+1. 异步操作的代码，写在异步的 actionCreator中
 2. extraReducers ==> fulfilled 分支 action.payload 值就是 异步actionCreator 成功promise的结果值。
 ```
 
 ```shell
-createAsyncThunk()
-作用：返回一个异步的actionCreator
+createAsyncThunk() 
+createAsyncThunk 是一个高阶函数，接收两个参数，其中一个参数是一个promise对象，返回值是一个actionCreator函数
+作用：返回一个异步的actionCreator函数
 参数：
-第一个参数是'切片名/程序员名',第二个参数是一个回调函数：回调函数中的参数是 actionCreator调用后返回的action对象中的payload。
-返回值：
+第一个参数是'切片名/异步程序员名',可以随意起名
+第二个参数是一个回调函数：回调函数中的参数是 异步actionCreator调用后返回的action对象中的payload。
+(第一个参数可以随便写，但是基于同步的action的结构，也按照同步的写)
+返回值：返回一个异步的actionCreator函数
 ```
 
-
-
-1. 创建异步actionCreator：src->
+1. 创建异步actionCreator：
 
 ```js
 /**
@@ -597,14 +611,21 @@ createAsyncThunk()
  * 异步的reducer： 需要配置在 extraReducers中， 【pending、fulfilled、rejected 】
  */
 
-// 创建异步的产品经理
+// 创建异步的产品经理 
 export const asyncAddNum = createAsyncThunk('count/addNum', async (payload) => {
     let { data } = await axios.get('https://api.github.com/search/users?q=aa')
-    // console.log('data: ',data);
-    return data.total_count;// 会得到一个成功的promise，成功的结果值是 total_count
-    // return Promise.reject('error123123')
+    // 回调函数返回一个成功的promise对象，成功的结果值是 total_count
+    // 这个promise对象作为 createAsyncThunk() 函数的一个参数
+    return data.total_count;
+    
+    // 回调函数返回一个失败的promise
+    return Promise.reject('error123123')
 })
 
+// ƒ actionCreator(arg) {}, asyncAddNum是一个actionCreator函数
+console.log(asyncAddNum) 
+
+// 减操作 回调函数两秒后返回一个成功的promise，成功的返回值是传过来的payload
 export const asyncDecNum = createAsyncThunk('count/decNum', (payload)=>{
     return new Promise((resolve, reject)=>{
         setTimeout(()=>{
@@ -614,30 +635,288 @@ export const asyncDecNum = createAsyncThunk('count/decNum', (payload)=>{
 })
 ```
 
-2. 创建异步的reducer：src->
+2. 创建异步的reducer：这里执行的还是同步的代码，只不过他是接收异步actionCreator三个分支（pending，fulfilled，reject）进行处理。
 
 ```js
 // 异步的程序员
 extraReducers: (builder) => {
     builder
+    	// 调用 asyncAddNum() (异步产品经理) ,返回一个 action对象
+        // {type:'count/addNum/pending',payload:undefined,meta:{...}}
+    
+    	// 监听  asyncAddNum 对象的pending状态
+    	// addCase()方法：接收两个参数
+    	// 第一个参数是 asyncAddNum 对象的状态,
+    	// 第二个参数是 一个回调函数
+    	// 回调函数中的第一个参数是 数据状态，第二个参数是 action对象
         .addCase(asyncAddNum.pending, (state, action) => {
             console.log('pending action: ', action);
         })
-        // 如果是一个成功的promise，成功的结果值就是action的payload属性值
+        // 如果是一个成功的promise，成功的结果值return的total_count会传给action对象中的payload属性值
         .addCase(asyncAddNum.fulfilled, (state, action)=>{
             console.log('fulfilled action', action);
             state.num += action.payload
         })
+    	// 如果是一个失败的promise，失败的结果值return的Promise.reject('error123123')在action对象中的error对象中的message属性中
         .addCase(asyncAddNum.rejected, (state, action)=>{
             console.log('rejected action: ', action);
         })
+    
+    	// 创建减操作成功的异步reducer
         .addCase(asyncDecNum.fulfilled, (state, {payload})=>{
             state.num -= payload
         })
 }
 ```
 
+3. 调用 App.jsx
 
+```jsx
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { addNum, decNum,asyncAddNum } from './store/slice/countSlice'
+export default function App() {
+    // 获取数据
+    let { num } = useSelector(state => state.count)
+    const dispatch = useDispatch()
+    return (
+        <div>
+
+            <p>num: {num}</p>
+
+            {/* 调用同步的reducer */}
+            <p><button onClick={() => {
+                dispatch(addNum(3))
+            }}>num ++</button></p>
+
+            <p><button onClick={() => {
+                dispatch(decNum(5))
+            }}>num--</button></p>
+
+            <hr />
+
+            {/* 调用异步的reducer */}
+            <p><button onClick={() => {
+                dispatch(asyncAddNum(10))
+            }}>异步的 addNum</button></p>
+
+
+        </div>
+    )
+}
+```
+
+
+
+### 修改数据
+
+使用 dispatch 调用异步的actionCreator
+
+```shell
+const dispatch = useDispatch()
+# 这里的payload参数会作为 action对象中meta对象中的arg属性 
+# {type:'count/addNum/pending',payload:undefined,meta:{...}}
+dispatch(异步的actionCreator(payload))
+```
+
+### 使用案例
+
+src->App.jsx
+
+```jsx
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { addNum, decNum,asyncAddNum,asyncDecNum } from './store/slice/countSlice'
+export default function App() {
+    // 获取数据
+    let { num } = useSelector(state => state.count)
+    const dispatch = useDispatch()
+    return (
+        <div>
+
+            <p>num: {num}</p>
+
+            {/* 调用同步的reducer */}
+            <p><button onClick={() => {
+                dispatch(addNum(3))
+            }}>同步的加</button></p>
+
+            <p><button onClick={() => {
+                dispatch(decNum(5))
+            }}>同步的减</button></p>
+
+            <hr />
+
+            {/* 调用异步的reducer */}
+            <p><button onClick={() => {
+                dispatch(asyncAddNum(10))
+            }}>异步的加</button></p>
+
+            <p><button onClick={() => {
+                dispatch(asyncDecNum(9));
+            }}>异步的减</button></p>
+
+        </div>
+    )
+}
+```
+
+src->store->index.js
+
+```js
+import { configureStore } from "@reduxjs/toolkit";
+import count from './slice/countSlice'
+
+const store = configureStore({
+    reducer: {
+        count
+    }
+})
+export default store;
+```
+
+src->strore->countSlice.js
+
+```js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+
+const countSlice = createSlice({
+    name:'count',
+    initialState:{
+        num:88
+    },
+    // 同步的reducer
+    reducers:{
+        // 加操作
+        addNum(state,{payload}){
+            state.num += payload
+        },
+        // 减操作
+        decNum(state,{payload}){
+            state.num -= payload
+        }
+    },
+    // 异步reducer
+    extraReducers: (builder)=>{
+        builder
+            .addCase(asyncAddNum.pending,(state,action)=>{
+                console.log('pending action: ', action);
+            })
+            // action对象的payload属性接收成功的PromiseResult值
+            .addCase(asyncAddNum.fulfilled, (state, action) => {
+                console.log('fulfilled action', action);
+                state.num += action.payload
+            })
+            .addCase(asyncAddNum.rejected, (state, action) => {
+                console.log('rejected action: ', action);
+            })
+            // 减操作 异步
+            .addCase(asyncDecNum.fulfilled,(state,action)=>{
+                state.num -= action.payload
+            })
+    }
+    
+
+})
+
+// 暴漏同步actionCreator
+export const { addNum,decNum } = countSlice.actions
+
+// 暴漏异步加操作的actionCreator
+export const asyncAddNum = createAsyncThunk('count/addNum',async (payload)=>{
+    // 发送异步请求，获取数据
+    let { data } = await axios.get('https://api.github.com/search/users?q=aa')
+    // 回调函数返回成功promise
+    return data.total_count;
+    // 回调函数返回失败的promise
+    return Promise.reject("bad request")
+})
+// 暴漏异步减操作的actionCreator
+export const asyncDecNum = createAsyncThunk('count/decNum', (payload) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            // resolve() 中的参数作为成功Promise对象中 PromiseResult
+            // 这个Result会作为actionCreator调用后返回的action对象中的payload属性值
+            resolve(payload)
+        }, 2000)
+    })
+})
+// 暴漏默认reducer
+export default countSlice.reducer
+```
 
 ## 小结
+
+### reduxjs/toolkit使用
+
+1. store仓库入口文件：src->store->index.js
+
+```js
+const store = configureStore({
+ reducer:{
+     count
+ }
+})
+```
+
+2. 创建切片slice：src->slice->countSlice.js
+
+```js
+const countSlice = createSlice({
+    name:'',		// name
+    initialState:{ 	// 数据状态state
+        
+    },
+    
+    reducers:{		// 同步的reducer
+        
+    },
+    				// 同步的actionCreator redux帮咱们创建在了切片的actions属性上
+    
+    extraReducers: (builder)=>{
+        builder		// 异步reducer
+            .addCase(asyncAddNum.pending,(state,action)=>{
+                
+            })
+            
+            .addCase(asyncAddNum.fulfilled, (state, action) => {
+                
+            })
+            .addCase(asyncAddNum.rejected, (state, action) => {
+                console.log('rejected action: ', action);
+            })
+    }
+    				
+    
+})
+
+// 定义异步的actionCreator
+const asyncAddNum = createAsyncThunk('count/addNum',async (payload)=>{
+    return 
+})
+
+// 分别暴露同步的actionCreator
+export const { addNum,decNum } = countSlice.actions
+
+// 分别暴露异步的actionCreator
+export {asyncAddNum}
+
+// 暴漏默认reducer
+export default countSlice.reducer
+```
+
+### react-redux使用
+
+```js
+1. Provider: 包裹根组件 绑定store
+2. useSelector: 获取状态数据
+3. useDispatch：创建dispatch函数
+
+修改状态数据：
+
+1. 同步： dispatch(同步actionCreator(payload))
+2. 异步：dispatch(异步的actionCreator(payload))
+```
 
