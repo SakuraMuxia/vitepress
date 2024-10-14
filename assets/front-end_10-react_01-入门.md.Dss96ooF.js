@@ -304,7 +304,7 @@ import{_ as s,c as i,o as a,a5 as n}from"./chunks/framework.ysm0ofoH.js";const c
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">number：正常输出</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">string：正常输出</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">boolean</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:不输出内容</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">boolean</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:不输出内容 block</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{true}可简写为block</span></span>
 <span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">null</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">undefined</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:不输出内容</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">对象</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">直接使用对象输出内容会报错</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(设置属性时，插值表达式内可以使用对象形式)</span></span>
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">数组</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: 遍历每一个元素输出</span></span>
