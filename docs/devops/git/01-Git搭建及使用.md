@@ -1262,3 +1262,184 @@ git remote -v
 git remote remove origin
 ```
 
+### git rebase和git merge的区别
+
+```
+git rebase和git merge实现的功能都差不多，都是将一个分支的代码合并到另一个分之上
+```
+
+在master分之上执行git merge会生成一个新的提交记录8，develop上的提交会被合并到master分之上，git merger保留了原有分支的原有结构，大量merge之后，分支变得很大
+
+![image-20241018102231701](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241018102231701.png)
+
+在master分之上执行git rebase,会把develop分枝上的提交嫁接到mater分之上（在develop父节点之后添加），同时提交记录5和7是一次新的commit记录
+
+![image-20241018102638403](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241018102638403.png)
+
+### git merge和 cherry pick结合使用
+
+0. 获取远程分支master的最新提交记录，并合并到本地分支master
+
+```shell
+使用 webstrom 
+
+# 1 获取远程分支master的最新提交
+git fetch --all 这会从所有配置的远程仓库中获取最新的更改，包括所有分支的更新
+Git 并没有提供一个命令来一次性拉取并合并所有远程仓库和所有分支的更改
+
+如果你只想从特定的远程仓库（例如 origin）获取所有分支的最新提交，可以使用以下命令
+git fetch origin
+
+列出所有的本地和远程分支，以查看拉取的最新更新
+git branch -a
+
+========
+如果你只想拉取并合并单个远程仓库的所有分支，逐个切换到对应分支执行 git pull 是一个常用方法。
+例如，对于 master 分支，执行：
+git checkout master
+git pull origin master
+对于其他分支，切换到对应的本地分支并拉取
+git checkout <branch-name>
+git pull origin <branch-name>
+
+git checkout master		  # 切换到 master 分支
+git fetch origin          # 更新远程引用
+git merge origin/master   # 合并 origin/master 到 本地master
+
+等同于
+git pull origin master
+# 2 把master分支的最新提交合并到自己的分支上
+	
+# 假设你在 develop 分支上，想要获取远程 master 分支上的最新更改，可以执行以下命令：
+git checkout develop      # 切换到 develop 分支
+git fetch origin          # 更新远程引用
+git merge origin/master   # 合并 origin/master 到 develop
+```
+
+1. 切换分支到自己的分支
+
+![image-20241018153519395](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241018153519395.png)
+
+2. 合并master分支上的最新提交记录到自己的分支上
+
+![image-20241018153623913](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241018153623913.png)
+
+3. 在自己的分支上编写代码
+
+4. 使用 `cherry pick`把本地自己分支的代码挑选后重新提交到master分支中
+
+```shell
+# 首选切换到本地master分支中，本地master分支已经是远程master最新的提交记录
+
+选中 自己的分支 然后渲染cherry-Pick然后 解决冲突，提交就可以了。
+
+```
+
+**webstrom的操作**
+
+![image-20241018153034842](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241018153034842.png)
+
+5. 或者使用`git merge`把本地的自己分支写好的代码合并到master分支中（人多了 树状图容易成为蜘蛛网）
+
+```shell
+1. 首先切换到master分支中(master分支是最新的提交记录)
+```
+
+![image-20241018154357273](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241018154357273.png)
+
+```shell
+有冲突解决冲突即可
+然后 在 master分支 提交即可
+```
+
+### Git rebase
+
+`git rebase` 将一个分支上的提交重新应用到另一个分支上。这通常意味着将一系列提交移动到另一个分支的顶部
+
+**命令格式**:
+
+```ts
+git rebase <branch-name>
+```
+
+**示例**: 继续上面的例子，如果你想将`master`分支的更改重新应用到`develop`分支的顶部，可以执行
+
+```ts
+git checkout master
+git rebase develop
+```
+
+![image-20241018102638403](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241018102638403.png)
+
+**特点**:
+
+- **历史重写**: `git rebase` 会改变提交历史，可能会导致提交ID的变化。
+- **交互式 rebase**: 可以使用 `git rebase -i` 进行交互式 rebase，允许你修改、删除或重组提交。
+- **避免合并提交**: 使用`rebase`可以避免产生额外的合并提交。
+
+### Git Cherry-Pick
+
+`git cherry-pick` 允许你**选择性**地将单个或多个提交从一个分支应用到另一个分支。这对于修复已发布的版本特别有用
+
+**cherry-pick单个提交命令格式**
+
+```ts
+git cherry-pick <commit-4>
+```
+
+**示例**: 如果想将`develop`分支中的某个提交（例如 commit hash 为`<commit-4>`）应用到`master`分支，可以执行:
+
+```ts
+git checkout master
+git cherry-pick <commit-4>
+```
+
+![image-20241018155644002](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241018155644002.png)
+
+**cherry-pick多个提交命令格式**
+
+```ts
+git cherry-pick <commit-4>空格<commit-8>
+git cherry-pick <commit-4>..<commit-8>
+git cherry-pick <commit-4>^..<commit-8>
+```
+
+示例: 如果想将develop分支中的某几个提交，应用到master分支，可以执行
+
+```ts
+（例如 commit hash 为<commit-4>，<commit-8>）
+git checkout master
+git cherry-pick <commit-4>空格<commit-8>
+```
+
+![image-20241018155852941](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241018155852941.png)
+
+cherry-pick多个提交命令格式:
+
+```ts
+git cherry-pick <commit-4>空格<commit-8>
+git cherry-pick <commit-4>..<commit-8>(4,8]
+git cherry-pick <commit-4>^..<commit-8>[4,8]
+```
+
+**示例**: 如果想将`develop`分支中的某连续几个提交（例如 commit hash 为 (`<commit-4>`到`<commit-8>`）应用到`master`分支，可以执行
+
+```ts
+git checkout master
+git cherry-pick <commit-4>空格<commit-8>(4,8]
+git cherry-pick <commit-4>^..<commit-8>[4,8]
+```
+
+![image-20241018160018796](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241018160018796.png)
+
+注意事项：
+
+* 冲突处理：如果在cherry-pick过程中遇到文件修改冲突，你需要手动解决这些冲突，然后使用git add添加解决后的文件，并使用git cherry-pick --continue继续，如果你决定不再继续cherry-pick过程，可以使用git cherry-pick --abort来取消。
+* 历史重写：虽然cherry-pick本身不重写历史，但如果你对一个已经被推送的分支使用cherry-pick，可能会导致其他人需要重新拉取最新的提交。
+* 提交信息：cherry-pick会保留原始提交的信息，包括提交者和提交消息。
+
+#### 总结
+
+- **Merge**: 适用于希望保留分支历史的场景，通常用于最终合并功能分支到主分支。
+- **Rebase**: 适用于希望保持线性历史记录的情况，适合于经常需要同步最新变更的开发人员（在自己的分支上使用）。
+- **Cherry-Pick**: 适用于需要快速应用特定修复或功能到现有分支的情况。
