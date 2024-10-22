@@ -4,7 +4,7 @@
 
 通过React命令式或声明式语法,创建出来的元素就是虚拟dom. 根据第一个挂载渲染的结构,生成第一棵虚拟DOM树,更新后,生成第二棵 虚拟DOM树. 然后比较两个新旧虚拟DOM树,找到不同,去修改真实DOM树,从而实现代价最小的页面更新
 
-![diff](000-images/09-虚拟dom和diff/diff.png)
+![diff](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/diff.png)
 
 ```shell
 通过 数据状态 创建 react元素(虚拟dom)
@@ -19,7 +19,7 @@
 
 
 
-![diff](000-images/09-虚拟dom和diff/diff2.png)
+![diff](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/diff2.png)
 
 ## Diff算法
 
@@ -157,7 +157,7 @@ React 并不会意识到应该保留 `<li>Duke</li>` 和 `<li>Villanova</li>`，
 <li key={item.id}>{item.name}</li>
 ```
 
-![](000-images/09-虚拟dom和diff/c0aa97d996de5e7f1069e97ca3accfeb_hd.png)
+![](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/c0aa97d996de5e7f1069e97ca3accfeb_hd.png)
 
 
 
@@ -268,15 +268,15 @@ export default function App() {
 
 实验：key的作用
 
-![image-20241022123444552](000-images/09-虚拟dom和diff/image-20241022123444552.png)
+![image-20241022123444552](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241022123444552.png)
 
 原理：
 
-![image-20241022123405869](000-images/09-虚拟dom和diff/image-20241022123405869.png)
+![image-20241022123405869](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241022123405869.png)
 
 使用id作为key，在diff算法做比较的时候，就不会乱，key=99，就会新创建一个虚拟dom
 
-![image-20241022125501104](000-images/09-虚拟dom和diff/image-20241022125501104.png)
+![image-20241022125501104](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20241022125501104.png)
 
 
 
@@ -312,7 +312,7 @@ export default function App() {
 
 1. 在当前的实现中，一棵子树能在其兄弟之间移动，但不能移动到其他位置。例如,下面的这种情况. React并不会改变A树的位置,而是拆除A树,在D节点下重新创建A树.实际开发中应避免这样的操作,不过目前的开发中基本没有这种情况
 
-   ![](000-images/09-虚拟dom和diff/d712a73769688afe1ef1a055391d99ed_hd.png)
+   ![](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/d712a73769688afe1ef1a055391d99ed_hd.png)
 
 2. 该算法不会尝试匹配不同组件类型的子树。如果你发现你在两种不同类型的组件中切换，但输出非常相似的内容，建议把它们改成同一类型。
 
