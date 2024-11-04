@@ -91,3 +91,144 @@ tree-generator。快速生成目录树
 koroFileHeader。生成文件头部注释和函数注释
 ```
 
+## VScode设置显示缩放
+
+```
+打开设置: ctrl , 
+搜索:window.zoomLevel, 比例设置为1
+```
+
+
+
+## 安装VSCode插件
+
+```js
+- ES7+ React 作者dsznajder
+- open in browser
+
+vscode 插件推荐
+GitLens。便于查看代码提交记录，甩锅专用
+Todo Tree。可以高亮一些个人自定义的注释，比如 TODO、NOTE 等
+ES7 React/Redux/GraphQL/React-Native snippets。react 支持
+Volar。Vue 支持
+Import Cost。查看引入文件的大小，比如 import、require 引入的依赖
+filesize。查看当前文件的大小，右下角显示
+Paste JSON as Code。能快速生成 JSON 数据的 ts 数据类型
+Markdown Preview Enhanced。markdown 预览增强版，比默认的预览工具好用
+tree-generator。快速生成目录树
+koroFileHeader。生成文件头部注释和函数注释
+```
+
+## 配置Vscode代码片段(react)
+
+```sh
+1. 文件->首选项->配置用户代码片段->新代码片段->回车->创建一个代码片段文件
+
+2. 复制粘贴以下内容
+```
+
+```shell
+字段解释
+prefix:唤醒词
+scope: 生效的文件
+body: [] 生成的代码，一个元素代表一行
+$1 $2 光标停留的位置
+```
+
+```json
+{
+	"react模板":{
+		"prefix": "!react",
+		"body": [
+			"<!DOCTYPE html>",
+			"<html lang=\"en\">",
+			"<head>",
+				"\t<meta charset=\"UTF-8\">",
+				"\t<title>Title</title>",
+				"\t<script src=\"./lib/react.development.js\"></script>",
+				"\t<script src=\"./lib/react-dom.development.js\"></script>",
+				"\t<script src=\"./lib/babel.min.js\"></script>",
+			"</head>",
+			"<body>",
+			"\t<div id=\"root\"></div>",
+			"</body>",
+			"<script type=\"text/babel\">",
+			"\tconst root = ReactDOM.createRoot(document.querySelector(\"#root\"));",
+			"\troot.render((",
+				"\t\t<div></div>",
+			"\t))",
+			"</script>",
+			"</html>"
+		],
+		"description": "快速构建react模板页页面"
+	},
+    "react模板2":{
+		"prefix": "!react2",
+		"body": [
+			"<!DOCTYPE html>",
+			"<html lang=\"en\">",
+			"<head>",
+				"\t<meta charset=\"UTF-8\">",
+				"\t<title>Title</title>",
+				"\t<script src=\"./lib/react.development.js\"></script>",
+				"\t<script src=\"./lib/react-dom.development.js\"></script>",
+			"</head>",
+			"<body>",
+			"\t<div id=\"root\"></div>",
+			"</body>",
+			"<script>",
+			"\tconst root = ReactDOM.createRoot(document.querySelector(\"#root\"));",
+			"\troot.render((",
+				"\t\t<div></div>",
+			"\t))",
+			"</script>",
+			"</html>"
+		],
+		"description": "快速构建react模板页页面"
+	}
+}
+```
+
+## 删除代码片段
+
+```bash
+1. 显示文件路径：查看->外观->痕迹导航
+2. 按照目录-找到文件删除即可
+```
+
+## Vs插件-element plus
+
+```ts
+在vs中安装 
+Element UI Snippets 作用:快速添加element plus组件
+
+```
+
+## Vs代码片段(vue3)
+
+```ts
+点击 vscode 左下角的齿轮设置按钮，点击用户代码片段
+输入 vue，选择 vue.json 文件
+使用时输入 vue3 即可快速生成 vue3 模板
+```
+
+```ts
+{
+	"Print to console": {
+        "prefix": "vue3",  // 模板的名称
+        "body": [          // 模板的结构（骨架）
+            "<template>",
+			" $1",
+            "</template>",
+            "",
+            "<script setup lang='ts'>",
+			" $1",
+            "</script>",
+            "",
+            "<style scoped lang=\"less\">",
+            "</style>"
+        ],
+        "description": "Log output to console",
+    }
+}
+```

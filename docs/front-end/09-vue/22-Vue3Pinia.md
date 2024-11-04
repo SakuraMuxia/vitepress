@@ -1254,7 +1254,8 @@ createApp(App)
 ```js
 import store from "@/store"
 import useTodosStore from "@/store/modules/todos"
-// 把store对象作为 useTodoStore的参数传入。
+// 把store对象(大仓库)作为 useTodoStore的参数传入。
+// 在组件外使用 小仓库 需要将 大仓库对象 作为参数 注入到小仓库中才可以使用
 const todos = useTodosStore(store);
 console.log(todos.taskList)
 ```
