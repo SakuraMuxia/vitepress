@@ -87,6 +87,8 @@ git config --global user.email "2216847528@qq.com"
 #检查是否配置成功
 git config --list
 
+git config --global http.sslverify "false"
+
 验证
 ssh -T git@github.com
 ```
