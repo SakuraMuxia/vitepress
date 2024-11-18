@@ -77,7 +77,7 @@ export default defineConfig({
           },
           {
             text: 'uni-app',
-            link: '/front-end/'
+            link: '/front-end/12-uniapp/'
           },
         ]},
       { text: '运维', items:[
@@ -167,6 +167,7 @@ sidebar: {
     "/front-end/09-vue/": set_sidebar("/docs/front-end/09-vue/"),
     "/front-end/10-react/": set_sidebar("/docs/front-end/10-react/"),
     "/front-end/11-typescript/": set_sidebar("/docs/front-end/11-typescript/"),
+    "/front-end/12-uniapp/": set_sidebar("/docs/front-end/12-uniapp/"),
     "/blogs/01-technology/": set_sidebar("/docs/blogs/01-technology/"),
     "/devops/git/": set_sidebar("/docs/devops/git/"),
 },
