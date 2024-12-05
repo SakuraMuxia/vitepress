@@ -130,20 +130,44 @@ export default defineConfig({
         ]},
       { text: '后端', items:[
           {
-            text: 'SpringBoot',
-            link: '/front-end/'
+              text: 'JavaSE',
+              link: '/back-end/'
           },
           {
-            text: 'RabbitMQ',
-            link: '/front-end/'
+              text: '数据结构',
+              link: '/back-end/'
           },
           {
-            text: 'Mybatis',
-            link: '/front-end/'
+              text: 'Mysql',
+              link: '/back-end/'
+          },
+          {
+              text: 'JDBC',
+              link: '/back-end/'
+          },
+          {
+              text: 'SSM',
+              link: '/back-end/'
           },
           {
               text: 'Redis',
-              link: '/front-end/'
+              link: '/back-end/'
+          },
+          {
+              text: 'Docker',
+              link: '/back-end/'
+          },
+          {
+              text: 'Kafka',
+              link: '/back-end/'
+          },
+          {
+              text: 'JVM',
+              link: '/back-end/'
+          },
+          {
+              text: 'JUC',
+              link: '/back-end/'
           },
         ]},
       { text: '博客', items:[
