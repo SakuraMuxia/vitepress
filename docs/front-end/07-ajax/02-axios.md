@@ -190,6 +190,124 @@ params: {
 },
 ```
 
+**post请求 查询字符串和请求体**
+
+`axios.post` 的第三个参数 `{ params }` 是 Axios 用于将 `params` 自动转换为查询字符串并附加到 URL 上的功能
+
+```ts
+有查询字符串和请求体
+如果既需要查询字符串，也需要请求体（例如发送额外数据）：
+
+
+
+typescript
+复制代码
+const params = {
+  current: 1,
+  size: 10,
+  filter: 'status=active',
+};
+
+const body = {
+  extraData: 'example', // 这是请求体的数据
+};
+
+axios.post('https://example.com/api/devicelist', body, { params })
+  .then((response) => console.log('成功:', response.data))
+  .catch((error) => console.error('失败:', error));
+```
+
+```ts
+只发送查询字符串（无请求体
+
+如果不需要发送请求体，只需要将查询字符串附加到 URL 上：
+const params = {
+  current: 1,
+  size: 10,
+  filter: 'status=active',
+};
+
+axios.post('https://example.com/api/devicelist', null, { params })
+  .then((response) => console.log('成功:', response.data))
+  .catch((error) => console.error('失败:', error));
+
+```
+
+post请求自动拼接字符串
+
+```ts
+// 手动拼接字符串
+export const reqDeviceList = (currentPage: number, size: number, filter: string) => request.post<any, any>(API.DEVICELIST +
+    `?current=${currentPage}&size=${size}&filter=${filter}`)
+// 自动拼接字符串
+export const reqDeviceListB = (data:any,params:any) => request.post<any, any>(API.DEVICELIST,data,{
+    params:params
+})
+// 自动拼接字符串 不带请求体
+export const reqDeviceListB = (params:any) => request.post<any, any>(API.DEVICELIST,null,{
+    params:params
+})
+```
+
+构造查询字符串的代码
+
+```ts
+在 JavaScript 中，可以通过以下方式动态生成这种查询字符串：
+
+1. 使用 JSON.stringify 和 encodeURIComponent
+
+const params = {
+  current: 1,
+  size: 400,
+  filter: JSON.stringify({ selOrgId: 1 }), // 转为 JSON 字符串
+};
+
+// 转为查询字符串
+const queryString = Object.keys(params)
+  .map((key) => `${key}=${encodeURIComponent(params[key])}`)
+  .join('&');
+
+console.log(queryString);
+
+输出结果：
+current=1&size=400&filter=%7B%22selOrgId%22%3A1%7D
+
+
+2. 使用 URLSearchParams
+javascript
+复制代码
+const params = {
+  current: 1,
+  size: 400,
+  filter: JSON.stringify({ selOrgId: 1 }),
+};
+
+const queryString = new URLSearchParams(params).toString();
+console.log(queryString);
+
+输出结果：
+current=1&size=400&filter=%7B%22selOrgId%22%3A1%7D
+```
+
+不封装直接使用
+
+```ts
+import axios, { type AxiosResponse } from 'axios';
+// 获取阿里GeoJson数据
+const getGeoJsonData = async () => {
+    const url = 'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json';
+    try {
+        const response = await axios.get(url)
+        if (response.status === 200) {
+            featuresList.value = response.data
+            console.log(featuresList.value)
+        }
+    } catch (error) {
+        console.error('请求出错:', error);
+    }
+}
+```
+
 
 
 ### 每次发送请求时设置配置项
