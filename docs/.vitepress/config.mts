@@ -79,6 +79,10 @@ export default defineConfig({
             text: 'uni-app',
             link: '/front-end/12-uniapp/'
           },
+          {
+            text: 'vue-project',
+            link: '/front-end/13-project/'
+          },
         ]},
       { text: '运维', items:[
           {
@@ -131,7 +135,7 @@ export default defineConfig({
       { text: '后端', items:[
           {
               text: 'JavaSE',
-              link: '/back-end/'
+              link: '/back-end/001-JavaSE/'
           },
           {
               text: '数据结构',
@@ -192,8 +196,10 @@ sidebar: {
     "/front-end/10-react/": set_sidebar("/docs/front-end/10-react/"),
     "/front-end/11-typescript/": set_sidebar("/docs/front-end/11-typescript/"),
     "/front-end/12-uniapp/": set_sidebar("/docs/front-end/12-uniapp/"),
+    "/front-end/13-project/": set_sidebar("/docs/front-end/13-project/"),
     "/blogs/01-technology/": set_sidebar("/docs/blogs/01-technology/"),
     "/devops/git/": set_sidebar("/docs/devops/git/"),
+    "/back-end/001-JavaSE/": set_sidebar("/docs/back-end/001-JavaSE/"),
 },
 //---------------------------------------------------------------
     // 设置搜索框的样式
