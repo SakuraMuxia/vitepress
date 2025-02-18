@@ -45,6 +45,17 @@ console.log('');
 2. 实现数组的去重
 ```
 
+**案例**
+
+```ts
+// 转为普通的数组
+const arr = Array.from(alarmTableRef.value?.setArr || new Set())
+或
+const arr = [...alarmTableRef.value.setArr]
+```
+
+
+
 ## WeakSet
 
 只能New不能实例化
