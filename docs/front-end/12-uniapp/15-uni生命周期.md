@@ -1,10 +1,27 @@
-# 生命周期
+# uni生命周期
+
+## uniapp生命周期
+
+uniapp页面生命周期函数与 Vue.js 的生命周期函数有所不同，因为 uni-app 是基于 Vue.js 的跨平台应用框架，因此它具有自己特定的生命周期函数。
+可以在这些生命周期函数中编写相应的逻辑代码，以便在不同阶段对页面进行初始化、展示、隐藏和卸载时执行特定的操作。
 
 ```ts
-https://developers.weixin.qq.com/miniprogram/dev/reference/api/Page.html
+在开发uniapp Vue3版本的时候，不能像vue2的选项式API一样，可以直接使用onLoad、onShow等，在组合式API中需要先从“@dcloudio/uni-app”模块中导入才可以。
 ```
 
-生命周期主要包含以下四个阶段：创建、挂载、更新、销毁
+```ts
+<script setup>
+	import {onLoad,onReady} from "@dcloudio/uni-app"
+</script>
+```
+
+```ts
+onLoad：页面加载时触发，可以在此生命周期函数中进行页面初始化操作。
+onShow：页面显示时触发，可以在此生命周期函数中进行页面展示相关的操作。
+onReady：页面初次渲染完成时触发，可以在此生命周期函数中进行页面渲染完成后的操作。
+onHide：页面隐藏时触发，可以在此生命周期函数中进行页面隐藏相关的操作。
+onUnload：页面卸载时触发，可以在此生命周期函数中进行页面卸载相关的操作。
+```
 
 ## 应用级
 
@@ -224,7 +241,13 @@ onPageScroll(()=>{
 })
 ```
 
+### onReachBottom()
 
+可在pages.json里定义具体页面底部的触发距离
+
+比如设为50，那么滚动页面到距离底部50px时，就会触发onReachBottom事件。
+
+如使用scroll-view导致页面没有滚动，则触底事件不会被触发。scroll-view滚动到底部的事件请参考scroll-view的文档
 
 ## uniapp执行顺序
 

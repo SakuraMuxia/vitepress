@@ -72,6 +72,70 @@ npm run dev:mp-weixin (微信)
 出现一个dist文件夹,把dist文件夹导入微信小程序程序中
 ```
 
+## 样式导入
+
+使用`@import`语句可以导入外联样式表，`@import`后跟需要导入的外联样式表的相对路径，用`;`表示语句结束。
+
+```ts
+<style>
+    @import "../../common/uni.css";
+
+    .uni-card {
+        box-shadow: none;
+    }
+</style>
+```
+
+**内联样式**
+
+框架组件上支持使用 style、class 属性来控制组件的样式。
+
+style：静态的样式统一写到 class 中。style 接收动态的样式，在运行时会进行解析，请尽量避免将静态的样式写进 style 中，以免影响渲染速度。
+
+```html
+<view :style="{color:color}" />
+```
+
+class：用于指定样式规则，其属性值是样式规则中类选择器名(样式类名)的集合，样式类名不需要带上.，样式类名之间用空格分隔。
+
+```html
+<view class="normal_view" />
+```
+
+## 注册局部组件
+
+局部注册之前，在需要引用该组件的页面，导入你想使用的组件。
+
+**页面引入组件方式**
+
+1、**传统vue规范：** 在 index.vue 页面中，通过 `import` 方式引入组件 ，在 `components` 选项中定义你想要使用的组件
+
+2、**通过uni-app的[easycom](https://uniapp.dcloud.io/collocation/pages?id=easycom)**：将组件引入精简为一步。只要组件安装在项目的 `components` 目录下，并符合 `components/组件名称/组件名称.vue` （驼峰命名法，首字母大写UserName或 短横线分隔命名xxm-icon 前缀+业务名称）目录结构。就可以不用引用、注册，直接在页面中使用。
+
+```vue
+<!-- 在index.vue引入 uni-badge 组件-->
+<template>
+    <view>
+        <uni-badge text="1"></uni-badge><!-- 3.使用组件 -->
+    </view>
+</template>
+<script>
+    // 这里不用import引入，也不需要在components内注册uni-badge组件。template里就可以直接用
+    export default {
+        data() {
+            return {
+            }
+        }
+    }
+</script>
+```
+
+**easycom是自动开启的**，不需要手动开启，有需求时可以在 `pages.json` 的 `easycom` 节点进行个性化设置
+
+不管`components`目录下安装了多少组件，`easycom`打包后会自动剔除没有使用的组件，对组件库的使用尤为友好
+
+
+
 ## 项目结构
 
 根目录
