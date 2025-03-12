@@ -239,6 +239,43 @@ onPageScroll(()=>{
 
 如使用scroll-view导致页面没有滚动，则触底事件不会被触发。scroll-view滚动到底部的事件请参考scroll-view的文档
 
+```ts
+onReachBottom(()=>{
+    // 发送网络请求
+})
+```
+
+### onPullDownRefresh()
+
+前提条件：需要在pages.json文件中的pages配置项中开启 下拉刷新
+
+```ts
+并在 style 选项中开启 enablePullDownRefresh
+
+"enablePullDownRefresh":true
+```
+
+
+
+```ts
+// 监听上拉刷新
+onPullDownRefresh(()=>{
+    // 清空数据
+    
+    // 发送网络请求
+    
+    // 开启刷新样式
+    uni.startPullDownRefresh(OBJECT)
+    
+    // 获取数据后，
+    
+    // 关闭刷新样式
+    
+})
+```
+
+
+
 ## uniapp执行顺序
 
 **页面生命周期**
