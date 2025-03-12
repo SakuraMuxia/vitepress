@@ -82,3 +82,286 @@ HBuilderX取消勾选保存时自动格式化
 取消勾选保存时自动格式化，主要是为了保存时，不要它的自动格式化代码风格设置。
 ```
 
+## 首页布局*
+
+**设置公共CSS**
+
+```vue
+
+```
+
+**轮播图布局**
+
+使用swiper组件，设置轮播。
+
+```vue
+
+```
+
+**公告布局**
+
+使用uni-ui设置图标
+
+```vue
+
+```
+
+**封装组件**
+
+新建 components 目录，然后创建 common-title 组件
+
+```vue
+
+```
+
+**每日推荐**
+
+使用scroll-view组件
+
+```vue
+
+```
+
+设置样式
+
+```css
+/* 父组件省略写法 scss */
+father{
+    &-item{
+    	
+	}
+}
+/* 使用伪类选择器控制最后一个图片的样式 */
+```
+
+使用拓展组件，图标组件。
+
+```ts
+
+```
+
+使用拓展组件，uni-dateformat组件
+
+```vue
+
+```
+
+**专题精选**
+
+创建 theme-item 组件
+
+```vue
+
+```
+
+使用 grid 网格布局*
+
+```vue
+
+```
+
+圆角覆盖设置
+
+```css
+/* 在图片的父级元素上设置	*/
+.box{
+    border-radius:10rpx;
+	overflow:hidden;
+    .pic{
+        width:100%;
+        heigh:100%;
+    }
+}
+
+```
+
+磨砂样式
+
+```css
+backdrop-filter:blur(20rpx)
+```
+
+通过缩放设置字体小于12
+
+```css
+
+```
+
+通过传参控制显示更多
+
+```vue
+
+```
+
+## 分类页面布局
+
+创建分类页面 classify.vue
+
+```vue
+
+```
+
+分类页面布局
+
+```css
+
+```
+
+## 用户页面布局
+
+设置 card 样式：圆角，阴影。使用伪类选择器控制最后一个没有边框
+
+```vue
+
+```
+
+点击客服，执行挂起微信
+
+```ts
+通过设置一个 按钮 设置opentype 为 contack
+把这个按钮通过 定位，定位到标签上，然后隐藏透明度
+opacity:0
+```
+
+通过条件编译，执行 拨打电话的 API
+
+```ts
+
+```
+
+
+
+## 底部导航配置
+
+配置底部导航的图标和路径
+
+```ts
+
+```
+
+## 全局顶部导航
+
+配置global样式
+
+```ts
+配置 通屏 
+	在pages.json文件中pages配置项中的style配置项的navigationStyle设置为custom
+	navigationStyle:custom
+```
+
+## 条件编译
+
+配置条件编译，控制在不同的平台编译不同的内容。
+
+```ts
+以 `#ifdef` 或 `#ifndef` 加 `%PLATFORM%` 开头，以 `#endif` 结尾。
+```
+
+| 条件编译写法                                             | 说明                                                         |
+| -------------------------------------------------------- | ------------------------------------------------------------ |
+| #ifdef **APP-PLUS** 需条件编译的代码 #endif              | 仅出现在 App 平台下的代码                                    |
+| #ifndef **H5** 需条件编译的代码 #endif                   | 除了 H5 平台，其它平台均存在的代码（注意if后面有个n）        |
+| #ifdef **H5** \|\| **MP-WEIXIN** 需条件编译的代码 #endif | 在 H5 平台或微信小程序平台存在的代码（这里只有\|\|，不可能出现&&，因为没有交集） |
+
+```ts
+在 html 使用 微信小程序使用
+<!-- #ifdef MP-WEIXIN -->
+    <official-account></official-account>
+<!-- #endif -->
+
+
+在js 中使用
+// #ifdef  %PLATFORM%
+uni.scanCode(()=>{
+    
+})
+// #endif
+
+
+在css中使用
+/*  #ifdef  %PLATFORM%  */
+平台特有样式
+/*  #endif  */
+
+
+在json中使用
+// #ifdef  %PLATFORM%
+{
+    "path":""
+}
+// #endif
+
+```
+
+## 线性渐变配置*
+
+在 common 中的 common-style.css 中配置统一的页面渐变
+
+```css
+background:linear-gradient(),
+linear-gradient();
+min-height:
+
+```
+
+## 主题色变量
+
+在 全局中的 scss中配置 主题色变量 uni.scss
+
+```css
+@import "@/commont/style/base-style.scss"
+```
+
+新建 commont/style/base-style.scss
+
+```scss
+$brand-theme-color:#
+```
+
+通过 设置 uni-icon 控制uni-icon的颜色 (H5可以实现，小程序不支持)
+
+```css
+uni-icon{
+    color:#ccc !important
+}
+/**使用 deep穿透 设置uni-ui的样式**/
+
+:deep(){
+    uni-icon{
+        color:#ccc !important
+    }
+}
+```
+
+## scss混合*
+
+```ts
+未了解
+```
+
+## 分类列表页面
+
+创建分类列表页面 classlist.vue 
+
+设置分类列表页面布局 
+
+```vue
+
+```
+
+配置navigate设置 跳转页面 （我的评分，我的下载，专题推荐，分类页面）
+
+```ts
+配置 navigate的 opentype 类型为 relaunch
+```
+
+## 壁纸预览页面
+
+新建页面 preview.vue
+
+使用swiper布局，设置custom通屏样式，
+
+```
+
+```
+
