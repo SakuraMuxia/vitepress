@@ -365,3 +365,196 @@ uni-icon{
 
 ```
 
+搭建静态页面，返回，信息，评分，下载，浮动框。
+
+```ts
+
+```
+
+配置样式
+
+```css
+/**定位元素设置居中**/
+position:absolute;
+left:0;
+right:0;
+width:fit-content; /**宽度根据内容自适应**/
+margin:auto;
+background:rgba(0,0,0,0.3); /**背景透明 **/
+backdrop-filter:blur(10rpx); /**模糊效果 **/
+
+/**使用calc计算的时候，中间需要加空格**/
+top:calc(10vh + 80rpx);
+
+/**使用子元素选择器**/
+.mask{
+    &>{
+    	
+	}
+    .time{
+        text-shadow: /**文字阴影 **/
+    }
+}
+
+```
+
+添加点击事件，隐藏遮罩层
+
+```ts
+
+```
+
+信息弹窗
+
+```ts
+使用 uni-popup 拓展组件
+
+vue3语法
+infoPopupRef.value.open()
+```
+
+自己写信息弹窗的遮罩层的样式和布局
+
+```vue
+
+上边的布局
+
+内容的布局 - 使用scroll-view组件
+
+
+```
+
+配置评分组件
+
+```ts
+配置评分组件只读，可以点击，设置value
+
+设置评分样式
+```
+
+配置版权信息样式，配置关闭按钮样式和功能
+
+```ts
+
+```
+
+uni-rate组件点击评分配置
+
+```vue
+评分组件的布局
+<uni-popup>
+    
+</uni-popup>
+
+
+设置评分组件设置半星
+
+设置评分组件点击蒙版才关闭
+
+设置按钮的禁用状态
+
+设置按钮的点击事件
+
+
+```
+
+## 自定义头部
+
+创建一个公共组件 custom-nav-bar 组件
+
+设置 nav-bar 组件布局
+
+```vue
+title-bar 胶囊按钮区域
+status-bar 状态栏区域
+
+在状态栏区域设置一个空盒子
+
+设置nav-bar渐变背景色
+
+使用一个空盒子，作为一个填充区域
+```
+
+获取系统高度
+
+```ts
+状态栏的高度
+
+
+胶囊按钮的高度
+uni.getMenuButtonBoundingClientRect()
+let menuButtonInfo = uni.getMenuButtonBoundingClientRect()
+
+使用条件编译判断
+
+
+```
+
+计算导航栏高度示意图
+
+![](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20250313151457971.png)
+
+抽离计算系统高度
+
+```ts
+新建utils目录，并同时创建system.js文件
+
+使用全局API获取设备信息
+
+定义一个计算状态栏高度函数，暴漏这个函数
+export const functon(){}
+
+定义一个计算标题栏高度函数，暴漏这个函数
+export const functon(){}
+
+在页面中导入，然后调用
+```
+
+分类页面的标题栏设置
+
+```ts
+把标题栏组件引入，传值
+```
+
+预览页面标题栏设置
+
+```ts
+引入封装计算状态栏方法，然后调用，设置返回按钮的高度
+```
+
+设置页面跳转
+
+```ts
+首页点击图片跳转预览
+
+分类页面的点击图片跳转预览
+
+
+```
+
+创建公告详情页面
+
+```ts
+设置公告详情页面布局
+```
+
+使用uni.tag标签
+
+```ts
+
+```
+
+设置公告跳转到公告详情页面
+
+```ts
+
+```
+
+## 接口
+
+获取首页banner数据
+
+```ts
+
+```
+

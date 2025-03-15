@@ -234,6 +234,36 @@ uniapp-API-界面
 
 ### uni.request
 
+**OBJECT 参数说明**
+
+| 参数名               | 类型                      | 必填 | 默认值 | 说明                                                         |
+| :------------------- | :------------------------ | :--- | :----- | :----------------------------------------------------------- |
+| url                  | String                    | 是   |        | 开发者服务器接口地址                                         |
+| data                 | Object/String/ArrayBuffer | 否   |        | 请求的参数                                                   |
+| header               | Object                    | 否   |        | 设置请求的 header，header 中不能设置 Referer                 |
+| method               | String                    | 否   | GET    | 有效值详见下方说明                                           |
+| timeout              | Number                    | 否   | 60000  | 超时时间，单位 ms                                            |
+| dataType             | String                    | 否   | json   | 如果设为 json，会对返回的数据进行一次 JSON.parse，非 json 不会进行 JSON.parse |
+| responseType         | String                    | 否   | text   | 设置响应的数据类型。合法值：text、arraybuffer                |
+| sslVerify            | Boolean                   | 否   | true   | 验证 ssl 证书                                                |
+| withCredentials      | Boolean                   | 否   | false  | 跨域请求时是否携带凭证（cookies）                            |
+| firstIpv4            | Boolean                   | 否   | false  | DNS解析时优先使用ipv4                                        |
+| enableHttp2          | Boolean                   | 否   | false  | 开启 http2                                                   |
+| enableQuic           | Boolean                   | 否   | false  | 开启 quic                                                    |
+| enableCache          | Boolean                   | 否   | false  | 开启 cache                                                   |
+| enableHttpDNS        | Boolean                   | 否   | false  | 是否开启 HttpDNS 服务。如开启，需要同时填入 httpDNSServiceId 。 HttpDNS 用法详见 [移动解析HttpDNS](https://developers.weixin.qq.com/miniprogram/dev/framework/ability/HTTPDNS.html) |
+| httpDNSServiceId     | String                    | 否   |        | HttpDNS 服务商 Id。 HttpDNS 用法详见 [移动解析HttpDNS](https://developers.weixin.qq.com/miniprogram/dev/framework/ability/HTTPDNS.html) |
+| enableChunked        | Boolean                   | 否   | false  | 开启 transfer-encoding chunked                               |
+| forceCellularNetwork | Boolean                   | 否   | false  | wifi下使用移动网络发送请求                                   |
+| enableCookie         | Boolean                   | 否   | false  | 开启后可在headers中编辑cookie                                |
+| cloudCache           | Object/Boolean            | 否   | false  | 是否开启云加速（详见[云加速服务](https://smartprogram.baidu.com/docs/develop/extended/component-codeless/cloud-speed/introduction/)） |
+| defer                | Boolean                   | 否   | false  | 控制当前请求是否延时至首屏内容渲染后发送                     |
+| success              | Function                  | 否   |        | 收到开发者服务器成功返回的回调函数                           |
+| fail                 | Function                  | 否   |        | 接口调用失败的回调函数                                       |
+| complete             | Function                  | 否   |        | 接口调用结束的回调函数（调用成功、失败都会执行）             |
+
+### 封装request
+
 发送网络请求
 
 ```ts
@@ -621,3 +651,35 @@ module.exports = {
 <uni-icons class="input_icon" type="paperplane-filled" size="20" @click="add" />
 ```
 
+## 兼容性
+
+在大多数情况下，`wx` 的 API 在 `uni` 里都有对应的封装，虽然 `uni-app` 推荐用 `uni` 代替 `wx`，但在 **编译为微信小程序时**，仍然可以使用 `wx` API，不过这样就无法跨平台。
+
+**示例**
+
+仅限微信小程序环境时使用
+
+```ts
+if (wx && wx.getSystemInfoSync) {
+  const info = wx.getSystemInfoSync();
+  console.log("微信小程序设备信息:", info);
+}
+```
+
+或者使用 **条件编译** 让这段代码只在微信小程序中执行：
+
+```ts
+// #ifdef MP-WEIXIN
+	wx.showToast({ title: "仅微信小程序可见" });
+// #endif
+```
+
+但是有些 API 在 `uni` 中没有封装，必须用 `wx`，例如
+
+- `wx.cloud`（云开发）
+- `wx.login`（微信登录）
+- `wx.getUserProfile`（用户授权）
+
+**总结**
+
+如果你的项目只面向 **微信小程序**，可以直接用 `wx`。但如果要支持 H5、App、小程序等多个端，最好用 `uni`。

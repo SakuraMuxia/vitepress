@@ -21,3 +21,7 @@ uni-ui是官方的拓展组件
 ### uni-segmented-control
 
 分段器
+
+### uni-tag
+
+标签样式

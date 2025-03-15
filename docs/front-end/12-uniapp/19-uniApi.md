@@ -2,6 +2,8 @@
 
 `uni-app`的 js API 由标准 ECMAScript 的 js API 和 uni 扩展 API 这两部分组成。
 
+由DClound公司封装好的API，包含对Android，微信，钉钉，支付宝中API进行再一次封装，实现全平台支持。
+
 ## 界面
 
 ### uni.showToast(OBJECT)
@@ -717,3 +719,120 @@ const onPreview = function (index){
 | success     | Function | 否   | 接口调用成功的回调                               |
 | fail        | Function | 否   | 接口调用失败的回调函数                           |
 | complete    | Function | 否   | 接口调用结束的回调函数（调用成功、失败都会执行） |
+
+### uni.getSystemInfo(OBJECT)
+
+异步获取系统信息
+
+**OBJECT 参数说明：**
+
+| 参数名   | 类型     | 必填 | 说明                                             |
+| :------- | :------- | :--- | :----------------------------------------------- |
+| success  | Function | 是   | 接口调用成功的回调                               |
+| fail     | Function | 否   | 接口调用失败的回调函数                           |
+| complete | Function | 否   | 接口调用结束的回调函数（调用成功、失败都会执行） |
+
+### uni.getSystemInfosync(OBJECT)
+
+异步获取系统信息
+
+```ts
+方式1
+uni.getSystemInfo({
+	success: function (res) {
+		console.log(res.appName)
+	}
+});
+方式2
+SYSTEM_INFO = uni.getSystemInfo()
+console.log(SYSTEM_INFO.navigationBarHeight) // 这里返回的值是 px单位，不是rpx单位
+```
+
+**参数说明**
+
+| 参数                | 说明             |
+| ------------------- | ---------------- |
+| navigationBarHeight | 导航栏的高度     |
+| titleBarHeight      | 标题栏高度       |
+| statusBarHeight     | 手机状态栏的高度 |
+
+**各部分高度说明**
+
+**状态栏高度（Status Bar Height）**
+
+- **指的是手机顶部状态栏的高度**，即显示时间、电量、信号的部分。
+- 这个高度因设备不同而不同（如 iPhone X 及以上的刘海屏，安卓手机等）。
+- 可以通过 `wx.getSystemInfoSync().statusBarHeight` 获取。
+
+**导航栏高度（Navigation Bar Height）**
+
+- **指的是小程序页面顶部的导航栏（包含返回按钮、标题等）**。
+- 这个高度在不同设备上是固定的，通常是 **44px**（iOS）或 **48px**（Android）。
+
+**标题栏高度Title Bar Height**
+
+- **标题栏 = 状态栏 + 导航栏**，也就是整个小程序顶部的高度。
+
+- 计算方式：
+
+  ```js
+  const systemInfo = wx.getSystemInfoSync();
+  const statusBarHeight = systemInfo.statusBarHeight; // 状态栏高度
+  const navBarHeight = systemInfo.platform === 'ios' ? 44 : 48; // iOS 为 44，Android 为 48
+  const titleBarHeight = statusBarHeight + navBarHeight; // 总标题栏高度
+  ```
+
+![image-20250313151457971](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20250313151457971.png)
+
+## 网络
+
+### uni.request(OBJECT)
+
+发起网络请求。
+
+**OBJECT 参数说明**
+
+| 参数名               | 类型                      | 必填 | 默认值 | 说明                                                         |
+| :------------------- | :------------------------ | :--- | :----- | :----------------------------------------------------------- |
+| url                  | String                    | 是   |        | 开发者服务器接口地址                                         |
+| data                 | Object/String/ArrayBuffer | 否   |        | 请求的参数                                                   |
+| header               | Object                    | 否   |        | 设置请求的 header，header 中不能设置 Referer                 |
+| method               | String                    | 否   | GET    | 有效值详见下方说明                                           |
+| timeout              | Number                    | 否   | 60000  | 超时时间，单位 ms                                            |
+| dataType             | String                    | 否   | json   | 如果设为 json，会对返回的数据进行一次 JSON.parse，非 json 不会进行 JSON.parse |
+| responseType         | String                    | 否   | text   | 设置响应的数据类型。合法值：text、arraybuffer                |
+| sslVerify            | Boolean                   | 否   | true   | 验证 ssl 证书                                                |
+| withCredentials      | Boolean                   | 否   | false  | 跨域请求时是否携带凭证（cookies）                            |
+| firstIpv4            | Boolean                   | 否   | false  | DNS解析时优先使用ipv4                                        |
+| enableHttp2          | Boolean                   | 否   | false  | 开启 http2                                                   |
+| enableQuic           | Boolean                   | 否   | false  | 开启 quic                                                    |
+| enableCache          | Boolean                   | 否   | false  | 开启 cache                                                   |
+| enableHttpDNS        | Boolean                   | 否   | false  | 是否开启 HttpDNS 服务。如开启，需要同时填入 httpDNSServiceId 。 HttpDNS 用法详见 [移动解析HttpDNS](https://developers.weixin.qq.com/miniprogram/dev/framework/ability/HTTPDNS.html) |
+| httpDNSServiceId     | String                    | 否   |        | HttpDNS 服务商 Id。 HttpDNS 用法详见 [移动解析HttpDNS](https://developers.weixin.qq.com/miniprogram/dev/framework/ability/HTTPDNS.html) |
+| enableChunked        | Boolean                   | 否   | false  | 开启 transfer-encoding chunked                               |
+| forceCellularNetwork | Boolean                   | 否   | false  | wifi下使用移动网络发送请求                                   |
+| enableCookie         | Boolean                   | 否   | false  | 开启后可在headers中编辑cookie                                |
+| cloudCache           | Object/Boolean            | 否   | false  | 是否开启云加速（详见[云加速服务](https://smartprogram.baidu.com/docs/develop/extended/component-codeless/cloud-speed/introduction/)） |
+| defer                | Boolean                   | 否   | false  | 控制当前请求是否延时至首屏内容渲染后发送                     |
+| success              | Function                  | 否   |        | 收到开发者服务器成功返回的回调函数                           |
+| fail                 | Function                  | 否   |        | 接口调用失败的回调函数                                       |
+| complete             | Function                  | 否   |        | 接口调用结束的回调函数（调用成功、失败都会执行）             |
+
+### uni.connectSocket(OBJECT)
+
+创建一个 [WebSocket](https://developer.mozilla.org/zh-CN/docs/Web/API/WebSocket) 连接。
+
+uni-app的socket，分全局socket和socketTask。全局socket只能有一个，一旦被占用就无法再开启。**所以不推荐使用全局socket，一般使用socketTask。**
+
+**OBJECT 参数说明**
+
+| 参数名    | 类型          | 必填 | 说明                                                         | 平台差异说明                                            |
+| :-------- | :------------ | :--- | :----------------------------------------------------------- | :------------------------------------------------------ |
+| url       | String        | 是   | 服务器接口地址                                               | 小程序中必须是 `wss://` 协议                            |
+| multiple  | Boolean       | 否   | 是否多实例。传入 true 时，将返回一个包含 SocketTask 实例。   | 仅支付宝小程序支持                                      |
+| header    | Object        | 否   | HTTP Header , header 中不能设置 Referer                      | 小程序、App 2.9.6+                                      |
+| method    | String        | 否   | 默认是GET，有效值：OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT | 仅微信小程序支持                                        |
+| protocols | Array<String> | 否   | 子协议数组                                                   | App、H5、微信小程序、百度小程序、抖音小程序、飞书小程序 |
+| success   | Function      | 否   | 接口调用成功的回调函数                                       |                                                         |
+| fail      | Function      | 否   | 接口调用失败的回调函数                                       |                                                         |
+| complete  | Function      | 否   | 接口调用结束的回调函数（调用成功、失败都会执行）             |                                                         |
