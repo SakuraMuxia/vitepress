@@ -555,6 +555,113 @@ export const functon(){}
 获取首页banner数据
 
 ```ts
+获取首页banner数据，渲染数据
+```
 
+获取每日推荐接口
+
+```js
+获取首页每日推荐数据，渲染数据
+```
+
+获取壁纸公告列表
+
+```ts
+获取首页壁纸公告数据，渲染数据
+```
+
+## 封装请求
+
+新建一个 api 目录，里边存放的是各种接口
+
+新建一个 request.js 文件，作用是封装uni 请求。
+
+apis.js
+
+```ts
+export function apiGetBanner(){
+    return uni.request({
+        url:,
+        header:{
+        	
+    	}
+    })
+}
+```
+
+request.js
+
+```ts
+export function request(){
+    
+}
+```
+
+**获取分类列表数据**
+
+```ts
+通过封装的request请求和api接口获取数据
+渲染数据
+
+```
+
+**分类列表跳转到分类详情页面**
+
+```ts
+通过请求参数 classid获取 分类详情数据列表
+```
+
+分类详情页面通过 onLoad 生命周期获取 参数
+
+```ts
+onLoad(()=>{
+    设置导航栏的标题
+    
+    调用发送网络请求
+})
+```
+
+## 触底加载*
+
+使用 生命周期函数 onReachbottom() 监听触底
+
+使用 z-padding插件实现防抖
+
+```ts
+onReachBottom(()=>{
+    pageNum++
+})
+
+通过 解构把 新数据和老数据进行拼接
+classList.value = [...classList.value,...res.data]
+
+判断如果返回的数据小于pageSize，则不再发送请求,因为最后一次请求的数据，已经小于pageSize了，说明后续已经没有数据了。
+```
+
+触底加载loading样式
+
+```ts
+使用 uni-loading 插件
+
+在分类列表页面的 html 结构中添加 uni-load-more 标签
+
+在 uni-load-more 标签定义 loading-layout 类名，并把这个类名放在 common 目录中的公共 style.css中
+
+通过 v-if 和 v-else 控制loading加载的显示与隐藏
+
+通过 定义一个 noData 响应式对象，当发送请求相应后，后续没有数据了，改变noData的状态为true
+
+触底加载 和 骨架屏加载的 v-if 判断逻辑是相反的
+骨架屏加载显示 条件：数据列表的长度为空，并且 noData标记 为false
+触底加载显示 条件：数据列表长度不为空，或者 noDate 标记为 true
+通过三元表达式控制 加载中还是没有显示更多
+把底部安全区域定义为 通用css样式
+在底部新建一个空标签 设置类名为 底部安全区域的类型
+```
+
+骨架屏效果
+
+```ts
+使用 uv-skeletons 插件
 ```
 
