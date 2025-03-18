@@ -274,7 +274,57 @@ onPullDownRefresh(()=>{
 })
 ```
 
+### onShareAppMessage(Object)
 
+用户点击右上角分享
+
+```ts
+onShareAppMessage((e)=>{
+    return {
+        title:'',
+    	path:''
+    }
+})
+```
+
+此事件需要 return 一个 Object，用于自定义分享内容，其内容如下
+
+| 参数名   | 类型   | 必填 | 说明                                                         |
+| :------- | :----- | :--- | :----------------------------------------------------------- |
+| title    | String | 是   | 分享标题                                                     |
+| path     | String | 是   | 页面 path ，必须是以 / 开头的完整路径。注意：京东小程序，开头不要加'/' |
+| imageUrl | String | 否   | 分享图标，路径可以是本地文件路径、代码包文件路径或者网络图片路径。支持PNG及JPG。显示图片长宽比是 5:4 |
+| content  | String | 否   | 百度小程序表现为：分享内容；支付宝小程序表现为：吱口令文案   |
+| desc     | String | 否   | 自定义分享描述                                               |
+| bgImgUrl | String | 否   | 自定义分享二维码的背景图，建议大小750*950（网络图片路径）    |
+| query    | String | 否   | QQ小程序查询字符串，必须是 key1=val1&key2=val2 的格式。从这条转发消息进入后，可通过 qq.getLaunchOptionSync() 或 qq.onShow() 获取启动参数中的 query。 |
+
+### onShareTimeline(OBJECT)
+
+分享朋友圈
+
+```ts
+去 微信小程序 开发文档中搜索
+
+https://developers.weixin.qq.com/miniprogram/dev/reference/api/Page.html#onShareTimeline
+
+onShareTimeline(object)
+
+onshareTimeline(()=>{
+    return {
+        title:'',
+        
+    }
+})
+```
+
+事件处理函数返回一个 Object，用于自定义分享内容，不支持自定义页面路径，返回内容如下：
+
+| 字段     | 说明                                                        | 默认值                 |
+| :------- | :---------------------------------------------------------- | :--------------------- |
+| title    | 自定义标题，即朋友圈列表页上显示的标题                      | 当前小程序名称         |
+| query    | 自定义页面路径中携带的参数                                  | 当前页面路径携带的参数 |
+| imageUrl | 自定义图片路径，可以是本地文件或者网络图片。支持 PNG 及 JPG | 默认使用小程序 Logo    |
 
 ## uniapp执行顺序
 

@@ -665,3 +665,320 @@ classList.value = [...classList.value,...res.data]
 使用 uv-skeletons 插件
 ```
 
+在分类页面 使用本地存储 存储数据
+
+```ts
+使用本地存储 API存储 数据
+uni.setStorageSync("")
+```
+
+在预览页面 使用本地存储 读取数据
+
+```ts
+uni.getStorageSync("")
+
+// 读取数据后，然后处理数据
+把数组中元素添加picurl属性，修改后缀
+
+在预览页面修改 src 绑定的值
+
+修改预览页面的 数量 显示
+
+
+```
+
+点击图片从当前图片显示
+
+```ts
+分类列表页面 通过 url的path 传递 id
+预览页面通过 onLoad 函数读取 path中的id属性
+使用 findIndex() 方法获取 元素对应的索引值
+在swiper组件上设置current属性，对应当前 数据列表的索引值
+在swiper组件上设置@change事件，创建change事件回调
+const swiperChange = (e) => {
+    current.value = e.datail.current
+}
+
+```
+
+自定义一个数组，实现swiper的懒加载的效果
+
+```ts
+在
+image标签上设置v-if属性，v-if通过判断仅显示当前索引值（存在问题，弃用）
+创建一个数组对象，把看过的图索引值放在Set数组中，然后判断当前索引值是否包含在数组中，包含则返回true，不包含则返回false
+
+预加载，向左和向右，
+在数组对象中，把当前看过的图的索引的前一张和后一张，都放在数组中，实现友好交互。
+	
+// 设置预览页面数组对象为 set数组
+readImgs.value = [...new Set(readImgs.value)]
+```
+
+渲染信息数据
+
+```ts
+点击信息按钮显示 壁纸信息
+
+定义一个响应式数据
+	在onLoad生命周期函数中，把图片的信息赋值给 currentInfo响应式数据
+	
+```
+
+评分的操作
+
+```ts
+点击评分按钮，弹出评分弹框
+在确认评分的回调函数中，获取当前用户操作的评分
+封装网络接口
+发送网络请求
+对相应做出反应，评分成功弹窗，评分失败弹窗，评分完成后关闭弹窗。
+评分完成后，向分类列表的对象中添加一个userScore属性。
+由于没有刷新，评分完成后，向缓存中重新存储分类列表
+在评过分的壁纸上，再次点击评分，首先判断当前图片对象中是否存在 userScore属性，设置isScored响应式数据
+然后把 userScore的属性值，更改为评分的双向绑定值。
+根据isScored的状态，绑定确定评分按钮的禁用状态，同时绑定uni-rate组件的评分状态为disabled
+
+点击确认评分时，发送网络请求时，加上加载状态 uni.showLoading({
+    
+})
+
+返回数据时，加载完成状态。
+
+
+```
+
+解构同时设置别名
+
+```ts
+let {classid,_id:wallId} = currentInfo.value
+
+在之后使用 wallId 就相当于使用 _id
+
+```
+
+## 图片下载
+
+使用条件编译的语法，区别对待图片下载
+
+```ts
+const clickDownload = () => {
+    // #ifdef H5 
+    	H5逻辑
+    // #endif
+    
+    // #ifndef H5
+        uni.saveImageToPhotosAlbum({
+            filePath: currentInfo.value.picurl
+            success:(res) => {
+            		
+        	}
+        })
+    // #endif
+    
+}
+```
+
+设置 小程序的 downloadFile 合法域名
+
+```ts
+登陆小程序后台
+```
+
+使用 uni.getImageInfo 方法获取图片信息，小程序下获取网络图片信息需先配置download域名白名单才能生效。
+
+```ts
+uni.getImageInfo({
+    src:currentINfo.value.picurl,
+    success:(res)=>{
+        console.log(res)
+    }
+})
+uni.showloading({
+    title:'加载中',
+    mask:true // 遮罩
+})
+uni.saveImageToPhotosAlbum({
+    filePath:currentInfo.value.picurl,
+    success:(res)=>{
+        console.log(res)
+    },
+    fail:err=>{
+        // 如果没有保存成功
+        if(err.errMsg === '...'){
+            // 提示 保存失败，请重新点击下载
+            return;
+        }
+        // 再次提示，需要授权保存到相册
+        uni.showModal({
+            title:"提示",
+            content:"需要授权保存相册",
+            // 成功回调，点击了确认
+            success:res=>{
+                if(res.confirm){
+                    // 打开手动授权
+                    uni.openSetting({
+                        // 成功的回调
+                        success:(setting)=>{
+                            if(setting.authSetting['scope.writePhotosAlbum']){
+                                uni.showToast({
+                                    title:"",
+                                    
+                                })
+                            }
+                            else{
+                                // 获取授权失败
+                            }
+                        }
+                    })
+                }
+            }
+            complete:()=>{
+            	// 设置加载效果隐藏
+        	}
+        })
+    }
+})
+```
+
+设置小程序的 服务内容声明，用户隐私指引
+
+```ts
+
+```
+
+![image-20250318151557776](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20250318151557776.png)
+
+设置用户隐私 拒绝 的回调处理
+
+```ts
+
+```
+
+## 下载记录
+
+封装下载记录请求接口
+
+```ts
+发送请求，对响应数据进行处理
+```
+
+使用try catch 捕获异常
+
+```ts
+try {
+    
+}catch(err){
+    // 取消加载效果
+    
+}
+```
+
+处理 v-for 中的key的报错
+
+处理 生命周期，初始值报错
+
+```ts
+设置初始值，
+设置key
+设置v-if判断，数据存在时，再渲染
+```
+
+## 分享
+
+分享小程序
+
+```ts
+onShareAppMessage(()=>{
+    return {
+        title:'',
+        path:'' + 响应式数据
+    }
+})
+```
+
+分享朋友圈
+
+```ts
+onShareTimeline(()=>{
+    return {
+        title:'咸虾米'+ pageName,
+        query:'id=' + queryParmas.classid + "&name="+pageName
+    }
+})
+```
+
+分享传递参数
+
+```ts
+onload((e)=>{
+    // 解构url中的参数
+})
+
+onShareAppMessage(()=>{
+    return {
+        title:'咸虾米'+ pageName,
+        path:'/pages/classlist/classlist?id=' + queryParmas.classid + "&name="+pageName
+    }
+})
+```
+
+预览页面分享传递参数
+
+```ts
+在onLoad()的回调函数中获取，url中query参数，
+判断query中的 type是否为 share，如果是share则代表是从别人分享过来的
+于是需要封装接口，重新发送请求，获取壁纸列表，
+并把壁纸列表的picurl处理为bigurl，即可实现需求
+
+```
+
+对分享后页面的返回按钮进行处理
+
+```ts
+如果是从分享过来的，进行单独处理
+
+通过在 goBack的回调中
+goBack(){
+    uni.navigateBack({
+        success:()=>{
+            
+        },
+        fail:()=>{
+            // 跳转到首页
+            uni.reLaunch({
+                url:"/page/index/index"
+            })
+        }
+    })
+}
+```
+
+在分类列表页面，对localStorage进行销毁
+
+```ts
+在 onUnLoad() 中，处理 localStorage的数据，进行销毁。
+```
+
+首页随机页面点击后跳转到预览页面
+
+```ts
+在跳转到预览页面的回调中
+	把随机页面存储到localStorage中
+    根据id，进行传参，显示那一张图片
+    
+```
+
+壁纸信息弹窗底部的安全区域处理
+
+```ts
+在 uni-popup官方组件的源代码控制
+uni-popup.vue 349行代码进行注释
+```
+
+如果需要参数的页面没有接收到参数，则提示无参数，选择回到首页弹窗
+
+```ts
+
+```
+

@@ -702,6 +702,34 @@ const onPreview = function (index){
 </script>
 ```
 
+### uni.chooseImage(OBJECT)
+
+从本地相册选择图片或使用相机拍照
+
+**OBJECT 参数说明**
+
+| 参数名     | 类型     | 必填 | 说明                                                         |
+| :--------- | :------- | :--- | :----------------------------------------------------------- |
+| count      | Number   | 否   | 最多可以选择的图片张数，默认9                                |
+| sizeType   | Array    | 否   | original 原图，compressed 压缩图，默认二者都有               |
+| extension  | Array    | 否   | 根据文件拓展名过滤，每一项都不能是空字符串。默认不过滤。     |
+| sourceType | Array    | 否   | album 从相册选图，camera 使用相机，默认二者都有。如需直接开相机或直接选相册，请只使用一个选项 |
+| crop       | Object   | 否   | 图像裁剪参数，设置后 sizeType 失效                           |
+| success    | Function | 是   | 成功则返回图片的本地文件路径列表 tempFilePaths               |
+
+### uni.saveImageToPhotosAlbum()
+
+保存图片到系统相册。
+
+**OBJECT 参数说明**
+
+| 参数名   | 类型     | 必填 | 说明                                                         |
+| :------- | :------- | :--- | :----------------------------------------------------------- |
+| filePath | String   | 是   | 图片文件路径，可以是临时文件路径也可以是永久文件路径，不支持网络图片路径 |
+| success  | Function | 否   | 接口调用成功的回调函数                                       |
+| fail     | Function | 否   | 接口调用失败的回调函数                                       |
+| complete | Function | 否   | 接口调用结束的回调函数（调用成功、失败都会执行）             |
+
 ## 设备
 
 ### uni.makePhoneCall(OBJECT)
@@ -835,3 +863,25 @@ uni-app的socket，分全局socket和socketTask。全局socket只能有一个，
 | success   | Function | 否   | 接口调用成功的回调函数                                       |                                                         |
 | fail      | Function | 否   | 接口调用失败的回调函数                                       |                                                         |
 | complete  | Function | 否   | 接口调用结束的回调函数（调用成功、失败都会执行）             |                                                         |
+
+## 授权
+
+### uni.authorize(OBJECT)
+
+提前向用户发起授权请求。如果用户之前已经同意授权，则不会出现弹窗，直接返回成功。如果用户之前拒绝了授权，此接口会直接进入失败回调，一般搭配`uni.getSetting`和`uni.openSetting`使用。
+
+**OBJECT 参数说明**
+
+| 参数     | 类型     | 必填 | 说明                                             |
+| -------- | -------- | ---- | ------------------------------------------------ |
+| scope    | String   | 是   | 需要获取权限的 scope，详见 scope 列表。          |
+| success  | Function | 否   | 接口调用成功的回调函数                           |
+| fail     | Function | 否   | 接口调用失败的回调函数                           |
+| complete | Function | 否   | 接口调用结束的回调函数（调用成功、失败都会执行） |
+
+## 设置
+
+### uni.openSetting(OBJECT)
+
+调起客户端小程序设置界面，返回用户设置的操作结果。
+
