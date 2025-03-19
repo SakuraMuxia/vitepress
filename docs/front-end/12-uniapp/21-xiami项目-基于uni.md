@@ -82,12 +82,43 @@ HBuilderX取消勾选保存时自动格式化
 取消勾选保存时自动格式化，主要是为了保存时，不要它的自动格式化代码风格设置。
 ```
 
+## 新建目录
+
+新建common目录用于存放图片或需要引入的css和js
+
+在static目录中新建images目录存放logo，这里的文件都会被打包进去
+
 ## 首页布局*
 
 **设置公共CSS**
 
+/common/css/common-style.scss
+
 ```vue
 
+```
+
+在APP.vue中引入 公共css
+
+```vue
+<script>
+	export default {
+		onLaunch: function() {
+			console.log('App Launch')
+		},
+		onShow: function() {
+			console.log('App Show')
+		},
+		onHide: function() {
+			console.log('App Hide')
+		}
+	}
+</script>
+
+<style lang="scss">
+	/*每个页面公共css */
+@import "common/css/common-style.scss"	
+</style>
 ```
 
 **轮播图布局**
@@ -980,5 +1011,327 @@ uni-popup.vue 349行代码进行注释
 
 ```ts
 
+```
+
+## 个人用户
+
+布局个人用户页面，设置导航栏的高度
+
+```ts
+
+```
+
+封装用户信息接口
+
+```ts
+
+```
+
+获取用户数据，渲染用户数据
+
+```ts
+ 
+```
+
+无数据时，使用加载效果
+
+```ts
+
+```
+
+我的下载和我的评分页面
+
+```ts
+点击我的下载按钮，跳转到分类列表页面
+
+在跳转时传递标题和type类型：download或scope
+```
+
+封装获取下载历史接口
+
+```ts
+
+```
+
+封装获取评分的接口
+
+```ts
+
+```
+
+
+
+## 用户登陆*
+
+```ts
+
+```
+
+## 公告详情
+
+封装公告详情接口
+
+```ts
+
+```
+
+获取公告详情数据，并渲染数据。
+
+```ts
+
+```
+
+富文本的渲染
+
+```ts
+默认会把html标签直接展出来
+使用 rich-text 标签展示富文本。
+rich-text :nodes=""
+
+或使用第三方富文本插件 vue3 
+mp-text :content=""
+```
+
+在首页的公告 navegate 标签中设置 跳转的url 同时拼接 参数。
+
+在公告详情页面使用 onLoad 函数接收 id。
+
+在公告详情页面获取公告详情接口中接收id，发送请求
+
+```ts
+
+```
+
+点击常见问题跳转到公告详情页面，同时传递 id 参数，同时更改标题
+
+```ts
+
+```
+
+## 搜索页面
+
+创建 搜索页面 search.vue ，布局，
+
+首页 搜索标签 设置navigate便签 实现跳转
+
+使用 uni-search-bar 组件 搜索框
+
+```ts
+在扩展组件中，安装uni-search-bar组件
+插件市场，安装uv-empty组件，空状态，搜索为空时的样式
+
+搜索框中的确认搜索 onSearch 回调中
+	获取搜索的内容
+    把搜索的内容添加到搜索历史的数组中，使用 new Set([]),去重处理
+	把搜索历史放置到localStorage中，历史搜索默认从 localStorage中读取，否则为空 
+    
+搜索删除按钮 removeHistory 回调
+	弹窗提示 uni.showModal
+    删除缓存 uni.remove
+	删除响应式对象 searchHistory.value = []
+
+若搜索历史为空，则不显示搜索删除按钮，和最近搜索标签
+	
+在 tab 标签的点击事件中 onClick 回调中
+	把tab标签中的内容，复制到搜索栏
+```
+
+最近搜索
+
+热门搜索
+
+封装搜索接口，发送网络请求，获取搜索数据，渲染数据
+
+```ts
+点击标签 tag 时，同时发送请求，获取数据
+
+触底加载数据 onReachBottom 事件中
+	如果noDate为true，return
+	pageNum ++
+	处理响应结果，把老数据和新数据合并
+    需要把分类列表放在localStorage中
+	发送网络请求
+    
+加载样式进行处理，追加安全区域
+
+如果后续没有数据，则 使用 noData 作为标记 为 true
+
+使用 noSearch 标记判断 搜索内容和空状态
+
+初始化 initParams 
+	清空 classList
+    清空 noData标记 noSearch 标记
+    清空 queryParams 为初始化
+    
+在清空搜索和取消按钮 调用 init
+在点击标签的回调总 调用init
+
+
+
+```
+
+搜索列表页面
+
+```ts
+没有 搜索列表页面 ，通过v-if 控制 热门搜索，最近搜索的显示与隐藏
+```
+
+点击搜索列表的元素时，跳转到预览页面
+
+```ts
+<navigate :url = `/page/...?id=${item._id}`>
+    
+
+```
+
+离开页面，清空localStorage中的classList
+
+```ts
+
+```
+
+搜索框初始化，搜索记录限制条数，搜索中添加loading效果。
+
+```ts
+初始化函数中，传递value，如果输入框没有，则为空，存在则为value
+
+在搜索 onSearch 回调中 添加搜索加载，
+
+通过数组的 slice方法 截取 只获取10个内容
+```
+
+首页轮播图跳转和修复bug
+
+```ts
+swiper 标签中 添加 navigate 标签，同时修改 css样式
+
+在navigate标签中设置 url 属性 :url=`/page/...?${item.url}`
+
+再添加一个 navigate标签 通过 v-if 判断 item属性中是否是 miniProgram
+	在跳转到第三方小程序navigate的设置 ：url="",target="miniProgram",:app-id=""
+
+超过三个月之后返回null，进行修复，通过v-if进行修复
+
+专题精选 更多按钮上 进行跳转。
+```
+
+## 打包
+
+微信小程序
+
+```ts
+1. 注册微信小程序开发者
+	设置
+    服务类名	信息查询 图片处理
+    开发管理：
+    	配置服务器域名：https:
+		downloadFile 合法域名：新增一个合法域名
+        unloadFile 合法域名：新增合法域名
+
+2. manifest.json
+	设置appid，上传代码时自动压缩勾选
+    
+3. 发行
+	微信小程序
+    
+4. 打包目录
+	unpackage/dist/dev/mp-weixin
+
+5. 开发者工具中
+	点击上传 
+    
+6. 微信小程序的后台
+	版本管理-开发版本-提交审核
+
+7. 快的审核 内容发布 新闻发布 审核的时间更长
+```
+
+抖音小程序
+
+```ts
+1. 运行到 抖音开发者工具
+	设置appId,设置域名域名
+2. 注册抖音小程序开发者
+	抖音开放平台，快速入住，进入控制台，
+    使用 条件编译 隐藏标题栏 样式，仅在抖音小程序不显示。
+    备案
+3. 发行，抖音，上传
+4. 上传，
+5. 配置域名，downloadFile合法域名
+```
+
+H5打包和发布：使用unicloud网页托管
+
+```ts
+1. 进入manifest.json文件
+	Web配置：
+    	配置标题
+        配置路由模式
+        运行的基础路由 根./ 或者 /xxmwall/
+        配置定位和地图
+2. 源码视图中配置跨域
+
+3. 打包：发行-网站
+		配置名称
+4. 打包路径
+	unpackage-dist-build-h5
+5. 把目录名称为 xxmwall
+
+6. 使用unicloud服务空间
+		使用前端网页托管
+   		注意 目录名称 必须 与 manifest.json 名称一致。
+   		参数配置，使用默认域名访问
+        配置跨域，跨域配置，把默认域名新增上
+7. 草料二维码，将https链接转为二维码
+8. 购买域名
+```
+
+安卓APP打包
+
+https://hx.dcloud.net.cn/Tutorial/App/use-chrome-to-debug-android-apps?id=%e9%99%84%e5%bd%95%ef%bc%9aandroid%e6%a8%a1%e6%8b%9f%e5%99%a8%e8%b0%83%e8%af%95%e7%8e%af%e5%a2%83
+
+```ts
+1. 运行到手机模拟器
+2. manifest.json 进行配置
+	应用名称 1.0.1 应用版本号 101
+	设置应用图标：
+    	App启动界面，原生隐私提示框
+    App模块：
+    权限配置：
+    常用配置：
+3. 打包自定义基座
+
+4. 发行
+	原生APP-云打包，打正式包
+```
+
+打包
+
+![image-20250319151005011](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20250319151005011.png)
+
+## 消息推送*
+
+```ts
+3.1-3.2-3.3 push推送更新
+```
+
+HBuilder连接夜神模拟器进行调试
+
+```ts
+夜神模拟器
+编写文件注意后缀名为.bat
+d:
+cd  D:\Program Files\Nox\bin
+nox_adb  connect 127.0.0.1:62001
+nox_adb devicese
+d:
+cd  D:\HBuilder
+adb connect 127.0.0.1:62001
+adb devices
+
+输入命令：netstat -ano，列出所有端口的情况！
+输入命令：netstat -aon|findstr “端口号”！
+
+不通过可以尝试另换端口，或者检查路径是否准确！
 ```
 
