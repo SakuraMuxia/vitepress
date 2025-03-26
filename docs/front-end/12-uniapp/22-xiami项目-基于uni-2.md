@@ -358,10 +358,29 @@ defineProps({
 
 在utils中新建一个 request.js 文件，作用是封装uni 请求。
 
-apis.js
+@/home/home.js
 
 ```ts
+import request from "/utils/request.js";
 
+export function apiGetBanner() {
+	return request({
+		url: "/homeBanner"
+	})
+}
+
+export function apiGetDayRandom() {
+	return request({
+		url: "/randomWall"
+	})
+}
+
+export function apiGetNotice(data = {}) {
+	return request({
+		url: "/wallNewsList",
+		data
+	})
+}
 ```
 
 request.js
@@ -374,7 +393,7 @@ const BASE_URL = 'https://tea.qingnian8.com/api/bizhi';
 
 const request = (config) => {
 	// 请求配置项
-	const {
+	let {
 		// 请求接口
 		url,
 		// 请求体
@@ -387,9 +406,9 @@ const request = (config) => {
 	// 拼接url
 	url = BASE_URL + url
 	// 配置请求头
-	header['access-key'] = "xxm123321@#"
+	header['access-key'] = "sakuna@445"
 	// 返回一个Promise对象
-	return new Promise((res, rej) => {
+	return new Promise((resolve, reject) => {
 		uni.request({
 			url,
 			data,
@@ -431,38 +450,321 @@ const request = (config) => {
 export default request;
 ```
 
-**获取分类列表数据**
+**渲染 banner 图片并实现跳转**
+
+```html
+<!-- 判断图片的性质 跳转到其他 微信小程序-->
+<navigator v-if="item.target == 'miniProgram'" :url="item.url" class="like" target="miniProgram" :app-id="item.appid">
+    <image :src="item.picurl" mode="aspectFill"></image>
+</navigator>
+
+<!-- 普通图片跳转在本程序内的其他页面 - 分类页面 -->
+<navigator v-else :url="`/pages/classlist/classlist?${item.url}`" class="like">
+    <image :src="item.picurl" mode="aspectFill"></image>
+</navigator>
+```
+
+渲染 推荐 图片并实现跳转
+
+```html
+使用 参数 传递id
+```
+
+**获取大分类列表数据**
 
 ```ts
 通过封装的request请求和api接口获取数据
-渲染数据
+// 分类
+export const apiGetClassify = (data={}) => request({
+	url:"/classify",
+	data
+})
+
+获取数据/pages/index/index.vue
+// 获取分类
+const getClassify = async () => {
+	const data = {
+		select: true // 无需 pageNum和pageSize
+	};
+	await apiGetClassify(data)
+		.then((res) => {
+			console.log(res);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};
 
 ```
 
-**分类列表跳转到分类详情页面**
+**时间戳工具类**
+
+```js
+// timestamp 发布者发布的时间戳
+const compareTimestamp = (timestamp) => {
+	// 获取当前时间戳
+	const currentTime = new Date().getTime();
+	// 时间时间间隔
+	const timeDiff = currentTime - timestamp;
+
+	if (timeDiff < 60000) {
+		return '1分钟内';
+	} else if (timeDiff < 3600000) {
+		return Math.floor(timeDiff / 60000) + '分钟';
+	} else if (timeDiff < 86400000) {
+		return Math.floor(timeDiff / 3600000) + '小时';
+	} else if (timeDiff < 2592000000) {
+		return Math.floor(timeDiff / 86400000) + '天';
+	} else if (timeDiff < 7776000000) {
+		return Math.floor(timeDiff / 2592000000) + '月';
+	} else {
+		return null;
+	}
+}
+export {
+	compareTimestamp,
+	gotoHome
+}
+```
+
+**theme-item 组件**
+
+```vue
+<template>
+	<view class="themeItem">
+		<!-- 图片跳转 -->
+		<navigator :url="'/pages/classlist/classlist?id=' + item._id + '&name=' + item.name" class="box" v-if="!isMore">
+			<image class="pic" :src="item.picurl" mode="aspectFill"></image>
+			<view class="mask">{{ item.name }}</view>
+			<view class="tab" v-if="compareTimestamp(item.updateTime)">{{ compareTimestamp(item.updateTime) }}前更新</view>
+		</navigator>
+		<!-- 最后一张图显示更多跳转到分类 -->
+		<navigator url="/pages/classify/classify" open-type="reLaunch" class="box more" v-if="isMore">
+			<image class="pic" src="../../common/images/more.jpg" mode="aspectFill"></image>
+			<view class="mask">
+				<uni-icons type="more-filled" size="34" color="#fff"></uni-icons>
+				<view class="text">更多</view>
+			</view>
+		</navigator>
+	</view>
+</template>
+
+<script setup>
+import { compareTimestamp } from '@/utils/common.js';
+
+defineProps({
+	isMore: {
+		type: Boolean,
+		default: false
+	},
+	item: {
+		type: Object,
+		default() {
+			return {
+				name: '默认名称',
+				picurl: '../../common/images/classify1.jpg',
+				updataTime: Date.now() - 1000 * 60 * 60 * 5
+			};
+		}
+	}
+});
+</script>
+```
+
+**tabBar大分类页面**
+
+```vue
+<template>
+	<view class="classLayout pageBg">
+		<custom-nav-bar title="分类"></custom-nav-bar>
+		<view class="classify">
+			<theme-item v-for="item in classifyList" :item="item" :key="item._id"></theme-item>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { apiGetClassify } from "@/api/home/home.js"
+import { onReady } from '@dcloudio/uni-app';
+const classifyList = ref([]);
+
+// 获取分类
+const getClassify = async () => {
+	const data = {
+		pageSize:15
+	};
+	await apiGetClassify(data)
+		.then((res) => {
+			classifyList.value = res.data
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};
+
+onReady(()=>{
+	// 获取分类请求
+	getClassify()
+})
+</script>
+
+<style lang="scss" scoped>
+.classify{
+	padding:30rpx;
+	display: grid;
+	grid-template-columns: repeat(3,1fr);
+	gap:15rpx;
+}
+</style>
+
+```
+
+**大分类跳转到分类详情页面**
 
 ```ts
-通过请求参数 classid获取 分类详情数据列表
+通过请求参数 classid 获取 分类详情数据列表
 ```
 
-分类详情页面通过 onLoad 生命周期获取 参数
+**分类详情页面通过 onLoad 生命周期获取 参数**
 
 ```ts
 onLoad(()=>{
+    
+    从 参数中 解构出 id name type 
+    
     设置导航栏的标题
     
     调用发送网络请求
+    
 })
+
+onLoad((value) => {
+	// type 指的是 ? 判断是历史浏览 还是 分类
+	// {id: "6524a48f6523417a8a8b825d", name: "可爱萌宠"}
+	const { id, name, type = null } = value;
+	if (type) {
+		queryParams.type = type;
+	}
+	if (id) {
+		queryParams.classid = id;
+	}
+	// 修改导航标题
+	uni.setNavigationBarTitle({
+		title: name
+	});
+	// 发送获取分类数据请求
+	getClassList();
+});
 ```
+
+**大分类列表页面数据渲染**
+
+```ts
+封装获取分类列表页面数据请求
+
+发送请求
+// 分类数据请求
+const getClassList = async () => {
+	// 判断是 分类 来的 还是 历史记录来的
+	if (queryParams.classid) {
+		await apiGetClassList(queryParams)
+			.then((res) => {
+				classList.value = res.data
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+	// 历史记录
+	if (queryParams.type) {
+		await apiGetHistoryList(queryParams)
+			.then((res) => {
+				console.log("历史列表",res);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+};
+获取数据，渲染数据
+
+```
+
+
 
 ## 触底加载*
 
-使用 生命周期函数 onReachbottom() 监听触底
+使用 生命周期函数 onReachBottom() 监听触底
 
-使用 z-padding插件实现防抖
+**自定义 触底加载**
 
 ```ts
+// 触底加载
+onReachBottom(()=>{
+	// 判断是否后续还有数据，没有数据则不发送请求
+	if(noData.value){
+		return;
+	}
+	// 页面加一
+	queryParams.value.pageNum++;
+	// 发送请求
+	getClassList()
+})
+```
 
+**使用 z-paging 插件实现防抖**
+
+```ts
+https://ext.dcloud.net.cn/search?q=z-paging
+
+基本使用
+https://z-paging.zxlee.cn/start/use.html#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8
+在线演示
+https://demo.z-paging.zxlee.cn/#/
+
+更改配置项 ，例如每页 获取多少个
+https://z-paging.zxlee.cn/api/props/common.html
+
+自定义下拉刷新
+	下载 zip 包，然后打开 找到 demo. 中refresher插槽，再复制 custom-refresher中的组件到自己的项目
+	使用 loading插槽
+    <template #load>
+        加载中，使用uni中的加载中样式。
+底部使用 
+```
+
+```ts
+<template>
+    <z-paging ref="paging" v-model="dataList" @query="queryList">
+    	<!-- z-paging默认铺满全屏，此时页面所有view都应放在z-paging标签内，否则会被盖住 -->
+    	<!-- 需要固定在页面顶部的view请通过slot="top"插入，包括自定义的导航栏 -->
+        <view class="item" v-for="(item,index) in dataList" :key="index">
+            <view class="item-title">{{item.title}}</view>
+        </view>
+    </z-paging>
+</template>
+
+<script setup>
+    import { ref } from 'vue';
+    const paging = ref(null)
+	// v-model绑定的这个变量不要在分页请求结束中自己赋值，直接使用即可
+    const dataList = ref([])
+    
+	// @query所绑定的方法不要自己调用！！需要刷新列表数据时，只需要调用paging.value.reload()即可
+    const queryList = (pageNo, pageSize) => {
+		// 此处请求仅为演示，请替换为自己项目中的请求
+        request.queryList({ pageNo,pageSize }).then(res => {
+			// 将请求结果通过complete传给z-paging处理，同时也代表请求结束，这一行必须调用
+            paging.value.complete(res.data.list);
+        }).catch(res => {
+			// 如果请求失败写paging.value.complete(false);
+			// 注意，每次都需要在catch中写这句话很麻烦，z-paging提供了方案可以全局统一处理
+			// 在底层的网络请求抛出异常时，写uni.$emit('z-paging-error-emit');即可
+			paging.value.complete(false);
+		})
+    }
+</script>
 ```
 
 
@@ -478,7 +780,7 @@ classList.value = [...classList.value,...res.data]
 判断如果返回的数据小于pageSize，则不再发送请求,因为最后一次请求的数据，已经小于pageSize了，说明后续已经没有数据了。
 ```
 
-触底加载loading样式
+**触底加载loading样式**
 
 ```ts
 使用 uni-loading 插件
@@ -499,13 +801,34 @@ classList.value = [...classList.value,...res.data]
 在底部新建一个空标签 设置类名为 底部安全区域的类型
 ```
 
-骨架屏效果
+```vue
+<template>
+	<view class="classlist">
+		<!-- 顶部加载样式 无数据时，并且后续有数据 显示-->
+		<view class="loadingLayout" v-if="!classList.length && !noData">
+			<uni-load-more status="loading"></uni-load-more>
+		</view>
+		<!-- 内容 -->
+		<view class="content">
+			<navigator url="/pages/preview/preview" class="item" v-for="item in classList" :key="item._id">
+				<image :src="item.smallPicurl" mode="aspectFill"></image>
+			</navigator>
+		</view>
+		<!-- 顶部加载样式 有数据，或者后续无数据 显示-->
+		<view class="loadingLayout" v-if="classList.length || noData">
+			<uni-load-more :status="noData ? 'noMore' : 'loading'"></uni-load-more>
+		</view>
+	</view>
+</template>
+```
+
+**骨架屏效果**
 
 ```ts
 使用 uv-skeletons 插件
 ```
 
-在分类页面 使用本地存储 存储数据
+**在分类页面 使用本地存储 存储数据**
 
 ```ts
 使用本地存储 API存储 数据
@@ -522,9 +845,7 @@ uni.getStorageSync("")
 
 在预览页面修改 src 绑定的值
 
-修改预览页面的 数量 显示
-
-
+修改预览页面的 数量 显示 
 ```
 
 点击图片从当前图片显示
@@ -544,8 +865,8 @@ const swiperChange = (e) => {
 自定义一个数组，实现swiper的懒加载的效果
 
 ```ts
-在
-image标签上设置v-if属性，v-if通过判断仅显示当前索引值（存在问题，弃用）
+在image标签上设置v-if属性，v-if通过判断仅显示当前索引值（存在问题，弃用）
+
 创建一个数组对象，把看过的图索引值放在Set数组中，然后判断当前索引值是否包含在数组中，包含则返回true，不包含则返回false
 
 预加载，向左和向右，
@@ -579,7 +900,8 @@ readImgs.value = [...new Set(readImgs.value)]
 然后把 userScore的属性值，更改为评分的双向绑定值。
 根据isScored的状态，绑定确定评分按钮的禁用状态，同时绑定uni-rate组件的评分状态为disabled
 
-点击确认评分时，发送网络请求时，加上加载状态 uni.showLoading({
+点击确认评分时，发送网络请求时，加上加载状态 
+uni.showLoading({
     
 })
 
@@ -594,7 +916,6 @@ readImgs.value = [...new Set(readImgs.value)]
 let {classid,_id:wallId} = currentInfo.value
 
 在之后使用 wallId 就相当于使用 _id
-
 ```
 
 ## 图片下载
@@ -681,6 +1002,109 @@ uni.saveImageToPhotosAlbum({
 })
 ```
 
+```ts
+// 下载回调
+const clickDown = async () => {
+	// 条件编译 H5 的语法
+	// #ifdef H5
+	uni.showModal({
+		content: '请长按保存壁纸',
+		showCancel: false
+	});
+	// #endif
+	// 非H5的语法
+	// #ifndef H5
+	try {
+		// 提示
+		uni.showLoading({
+			title: '下载中...',
+			mask: true
+		});
+		// 解构 classid 和 wallid
+		let { classid, _id: wallId } = currentInfo.value;
+		// 发送 下载 图片请求
+		let res = await apiWriteDownload({
+			classid,
+			wallId
+		});
+		// 判断如果响应代码 不为 0 抛出异常
+		if (res.errCode != 0){
+			throw res
+		}
+		// 使用 uni API 
+		uni.getImageInfo({
+			// 图片路径
+			src: currentInfo.value.picurl,
+			// 获取图片地址成功时回调
+			success: (res) => {
+				console.log("获取图片地址成功时回调",res)
+				// 保存到 相册 API
+				uni.saveImageToPhotosAlbum({
+					filePath: res.path,
+					// 保存到相册成功时的回调
+					success: (res) => {
+						uni.showToast({
+							title: '保存成功，请到相册查看',
+							icon: 'none'
+						});
+					},
+					// 保存到相册失败的回调
+					fail: (err) => {
+						// 用户取消
+						if (err.errMsg == 'saveImageToPhotosAlbum:fail cancel') {
+							uni.showToast({
+								title: '保存失败，请重新点击下载',
+								icon: 'none'
+							});
+							return;
+						}
+						// 没有授权
+						uni.showModal({
+							title: '授权提示',
+							content: '需要授权保存相册',
+							// 提示成功弹出时的回调
+							success: (res) => {
+								if (res.confirm) {
+									// 打开设置 API
+									uni.openSetting({
+										// 打开设置成功的回调
+										success: (setting) => {
+											console.log(setting);
+											// 开启写入到相册权限
+											if (setting.authSetting['scope.writePhotosAlbum']) {
+												uni.showToast({
+													title: '获取授权成功',
+													icon: 'none'
+												});
+											} else {
+												uni.showToast({
+													title: '获取权限失败',
+													icon: 'none'
+												});
+											}
+										}
+									});
+								}
+							}
+						});
+					},
+					// 最终处理
+					complete: () => {
+						// 关闭加载样式
+						uni.hideLoading();
+					}
+				});
+			}
+		});
+		// 存在异常
+	} catch (err) {
+		console.log(err);
+		uni.hideLoading();
+	}
+	// #endif
+};
+```
+
 设置小程序的 服务内容声明，用户隐私指引
 
 ```ts
@@ -688,6 +1112,8 @@ uni.saveImageToPhotosAlbum({
 ```
 
 ![image-20250318151557776](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20250318151557776.png)
+
+![image-20250325140920146](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20250325140920146.png)
 
 设置用户隐私 拒绝 的回调处理
 
@@ -809,17 +1235,27 @@ goBack(){
     
 ```
 
-壁纸信息弹窗底部的安全区域处理
+处理popup底部弹窗空缺处理-安全区域处理-底部手势提示栏
 
 ```ts
 在 uni-popup官方组件的源代码控制
+/uni_modules/uni-popup/components/uni-popup.vue
+
 uni-popup.vue 349行代码进行注释
+
+paddingBottom: this.safeAreaInsets + 'px', 注释掉这行
 ```
 
 如果需要参数的页面没有接收到参数，则提示无参数，选择回到首页弹窗
 
 ```ts
+在 预览 页面，classList页面这种需要参数的页面，如果路由没有传递参数则弹窗，提示
 
+把这个方法gotoHome写到 公共的库 中 utils/common.js
+
+然后把这个方法导入到需要页面中
+
+并在 onLoad 生民周期中 判断 如果某些参数咩有传递 则 调用这个方法
 ```
 
 ## 个人用户
@@ -839,13 +1275,37 @@ uni-popup.vue 349行代码进行注释
 获取用户数据，渲染用户数据
 
 ```ts
- 
+ // 跳转到分类
+const goClassListDown = () => {
+	uni.navigateTo({
+		url: `/pages/classlist/classlist?name=我的下载&type=download`
+	});
+}
+const goClassListScore = () => {
+	uni.navigateTo({
+		url: `/pages/classlist/classlist?name=我的评分&type=score`
+	});
+}
+// 获取用户信息
+const getUserInfo = ()=>{
+	apiUserInfo().then(res=>{
+		console.log(res);
+		userInfo.value = res.data
+	})
+}
+onLoad(()=>{
+	// 获取用户信息
+	getUserInfo();
+})
 ```
 
-无数据时，使用加载效果
+无数据时，使用空数据效果 classList页面
 
 ```ts
-
+<!-- 顶部加载样式 有数据，或者后续无数据 显示-->
+<view class="loadingLayout" v-if="classList.length || noData">
+    <uni-load-more :status="noData ? 'noMore' : 'loading'"></uni-load-more>
+</view>
 ```
 
 我的下载和我的评分页面
@@ -858,17 +1318,7 @@ uni-popup.vue 349行代码进行注释
 
 封装获取下载历史接口
 
-```ts
-
-```
-
 封装获取评分的接口
-
-```ts
-
-```
-
-
 
 ## 用户登陆*
 
@@ -890,7 +1340,9 @@ uni-popup.vue 349行代码进行注释
 
 ```
 
-富文本的渲染
+**富文本的渲染**
+
+渲染后端返回的html代码
 
 ```ts
 默认会把html标签直接展出来
@@ -907,15 +1359,9 @@ mp-text :content=""
 
 在公告详情页面获取公告详情接口中接收id，发送请求
 
-```ts
+点击常见问题跳转到公告详情页面，同时传递 id 参数，发送请求
 
-```
-
-点击常见问题跳转到公告详情页面，同时传递 id 参数，同时更改标题
-
-```ts
-
-```
+渲染数据
 
 ## 搜索页面
 
@@ -923,7 +1369,7 @@ mp-text :content=""
 
 首页 搜索标签 设置navigate便签 实现跳转
 
-使用 uni-search-bar 组件 搜索框
+**使用 uni-search-bar 组件 搜索框**
 
 ```ts
 在扩展组件中，安装uni-search-bar组件
@@ -982,7 +1428,7 @@ mp-text :content=""
 搜索列表页面
 
 ```ts
-没有 搜索列表页面 ，通过v-if 控制 热门搜索，最近搜索的显示与隐藏
+没有 搜索列表页面 ，通过v-if 控制最近搜索的显示与隐藏
 ```
 
 点击搜索列表的元素时，跳转到预览页面

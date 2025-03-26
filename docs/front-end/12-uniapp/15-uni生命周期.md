@@ -194,6 +194,8 @@ Page({
 **类似于onMounted生命周期**
 
 ```ts
+导入
+import { onReady } from "@dcloudio/uni-app";
 onReady(()=>{
     // 业务逻辑
 })
