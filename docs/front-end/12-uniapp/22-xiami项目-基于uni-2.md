@@ -1460,14 +1460,31 @@ mp-text :content=""
 ```ts
 swiper 标签中 添加 navigate 标签，同时修改 css样式
 
-在navigate标签中设置 url 属性 :url=`/page/...?${item.url}`
+专题精选 更多按钮上 进行跳转。
+```
 
-再添加一个 navigate标签 通过 v-if 判断 item属性中是否是 miniProgram
-	在跳转到第三方小程序navigate的设置 ：url="",target="miniProgram",:app-id=""
+设置swiper标签
+
+```vue
+<swiper circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff" autoplay>
+    <swiper-item v-for="item in bannerList" :key="item._id">
+        <!-- 判断图片的性质 跳转到其他 微信小程序-->
+        <navigator v-if="item.target == 'miniProgram'" :url="item.url" class="like" target="miniProgram" :app-id="item.appid">
+            <image :src="item.picurl" mode="aspectFill"></image>
+        </navigator>
+        <!-- 普通图片跳转在本程序内的其他页面 -->
+        <navigator v-else :url="`/pages/classlist/classlist?${item.url}`" class="like">
+            <image :src="item.picurl" mode="aspectFill"></image>
+        </navigator>
+    </swiper-item>
+</swiper>
+```
 
 超过三个月之后返回null，进行修复，通过v-if进行修复
 
-专题精选 更多按钮上 进行跳转。
+```ts
+修改 /utils/common.js 中的代码
+修改 /components/theme-item/theme-item.vue页面
 ```
 
 ## 打包
@@ -1477,7 +1494,7 @@ swiper 标签中 添加 navigate 标签，同时修改 css样式
 ```ts
 1. 注册微信小程序开发者
 	设置
-    服务类名	信息查询 图片处理
+    服务类名 信息查询 图片处理
     开发管理：
     	配置服务器域名：https:
 		downloadFile 合法域名：新增一个合法域名

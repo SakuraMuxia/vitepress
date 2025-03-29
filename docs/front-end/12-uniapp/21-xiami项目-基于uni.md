@@ -947,7 +947,7 @@ signingConfigs {
         }
     }
 
-Hbuilder发行后，把资源复制到 src/main/assets/apps/
+Hbuilder发行后，把(Hbuilder/项目名字/unpackage/resourse)资源复制到 src/main/assets/apps/
 
 build selsct build variant 为 release
 
@@ -983,5 +983,14 @@ appId (src/main/assets/data/dclound_control.xml 更改appid)
 
 ![image-20250321105230521](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20250321105230521.png)
 
+## 更改图标启动
 
+打开 `Android Studio` 工程
 
+路径：HBuilder-Integrate-AS\simpleDemo\src\main\res\drawable
+
+```ts
+替换图标和背景
+```
+
+## 更新版本
