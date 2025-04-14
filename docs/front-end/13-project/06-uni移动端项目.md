@@ -172,11 +172,64 @@ export default defineConfig({
 import 'virtual:uno.css';
 ```
 
-## 持久化存储
+## 安装pinia
 
 ```ts
+将 vue 版本更新到 3.5.13，以匹配 pinia
+npm install vue@3.5.13
+npm install pinia
+
+新建 stora/index.ts
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate) // 启用持久化插件
+
+export default pinia
+
+在 main.js 中引入并使用 Pinia：
+import { createSSRApp } from "vue";
+import App from "./App.vue";
+import pinia from './store'
+
+export function createApp() {
+  const app = createSSRApp(App);
+  app.use(pinia)
+  return {
+    app,
+	pinia
+  };
+}
+
+创建 store 文件夹并定义状态管理模块
+
+在项目根目录下创建一个 store 文件夹，然后在其中创建所需的状态管理模块
+// store/counter.js
+import { defineStore } from 'pinia';
+
+export const useCounterStore = defineStore('counter', {
+  state: () => ({
+    count: 0,
+  }),
+  actions: {
+    increment() {
+      this.count++;
+    },
+  },
+});
+
+在需要使用状态的页面中，引入并使用 useCounterStore
+<script setup>
+import { useCounterStore } from '@/store/counter.js';
+
+const counterStore = useCounterStore();
+</script>
+
+
+======================
 自定义存储和自定义数据序列化程序。
-npm i pinia-plugin-persistedstate@3.2.1
+npm i pinia-plugin-persistedstate@4.2.0
 
 将插件添加到你的 pinia 实例中：
 import { createPinia } from 'pinia'
@@ -185,146 +238,184 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
-在声明您的store时，请将新persist选项设置为 true。
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
 
-export const useStore = defineStore(
-  'main',
-  () => {
-    const someState = ref('hello pinia')
-    return { someState }
-  },
-  {
-    persist: true,
-  },
-)
-```
+在定义具体的 Store 时，使用 persist 选项来启用持久化功能
+import { defineStore } from 'pinia';
 
-## 请求拦截器和路由拦截器
+export const useUserStore = defineStore('user', {
+  state: () => ({
+    name: '',
+    token: '',
+  }),
+  persist: true, // 启用持久化
+});
 
-在 HBuilderX 开发 uni-app 时，可以通过 uni-app 提供的 uni.request 拦截器来定义 请求拦截器，而 路由拦截器 需要在 App.vue 中全局监听 onLaunch 和 onShow 生命周期，或者使用 vue-router 进行拦截（如果是 H5 端）。
+在状态管理模块中启用持久化：
+  // store/counter.js
+  import { defineStore } from 'pinia';
 
-## 请求拦截器
-
-uni.request 本身不支持拦截器机制，但可以通过封装 request.js 实现全局拦截：
-
-在 common/request.js 文件中
-
-```js
-// common/request.js
-export const request = (options) => {
-  return new Promise((resolve, reject) => {
-    // 请求拦截 - 在这里可以添加 token 或者其他公共参数
-    const token = uni.getStorageSync('token') || '';
-    
-    uni.request({
-      ...options,
-      header: {
-        'Authorization': token ? `Bearer ${token}` : '',
-        'Content-Type': 'application/json',
-        ...options.header, // 合并自定义 headers
+  export const useCounterStore = defineStore('counter', {
+    state: () => ({
+      count: 0,
+    }),
+    actions: {
+      increment() {
+        this.count++;
       },
-      success: (res) => {
-        // 响应拦截 - 处理接口返回数据
-        if (res.statusCode === 200) {
-          resolve(res.data);
-        } else {
-          uni.showToast({
-            title: res.data.message || '请求失败',
-            icon: 'none'
-          });
-          reject(res);
-        }
-      },
-      fail: (err) => {
-        uni.showToast({
-          title: '网络请求失败',
-          icon: 'none'
-        });
-        reject(err);
-      }
-    });
+    },
+    persist: true, // 启用持久化
   });
-};
-
+通过上述步骤，您可以在 uni-app 的 HBuilder X 项目中成功集成并使用 Pinia 进行状态管理
 ```
 
-使用请求拦截器
+自定义持久化内容
 
-在 pages/index/index.vue 或 api.js 文件中
+如果您需要自定义持久化的行为，例如更改存储方式或指定需要持久化的状态字段，可以在 `persist` 选项中进行配置：
 
-```js
-import { request } from '@/common/request.js';
+```ts
+自定义持久化配置（可选）
 
-request({
-  url: 'https://api.example.com/data',
-  method: 'GET'
-}).then(res => {
-  console.log('请求成功:', res);
-}).catch(err => {
-  console.error('请求失败:', err);
+import { defineStore } from 'pinia';
+
+export const useUserStore = defineStore('user', {
+  state: () => ({
+    name: '',
+    token: '',
+  }),
+  persist: {
+    key: 'user_data', // 自定义存储的键名
+    storage: sessionStorage, // 使用 sessionStorage 而非 localStorage
+    paths: ['token'], // 仅持久化 token 字段
+  },
 });
 
 ```
 
+## 请求拦截器
+
+src/interceptors/request.ts
+
+```js
+// request拦截器
+export const requestInterceptor = () => {
+	// 添加请求和响应拦截器
+	uni.addInterceptor('request', {
+		invoke(args) {
+			// 请求前的处理，如添加 token
+			const token = uni.getStorageSync('TOKEN');
+			if (token) {
+				args.header = {
+					...args.header,
+					Authorization: `Bearer ${token}`,
+				};
+			}
+			return args;
+		},
+		success(response) {
+			// 响应后的处理，如统一处理错误码
+			if (response.statusCode === 401) {
+				uni.showToast({
+					title: '登录已过期，请重新登录',
+					icon: 'none',
+				});
+				// 可以跳转到登录页面
+				uni.redirectTo({ url: '/pages/login/login' });
+			}
+			return response;
+		},
+		fail(err) {
+			// 请求失败的处理
+			uni.showToast({
+				title: '请求失败，请检查网络',
+				icon: 'none',
+			});
+			return Promise.reject(err);
+		},
+	});
+}
+```
+
+
+
 ## 路由拦截器
 
-uni-app 并没有 vue-router 的 beforeEach 这样的拦截器，但可以在 onLaunch、onShow 监听跳转，并手动拦截
-
-方法一：在 App.vue 中拦截
+src/interceptors/route.ts
 
 ```ts
-// App.vue
-export default {
-  onLaunch() {
-    console.log('App 启动');
-  },
-  onShow() {
-    const token = uni.getStorageSync('token');
-    
-    // 监听路由跳转
-    const pages = getCurrentPages();
-    const currentRoute = pages[pages.length - 1]?.route || '';
+import { getToken } from "@/utils/system";
 
-    // 如果未登录，且访问的不是登录页，则跳转到登录页
-    if (!token && currentRoute !== 'pages/login/login') {
-      uni.reLaunch({
-        url: '/pages/login/login'
-      });
-    }
-  }
-};
+// 定义需要拦截的路由跳转方法
+const methodsToIntercept = ['navigateTo', 'redirectTo', 'reLaunch', 'switchTab'];
 
+// navigate拦截器
+const navigateToInterceptor = (args) => {
+	const WHITE_LIST = ['/pages/login/login']; // 定义白名单页面
+	// 获取目标页面的路径
+	const url = args.url.split('?')[0];
+
+	// 如果目标页面在白名单中，则直接放行
+	if (WHITE_LIST.includes(url)) {
+		return args;
+	}
+
+	// 获取token
+	const token = getToken();
+
+	if (!token) {
+		// 如果没有 Token，提示用户并跳转到登录页面
+		uni.showToast({ title: '请先登录', icon: 'none' });
+		uni.navigateTo({ url: '/pages/login/login' });
+		return false; // 阻止原始跳转
+	}
+
+	// Token 有效，允许跳转
+	return args;
+}
+
+export const routeInterceptor = {
+	install() {
+		methodsToIntercept.forEach((method) => {
+			uni.addInterceptor(method, {
+				invoke: navigateToInterceptor,
+			});
+		});
+	},
+}
 ```
 
-方法二：封装 navigateTo 进行拦截
+拦截器
 
-可以封装 uni.navigateTo、uni.reLaunch 等方法，进行拦截
+src/interceptors/index.ts
 
 ```ts
-// common/router.js
-export const navigateTo = (url) => {
-  const token = uni.getStorageSync('token');
-  
-  // 需要登录的页面
-  const authPages = ['/pages/profile/profile', '/pages/order/order'];
-  
-  if (!token && authPages.includes(url)) {
-    uni.showToast({
-      title: '请先登录',
-      icon: 'none'
-    });
-    setTimeout(() => {
-      uni.reLaunch({ url: '/pages/login/login' });
-    }, 1000);
-    return;
-  }
-  
-  uni.navigateTo({ url });
-};
-
+export { requestInterceptor } from './request'
+export { routeInterceptor } from './route'
 ```
+
+在main.ts中挂载
+
+```ts
+import { createSSRApp } from "vue";
+import App from "./App.vue";
+import pinia from './store'
+
+import { routeInterceptor ,requestInterceptor } from './interceptors/index'
+
+export function createApp() {
+	const app = createSSRApp(App);
+	app.use(pinia)
+	app.use(routeInterceptor)
+	app.use(requestInterceptor)
+	return {
+		app,
+		pinia
+	};
+}
+```
+
+
+
+## src目录
 
 在 uni-app 中，默认情况下 @ 符号不会指向 src 目录，而是需要手动配置。
 
@@ -421,7 +512,355 @@ export default defineConfig({
 }
 ```
 
+## 配置高德Key
 
+配置 manifest.json 后再打自定义基座，再自定义基座确定好 包名 然后等待 云打包完成，可以登陆 uclioud后台看到应用的 SHA1和包名。然后在运行，使用自定义基座运行。
 
+获取高德地图 API Key
 
+```ts
+访问 高德开放平台。
+
+注册并登录后，进入「应用管理」->「创建新应用」。
+
+选择 Web服务 类型，获取 API Key（key）。
+云打包，使用云打包中的证书中的SHA1 5D:2B:50:B0:DF:5B:A5:EA:A5:9F:66
+启用 逆地理编码（Geocode） 和 POI搜索 服务。
+```
+
+在 manifest.json 配置
+
+```ts
+在 HBuilderX 中，打开 manifest.json，找到 App -> SDK 配置 -> 地图，填入你的 API Key
+
+{
+  "appid": "",
+  "uniStatistics": {},
+  "permissions": {
+    "Maps": {
+      "provider": "amap",
+      "key": {
+        "android": "你的高德API Key",
+        "ios": "你的高德API Key"
+      }
+    }
+  }
+}
+
+```
+
+在 main.ts 中初始化地图
+
+```ts
+在 main.ts 文件中，确保 uni-app 知道你使用的是高德地图：
+uni.setStorageSync('amap_key', '你的高德API Key');
+```
+
+使用腾讯地图SDK
+
+## uni 请求
+
+在使用 uni.request 发起网络请求时，处理请求参数的方式与 axios 存在一些差异。在 axios 中，params 通常用于 GET 请求的查询参数，data 则用于 POST 请求的请求体。而在 uni.request 中，所有请求类型的参数都通过 data 字段传递
+
+```ts
+
+```
+
+在 `uni.request` 中处理请求参数的建议
+
+```ts
+// 方法一：将查询参数直接添加到 URL 中
+uni.request({
+  url: 'https://example.com/api/resource?param1=value1&param2=value2',
+  method: 'GET',
+  success: (res) => {
+    // 处理响应
+  },
+  fail: (err) => {
+    // 处理错误
+  }
+});
+
+// 方法二：使用 data 字段传递查询参数
+uni.request({
+  url: 'https://example.com/api/resource',
+  method: 'GET',
+  data: {
+    param1: 'value1',
+    param2: 'value2'
+  },
+  success: (res) => {
+    // 处理响应
+  },
+  fail: (err) => {
+    // 处理错误
+  }
+});
+
+```
+
+**POST 请求：**将请求体参数放在 `data` 字段中
+
+```
+uni.request({
+  url: 'https://example.com/api/resource',
+  method: 'POST',
+  data: {
+    key1: 'value1',
+    key2: 'value2'
+  },
+  success: (res) => {
+    // 处理响应
+  },
+  fail: (err) => {
+    // 处理错误
+  }
+});
+
+```
+
+**封装 `uni.request` 以模拟 `axios` 的用法：**
+
+为了使 `uni.request` 的使用方式更接近 `axios`，可以进行封装，使其支持类似的配置项。
+
+```ts
+const request = (options) => {
+  const { url, method = 'GET', params = {}, data = {}, header = {} } = options;
+
+  // 处理 GET 请求的查询参数
+  let fullUrl = url;
+  if (method.toUpperCase() === 'GET' && Object.keys(params).length > 0) {
+    const queryString = Object.keys(params)
+      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+      .join('&');
+    fullUrl = `${url}?${queryString}`;
+  }
+
+  // 发起请求
+  return new Promise((resolve, reject) => {
+    uni.request({
+      url: fullUrl,
+      method,
+      data: method.toUpperCase() === 'GET' ? {} : data,
+      header,
+      success: (res) => {
+        resolve(res);
+      },
+      fail: (err) => {
+        reject(err);
+      }
+    });
+  });
+};
+
+// 使用示例
+request({
+  url: 'https://example.com/api/resource',
+  method: 'GET',
+  params: {
+    param1: 'value1',
+    param2: 'value2'
+  }
+}).then(response => {
+  // 处理响应
+}).catch(error => {
+  // 处理错误
+});
+
+```
+
+您可以使用 qs 插件将参数对象序列化为查询字符串，以处理类似 axios 的 params 参数。qs 是一个流行的查询字符串解析和序列化库，常用于将对象转换为 URL 查询字符串格式
+
+```ts
+npm install qs
+```
+
+在 uni.request 中使用 qs 处理查询参数
+
+## 封装request
+
+src/utils/request.ts
+
+在使用 uni.request 发起 GET 请求时，您可以使用 qs.stringify() 方法将参数对象转换为查询字符串，并将其附加到 URL 中
+
+```ts
+import qs from 'qs';
+//ES6类
+class Service {
+    //原型对象的方法
+    API(options: any): any {
+		var queryString = '';
+		// 解构
+		const {params = {}, data = {}, header = {} } = options;
+		
+        // 定义全局基础路由
+        const baseURL = 'http://jdgz.xwydl.com:8310';
+		
+        //加载效果开启
+        uni.showLoading({
+            title: '加载中...'
+        })
+
+        //判断用户是否登录:如有token携带
+        const token = uni.getStorageSync('TOKEN');
+        // 定义请求头
+		header['Content-Type'] = 'application/json;charset=UTF-8'
+        
+        // 如果token存在,则携带请求头
+        if (token) {
+            header.token = token;
+        }
+		
+		// 如果存在 params
+		if(params){
+			// 序列化params
+			queryString = '?' + qs.stringify(params)
+		}else{
+			queryString = ''
+		}
+		
+        // 返回一个promise对象
+        return new Promise((resolve, reject) => {
+            //uni-app 提供的API进行网络发请求
+            uni.request({
+                url: baseURL + options.url + queryString,// 请求的地址
+                method: options.method || 'GET',// 请求方式
+                data: options.data || {},// 携带的参数
+                header, // 请求头
+                success(res) {// 请求成功的回调
+                    resolve(res.data); // 返回一个成功的Promise对象,同时简化数据
+                },
+                fail(error) { // 请求失败的回调
+                    reject(error);
+                },
+                complete() { // 成功失败都执行
+                    uni.hideLoading(); // 隐藏加载动画
+                }
+            })
+
+        })
+    }
+    // get请求方法
+    get(options: any) {
+        options.method = "GET";
+        return this.API(options);
+    }
+    // post请求方法
+    post(options: any) {
+        options.method = "POST";
+        return this.API(options);
+    }
+    // delete 请求方法
+    delete(options: any) {
+        options.method = "DELETE";
+        return this.API(options);
+    }
+}
+// 暴漏数据
+export default Service;
+```
+
+## 封装API
+
+src/api/home/home.ts
+
+```ts
+import Service from "@/utils/request";
+
+class Request extends Service {
+    // 登陆请求
+	reqLogin(data:any){
+		return this.post({
+			url:'/api/mob/login',
+			data:data
+		})
+	}
+	// 获取地图数据
+	reqDeviceMapList(params:any){
+		return this.post({
+			url:'/api/core/device/map/list',
+			data:null,
+			params:params
+		})
+	}
+}
+export default new Request;
+```
+
+## nvue
+
+启用nvue格式，来支持原生SDK或API的支持
+
+首先在pages.json文件中，把对应的页面添加上 app-plus；
+
+```json
+{
+    "path" : "pages/map/map",
+    "style" : 
+    {
+        "navigationBarTitleText" : "地图",
+        "navigationStyle": "custom",
+        "app-plus":{"nvue":true}
+    }
+},
+```
+
+然后更改文件的后缀 map.vue => map.nvue
+
+使用vue2的语法编写
+
+```vue
+map.nvue
+```
+
+## 坐标系
+
+高德默认使用的gcj02（国内）坐标系得到的经纬度，一些第三方软件如 奥维地图获取的经纬度是 wsg（国际）坐标，两者相差500m左右。注意，根据需要进行转换
+
+wsg转gcj02
+
+```ts
+// 坐标转换方法（WGS84 -> GCJ02）
+function wgs84ToGcj02(lon, lat) {
+	const a = 6378245.0;
+	const ee = 0.00669342162296594323;
+
+	function outOfChina(lon, lat) {
+		return lon < 72.004 || lon > 137.8347 || lat < 0.8293 || lat > 55.8271;
+	}
+
+	function transformLat(x, y) {
+		let ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y +
+			0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x));
+		ret += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
+		ret += (20.0 * Math.sin(y * Math.PI) + 40.0 * Math.sin(y / 3.0 * Math.PI)) * 2.0 / 3.0;
+		ret += (160.0 * Math.sin(y / 12.0 * Math.PI) + 320 * Math.sin(y * Math.PI / 30.0)) * 2.0 / 3.0;
+		return ret;
+	}
+
+	function transformLon(x, y) {
+		let ret = 300.0 + x + 2.0 * y + 0.1 * x * x +
+			0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x));
+		ret += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
+		ret += (20.0 * Math.sin(x * Math.PI) + 40.0 * Math.sin(x / 3.0 * Math.PI)) * 2.0 / 3.0;
+		ret += (150.0 * Math.sin(x / 12.0 * Math.PI) + 300.0 * Math.sin(x / 30.0 * Math.PI)) * 2.0 / 3.0;
+		return ret;
+	}
+
+	if (outOfChina(lon, lat)) {
+		return [lon, lat];
+	}
+
+	const dLat = transformLat(lon - 105.0, lat - 35.0);
+	const dLon = transformLon(lon - 105.0, lat - 35.0);
+	const radLat = lat / 180.0 * Math.PI;
+	let magic = Math.sin(radLat);
+	magic = 1 - ee * magic * magic;
+	const sqrtMagic = Math.sqrt(magic);
+	const mgLat = lat + (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * Math.PI);
+	const mgLon = lon + (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * Math.PI);
+
+	return [mgLon, mgLat];
+}
+```
 
