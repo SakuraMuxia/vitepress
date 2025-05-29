@@ -864,3 +864,353 @@ function wgs84ToGcj02(lon, lat) {
 }
 ```
 
+## WebSocket服务
+
+封装一个websocket模块
+
+```js
+// utils/ws.js
+
+class WebSocketManager {
+  constructor(options = {}) {
+    this.url = options.url || '';
+    this.heartbeatInterval = options.heartbeatInterval || 15000; // 心跳间隔（ms）
+    this.reconnectInterval = options.reconnectInterval || 5000;  // 重连间隔（ms）
+    this.maxReconnectAttempts = options.maxReconnectAttempts || 5;
+
+    this.socketOpen = false;
+    this.heartbeatTimer = null;
+    this.reconnectAttempts = 0;
+
+    this.messageCallback = null;
+    this.initSocket();
+  }
+
+  initSocket() {
+    if (!this.url) {
+      console.error('WebSocket URL 未设置');
+      return;
+    }
+
+    uni.connectSocket({
+      url: this.url,
+      success: () => {
+        console.log('[WS] 正在连接...');
+      },
+      fail: (err) => {
+        console.error('[WS] 初始连接失败', err);
+        this.reconnect();
+      }
+    });
+
+    uni.onSocketOpen(() => {
+      console.log('[WS] 已连接');
+      this.socketOpen = true;
+      this.reconnectAttempts = 0;
+      this.startHeartbeat();
+    });
+
+    uni.onSocketMessage((res) => {
+      console.log('[WS] 收到消息：', res.data);
+      if (this.messageCallback) this.messageCallback(res.data);
+    });
+
+    uni.onSocketError((err) => {
+      console.error('[WS] 错误：', err);
+      this.socketOpen = false;
+      this.reconnect();
+    });
+
+    uni.onSocketClose(() => {
+      console.warn('[WS] 连接已关闭');
+      this.socketOpen = false;
+      this.reconnect();
+    });
+  }
+
+  send(data) {
+    if (this.socketOpen) {
+      uni.sendSocketMessage({
+        data: typeof data === 'string' ? data : JSON.stringify(data),
+        success: () => console.log('[WS] 消息发送成功'),
+        fail: (err) => console.error('[WS] 消息发送失败', err)
+      });
+    } else {
+      console.warn('[WS] 连接未打开，发送失败');
+    }
+  }
+
+  onMessage(callback) {
+    this.messageCallback = callback;
+  }
+
+  startHeartbeat() {
+    if (this.heartbeatTimer) clearInterval(this.heartbeatTimer);
+    this.heartbeatTimer = setInterval(() => {
+      if (this.socketOpen) {
+        this.send({ type: 'ping' });
+        console.log('[WS] 心跳发送');
+      }
+    }, this.heartbeatInterval);
+  }
+
+  reconnect() {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.error('[WS] 重连次数过多，停止尝试');
+      return;
+    }
+
+    this.reconnectAttempts++;
+    console.log(`[WS] 尝试第 ${this.reconnectAttempts} 次重连...`);
+    setTimeout(() => {
+      this.initSocket();
+    }, this.reconnectInterval);
+  }
+
+  close() {
+    clearInterval(this.heartbeatTimer);
+    uni.closeSocket();
+    this.socketOpen = false;
+    console.log('[WS] 手动关闭连接');
+  }
+}
+
+export default WebSocketManager;
+
+```
+
+使用websocket
+
+```ts
+import WebSocketManager from '@/utils/ws.js';
+
+const ws = new WebSocketManager({
+  url: 'wss://your-server.com/ws',
+  heartbeatInterval: 15000,
+  reconnectInterval: 5000
+});
+
+// 接收消息
+ws.onMessage((msg) => {
+  console.log('页面收到消息：', msg);
+});
+
+// 发送消息
+ws.send({ type: 'chat', content: 'Hello World!' });
+
+// 页面卸载时关闭
+onUnload(() => {
+  ws.close();
+});
+
+```
+
+支持多个连接，频道，Promise风格
+
+```js
+// utils/wsManager.js
+
+class WSInstance {
+  constructor(url, options = {}) {
+    this.url = url;
+    this.socketOpen = false;
+    this.socketTask = null;
+
+    this.messageHandlers = {}; // { channel: [callback1, callback2, ...] }
+    this.pendingRequests = {}; // { id: resolve }
+
+    this.heartbeatInterval = options.heartbeatInterval || 15000;
+    this.reconnectInterval = options.reconnectInterval || 5000;
+    this.maxReconnectAttempts = options.maxReconnectAttempts || 5;
+    this.reconnectAttempts = 0;
+
+    this.heartbeatTimer = null;
+    this.msgIdCounter = 1;
+
+    this.connect();
+  }
+
+  connect() {
+    this.socketTask = uni.connectSocket({ url: this.url });
+
+    uni.onSocketOpen(() => {
+      this.socketOpen = true;
+      this.reconnectAttempts = 0;
+      this.startHeartbeat();
+      console.log(`[WS][${this.url}] 连接成功`);
+    });
+
+    uni.onSocketMessage((res) => this._handleMessage(res.data));
+    uni.onSocketClose(() => {
+      console.warn(`[WS][${this.url}] 连接关闭`);
+      this.socketOpen = false;
+      this._tryReconnect();
+    });
+    uni.onSocketError((err) => {
+      console.error(`[WS][${this.url}] 连接错误`, err);
+      this.socketOpen = false;
+      this._tryReconnect();
+    });
+  }
+
+  _handleMessage(raw) {
+    try {
+      const data = JSON.parse(raw);
+
+      // 响应 pending 的 Promise 请求
+      if (data.id && this.pendingRequests[data.id]) {
+        this.pendingRequests[data.id](data);
+        delete this.pendingRequests[data.id];
+        return;
+      }
+
+      // 广播到对应频道
+      const { channel, payload } = data;
+      if (channel && this.messageHandlers[channel]) {
+        this.messageHandlers[channel].forEach(cb => cb(payload));
+      }
+    } catch (e) {
+      console.error(`[WS][${this.url}] 消息处理失败`, e);
+    }
+  }
+
+  send(channel, payload, expectResponse = false) {
+    return new Promise((resolve, reject) => {
+      if (!this.socketOpen) return reject('WebSocket 未连接');
+
+      const message = {
+        channel,
+        payload,
+      };
+
+      if (expectResponse) {
+        const id = Date.now() + '_' + (this.msgIdCounter++);
+        message.id = id;
+        this.pendingRequests[id] = resolve;
+
+        // 设置超时释放
+        setTimeout(() => {
+          if (this.pendingRequests[id]) {
+            delete this.pendingRequests[id];
+            reject('请求超时');
+          }
+        }, 8000);
+      }
+
+      uni.sendSocketMessage({
+        data: JSON.stringify(message),
+        success: () => {
+          if (!expectResponse) resolve(true);
+        },
+        fail: (err) => reject(err)
+      });
+    });
+  }
+
+  subscribe(channel, callback) {
+    if (!this.messageHandlers[channel]) {
+      this.messageHandlers[channel] = [];
+    }
+    this.messageHandlers[channel].push(callback);
+  }
+
+  unsubscribe(channel, callback) {
+    if (this.messageHandlers[channel]) {
+      this.messageHandlers[channel] = this.messageHandlers[channel].filter(fn => fn !== callback);
+    }
+  }
+
+  startHeartbeat() {
+    if (this.heartbeatTimer) clearInterval(this.heartbeatTimer);
+    this.heartbeatTimer = setInterval(() => {
+      if (this.socketOpen) {
+        this.send('ping', { time: Date.now() }).catch(() => {});
+      }
+    }, this.heartbeatInterval);
+  }
+
+  _tryReconnect() {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.error(`[WS][${this.url}] 已超出最大重连次数`);
+      return;
+    }
+    this.reconnectAttempts++;
+    setTimeout(() => {
+      console.log(`[WS][${this.url}] 尝试第 ${this.reconnectAttempts} 次重连...`);
+      this.connect();
+    }, this.reconnectInterval);
+  }
+
+  close() {
+    clearInterval(this.heartbeatTimer);
+    this.socketOpen = false;
+    uni.closeSocket();
+  }
+}
+
+class WebSocketManager {
+  constructor() {
+    this.instances = {}; // { url: WSInstance }
+  }
+
+  getInstance(url, options = {}) {
+    if (!this.instances[url]) {
+      this.instances[url] = new WSInstance(url, options);
+    }
+    return this.instances[url];
+  }
+
+  closeAll() {
+    Object.values(this.instances).forEach(inst => inst.close());
+    this.instances = {};
+  }
+}
+
+const wsManager = new WebSocketManager();
+export default wsManager;
+
+```
+
+页面中使用
+
+```js
+import wsManager from '@/utils/wsManager.js';
+
+// 获取连接实例（多连接支持）
+const ws = wsManager.getInstance('wss://your-server.com/ws', {
+  heartbeatInterval: 10000
+});
+
+// 订阅频道消息
+ws.subscribe('chat:newMessage', (msg) => {
+  console.log('收到新消息：', msg);
+});
+
+// 发送频道消息（不需要响应）
+ws.send('chat:sendMessage', { content: 'Hello~' });
+
+// 发送请求，等待响应（Promise 风格）
+ws.send('user:getInfo', { userId: 123 }, true).then(res => {
+  console.log('收到用户信息响应：', res);
+}).catch(err => {
+  console.error('请求失败：', err);
+});
+
+// 页面卸载时关闭
+onUnload(() => {
+  ws.close();
+});
+
+```
+
+支持多个连接
+
+```js
+const ws1 = wsManager.getInstance('wss://api1.example.com/ws');
+const ws2 = wsManager.getInstance('wss://api2.example.com/ws');
+
+ws1.subscribe('topic1', handler1);
+ws2.subscribe('topic2', handler2);
+
+```
+
