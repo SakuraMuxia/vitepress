@@ -138,6 +138,10 @@ export default defineConfig({
               link: '/back-end/001-JavaSE/'
           },
           {
+              text: 'unicloud',
+              link: '/back-end/002-unicloud/'
+          },
+          {
               text: '数据结构',
               link: '/back-end/'
           },
@@ -200,6 +204,7 @@ sidebar: {
     "/blogs/01-technology/": set_sidebar("/docs/blogs/01-technology/"),
     "/devops/git/": set_sidebar("/docs/devops/git/"),
     "/back-end/001-JavaSE/": set_sidebar("/docs/back-end/001-JavaSE/"),
+    "/back-end/002-unicloud/": set_sidebar("/docs/back-end/002-unicloud/"),
 },
 //---------------------------------------------------------------
     // 设置搜索框的样式
