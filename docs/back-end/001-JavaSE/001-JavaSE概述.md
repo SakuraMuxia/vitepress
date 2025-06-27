@@ -285,3 +285,29 @@ soutv 	自动生成打印上一行变量的输出语句
 
 ```
 
+**快速打印**
+
+```java
+p.getName.sout 回车 => System.out.println(p.getName);
+```
+
+**自动生成 类的get和set方法**
+
+```ts
+鼠标右键编辑器，选择“Generate”，也可以直接按Alt+Insert快捷键
+Getter和Setter进行分别生成get/set方法，这里选择Getter
+```
+
+**自动生成 类的无参构造**
+
+```ts
+鼠标右键编辑器，选择“Generate”，也可以直接按Alt+Insert快捷键
+这里选择Constructor
+```
+
+**显示类的继承关系**
+
+```ts
+在一个包中，然后选中所有的类，鼠标右键，diagrams，show diagrams。
+```
+

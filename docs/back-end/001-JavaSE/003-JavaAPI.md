@@ -94,3 +94,9 @@ equals()
 返回值：boolean类型
 ```
 
+## OBJECT
+
+```javascript
+getClass().getName() 获取当前类的包名+类名。
+```
+
