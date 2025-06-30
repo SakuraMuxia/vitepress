@@ -311,3 +311,9 @@ Getter和Setter进行分别生成get/set方法，这里选择Getter
 在一个包中，然后选中所有的类，鼠标右键，diagrams，show diagrams。
 ```
 
+**查找父类中的方法**
+
+```ts
+按住 ctrl 点击关键字 即可跳转。
+```
+
