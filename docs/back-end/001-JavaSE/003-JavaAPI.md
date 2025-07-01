@@ -85,7 +85,7 @@ public class TestScanner {
 
 ## String
 
-方法
+### 方法
 
 ```ts
 equals() 
@@ -94,9 +94,31 @@ equals()
 返回值：boolean类型
 ```
 
+```ts
+
+```
+
+
+
 ## OBJECT
 
-```javascript
+Object类是所有类的父亲
+
+### 属性
+
+### 方法
+
+```ts
 getClass().getName() 获取当前类的包名+类名。
 ```
+
+**toString()**
+
+```java
+object.toString 返回当前对象的字符串形式
+```
+
+
+
+### 构造方法
 
