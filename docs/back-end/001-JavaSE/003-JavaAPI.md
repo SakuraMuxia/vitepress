@@ -1,6 +1,6 @@
 # JavaAPI
 
-## Scanner
+## Scanner类
 
 `Scanner`是JDK提供的一个类,位于`java.util`包下,用来接收用户在控制台输入的信息。
 
@@ -83,9 +83,9 @@ public class TestScanner {
 }
 ```
 
-## String
+## String类
 
-### 方法
+**方法**
 
 ```ts
 equals() 
@@ -95,30 +95,41 @@ equals()
 ```
 
 ```ts
-
+length()
+length方法，表示获取字符串的长度
+String str;
+str.length() 获取字符串的长度
 ```
 
+## Object类
 
+Object类是所有类的父亲，所有类都可以直接使用Object类中的方法。
 
-## OBJECT
+**属性**
 
-Object类是所有类的父亲
+```java
+Object类中没有属性。
+```
 
-### 属性
-
-### 方法
+**方法**
 
 ```ts
 getClass().getName() 获取当前类的包名+类名。
+
+toString():默认返回当前对象包名和哈希值，通常会被重写
+
+equals()：默认比较两个对象地址是否相同，通常会被重写
+
+hashCode()：默认返回当前对象的哈希值，通常会被重写
+哈希值是由对象的地址等一些信息，使用凑杂算法计算出来的一个十进制的数值。哈希值不是地址值。
+Java中的地址值无法获取,计算Hash值的方式也无法获取。
+哈希值是通过对象的地址和一些信息进行加权，计算出来的十进制数值。
+hashCode()方法中使用了equals()方法的比较规则进行计算哈希值。
 ```
 
-**toString()**
-
-```java
-object.toString 返回当前对象的字符串形式
-```
 
 
 
-### 构造方法
+
+
 

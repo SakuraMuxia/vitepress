@@ -317,3 +317,10 @@ Getter和Setter进行分别生成get/set方法，这里选择Getter
 按住 ctrl 点击关键字 即可跳转。
 ```
 
+**方法后返回值快捷键**
+
+```java
+srt.toCharArray().var 可快速得到 char[] v1 = str.toCharArray()
+
+```
+
