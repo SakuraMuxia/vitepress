@@ -12,7 +12,7 @@
 
 **方法**
 
-```shell
+```java
 next() 接收用户输入的字符串
 nextByte() 接收用户输入的byte类型的数据
 nextShort() 接收用户输入的short类型的数据
@@ -27,7 +27,6 @@ nextBoolean() 接收布尔类型的数据
 
 ```ts
 导包：Scanner类是位于java.util包中类 是JDK提供的 所以我们如需使用 必须导包 
-
 ```
 
 **异常**
@@ -88,18 +87,40 @@ public class TestScanner {
 **方法**
 
 ```ts
-equals() 
-对字符串进行判断 必须使用equals方法
-用法： 变量名.equals("比较的内容")
+equals():对两个字符串对象是否相同进行判断
+参数：字符串对象
 返回值：boolean类型
+
+例子：
+String str1 = "hello";
+String str2 = "hello";
+boolean result = str1.equals(str2);
 ```
 
 ```ts
-length()
-length方法，表示获取字符串的长度
-String str;
-str.length() 获取字符串的长度
+length()：表示获取字符串的长度
+参数：无
+返回值：int类型
+
+例子：
+String str1 = "hello";
+System.out.println(str1.length());
 ```
+
+```java
+toCharArray()：将字符串 str1 转换为一个字符数组（char[]）
+参数：无
+返回值：返回一个新的 char[] 数组
+
+例子：
+String str1 = "hello";
+char[] chars = str1.toCharArray();
+for (char c : chars) {
+    System.out.println(c);
+}
+```
+
+
 
 ## Object类
 
@@ -115,21 +136,48 @@ Object类中没有属性。
 
 ```ts
 getClass().getName() 获取当前类的包名+类名。
+参数：无
+返回值：String
 
+例子：
+String result = getClass().getName();
+```
+
+```java
+equals()：比较两个对象地址是否相同
+参数：无
+返回值：boolean
+
+例子：
+Person per1 = new Persion();
+Person per2 = new Persion();
+boolean result = per1.equals(per2);
+```
+
+```java
 toString():默认返回当前对象包名和哈希值，通常会被重写
+参数：无
+返回值：String
+    
+例子：
+Person per2 = new Persion();
+String result = per2.toString();// 和直接打印对象，效果是一样的。
+```
 
-equals()：默认比较两个对象地址是否相同，通常会被重写
-
+```java
 hashCode()：默认返回当前对象的哈希值，通常会被重写
+参数：无
+返回值：int
+
+例子：
+Person per2 = new Persion();
+int result = per2.hashCode();
+System.out.println("per2 "+per2.hashCode());
+
+说明：
 哈希值是由对象的地址等一些信息，使用凑杂算法计算出来的一个十进制的数值。哈希值不是地址值。
 Java中的地址值无法获取,计算Hash值的方式也无法获取。
 哈希值是通过对象的地址和一些信息进行加权，计算出来的十进制数值。
 hashCode()方法中使用了equals()方法的比较规则进行计算哈希值。
 ```
-
-
-
-
-
-
 

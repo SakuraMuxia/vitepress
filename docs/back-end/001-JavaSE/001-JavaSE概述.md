@@ -324,3 +324,9 @@ srt.toCharArray().var 可快速得到 char[] v1 = str.toCharArray()
 
 ```
 
+**自动重写父类方法**
+
+```ts
+直接在子类中 写 父类中的方法名称 cure 回车
+```
+
