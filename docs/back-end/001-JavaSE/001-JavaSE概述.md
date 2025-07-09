@@ -8,6 +8,13 @@
 
 > 三者关系：JDK包含 JRE  JRE包含JVM  
 
+```java
+讲师：王浩栋
+B站：帅栋栋sdd
+```
+
+![image-20250707172458237](https://2216847528.oss-cn-beijing.aliyuncs.com/asset/image-20250707172458237.png)
+
 ## 配置环境
 
 ```ts
