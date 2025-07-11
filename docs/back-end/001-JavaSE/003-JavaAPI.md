@@ -84,6 +84,8 @@ public class TestScanner {
 
 ## String类
 
+String类是 `Java.lang` 包中的类，`Java.lang` 包默认加载，不用导包。
+
 **方法**
 
 ```ts
