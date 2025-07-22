@@ -343,3 +343,15 @@ srt.toCharArray().var 可快速得到 char[] v1 = str.toCharArray()
 选中文本，鼠标右击，点击 Column Selection Mode 或者 使用 Alt+shift+insert快捷键
 ```
 
+**Idea关闭引用提示**
+
+```ts
+以phpstorm 去掉 Usages 提示为例，Setting（设置）——Editor（编辑器）——Inlay Hints（嵌入提示）——Code Vision——Usages（用法），去掉勾选即可
+```
+
+**增强for循环**
+
+```java
+idea快捷键：元素名称.for
+```
+
