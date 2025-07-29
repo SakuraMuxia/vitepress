@@ -160,6 +160,8 @@ javadoc -d mydoc -author -version HelloWorld.java
 ```ts
 乱码
 记事本默认编码格式为UTF-8 而JVM默认文件的编码格式为GBK 最终原因也就是因为编码格式不一致所导致
+IDEA默认读取文件的格式为 UTF-8 格式,源文件的格式为ANSI(GBK),就会出现乱码。
+// 使用 InputStreamReader 类解决乱码的问题
 ```
 
 ```ts
