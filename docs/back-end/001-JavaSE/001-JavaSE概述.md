@@ -357,3 +357,9 @@ srt.toCharArray().var 可快速得到 char[] v1 = str.toCharArray()
 idea快捷键：元素名称.for
 ```
 
+**快速使用try catch 包裹代码**
+
+```ts
+选中代码，然后 ctrl + alt + t
+```
+
