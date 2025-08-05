@@ -145,6 +145,8 @@ getClass().getName() 获取当前类的包名+类名。
 String result = getClass().getName();
 ```
 
+equals()
+
 ```java
 equals()：比较两个对象地址是否相同
 参数：无
@@ -156,6 +158,8 @@ Person per2 = new Persion();
 boolean result = per1.equals(per2);
 ```
 
+toString()
+
 ```java
 toString():默认返回当前对象包名和哈希值，通常会被重写
 参数：无
@@ -165,6 +169,8 @@ toString():默认返回当前对象包名和哈希值，通常会被重写
 Person per2 = new Persion();
 String result = per2.toString();// 和直接打印对象，效果是一样的。
 ```
+
+hashCode()
 
 ```java
 hashCode()：默认返回当前对象的哈希值，通常会被重写
@@ -181,5 +187,27 @@ System.out.println("per2 "+per2.hashCode());
 Java中的地址值无法获取,计算Hash值的方式也无法获取。
 哈希值是通过对象的地址和一些信息进行加权，计算出来的十进制数值。
 hashCode()方法中使用了equals()方法的比较规则进行计算哈希值。
+```
+
+wait()
+
+```java
+wait()：表示让当前线程等待，不会自动唤醒（）
+参数：无
+返回值：无
+
+例子：
+
+```
+
+notify()
+
+```java
+notify()：唤醒正在等待的线程
+参数：无
+返回值：无
+
+例子：
+// 设置一个标记值 布尔值 false代表可以生产不能消费。true代表可以消费不能生产。
 ```
 
