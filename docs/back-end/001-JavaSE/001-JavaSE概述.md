@@ -363,3 +363,9 @@ idea快捷键：元素名称.for
 选中代码，然后 ctrl + alt + t
 ```
 
+**获取包名加类名**
+
+```java
+在左侧的导航窗口，选中类，鼠标右击，选中copy Path/reference，然后选中最后一个 copy Reference。
+```
+
