@@ -142,6 +142,14 @@ export default defineConfig({
               link: '/back-end/002-unicloud/'
           },
           {
+              text: 'JavaWeb',
+              link: '/back-end/003-JavaWeb/'
+          },
+          {
+              text: 'mysql',
+              link: '/back-end/004-mysql/'
+          },
+          {
               text: '数据结构',
               link: '/back-end/'
           },
@@ -205,6 +213,8 @@ sidebar: {
     "/devops/git/": set_sidebar("/docs/devops/git/"),
     "/back-end/001-JavaSE/": set_sidebar("/docs/back-end/001-JavaSE/"),
     "/back-end/002-unicloud/": set_sidebar("/docs/back-end/002-unicloud/"),
+    "/back-end/003-JavaWeb/": set_sidebar("/docs/back-end/003-JavaWeb/"),
+    "/back-end/004-mysql/": set_sidebar("/docs/back-end/004-mysql/")
 },
 //---------------------------------------------------------------
     // 设置搜索框的样式
