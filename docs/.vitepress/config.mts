@@ -24,7 +24,7 @@ export default defineConfig({
     //页脚
     footer: {
       message: '',
-      copyright: 'Copyright © 2024 雨落辰潇',
+      copyright: 'Copyright © 2025 雨落辰潇',
     },
 //-----------------------------------------------------------------------
     // nav导航
