@@ -232,3 +232,77 @@
 
 ```
 
+## form表单按钮类型
+
+```html
+<form action="addFruit" method="post">
+    <!-- 水果名称 -->
+    <div class="mb-3">
+      <label class="form-label">水果名称：</label>
+      <input type="text" class="form-control" name="fname">
+    </div>
+    <!-- 价格 -->
+    <div class="mb-3">
+      <label class="form-label">价格：</label>
+      <input type="number" class="form-control" name="price" >
+    </div>
+    <!-- 库存数量 -->
+    <div class="mb-3">
+      <label class="form-label">库存数量：</label>
+      <input type="number" class="form-control" name="count">
+    </div>
+    <!-- 备注 -->
+    <div class="mb-3">
+      <label class="form-label">备注：</label>
+      <input type="text" class="form-control" name="remark">
+    </div>
+    <!-- 操作按钮 -->
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-success">保存</button>
+      <button onclick="handleJumpList()" type="button">取消</button>
+    </div>
+</form>
+<script>
+  const handleJumpList = () => {
+    // 方式2：如果你使用的是后端路由，比如 Spring Boot 的 /fruit/list
+    window.location.href = '/fruit/fruitList';
+  }
+</script>
+```
+
+```html
+<form th:action="@{/updateFruit}" method="post" th:object="${fruit}">
+  <!-- 隐藏id -->
+  <input type="hidden" name="id" th:value="*{id}">
+
+  <label>水果名称：</label>
+  <input type="text" name="fname" th:value="*{fname}" required>
+  <br>
+
+  <label>价格：</label>
+  <input type="number" name="price" th:value="*{price}" step="0.1" required>
+  <br>
+
+  <label>库存数量：</label>
+  <input type="number" name="count" th:value="*{count}" required>
+  <br>
+
+  <label>备注：</label>
+  <input type="text" name="remark" th:value="*{remark}">
+  <br>
+
+  <button type="submit">保存修改</button>
+  <!--取消默认提交功能-->
+  <button onclick="handleJumpList()" type="button">取消</button>
+</form>
+<script>
+    function handleJumpList(){
+      // 方式1：直接跳转到某个页面
+      window.location.href = '/fruit/fruitList.html'; // 改成你的列表页路径
+
+      // 方式2：如果你使用的是后端路由，比如 Spring Boot 的 /fruit/list
+      // window.location.href = '/fruit/list';
+    }
+</script>
+```
+
