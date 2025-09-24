@@ -139,6 +139,26 @@
 
 ```
 
+`gap` 是 **Bootstrap 5** 新增的类，用于 **设置 Flex 或 Grid 容器子元素之间的间距**
+
+```html
+gap-{size}      // 同时设置行间距和列间距
+gap-x-{size}    // 设置水平方向间距
+gap-y-{size}    // 设置垂直方向间距
+
+<div class="d-flex gap-2">
+  <div class="p-2 bg-primary text-white">子元素1</div>
+  <div class="p-2 bg-success text-white">子元素2</div>
+  <div class="p-2 bg-danger text-white">子元素3</div>
+</div>
+```
+
+使用CSS样式，竖着排列
+
+```html
+<i style="writing-mode: vertical-rl;">添加</i>
+```
+
 
 
 ## 文本类
