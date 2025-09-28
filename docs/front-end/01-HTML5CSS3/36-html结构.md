@@ -306,3 +306,93 @@
 </script>
 ```
 
+## CSS闪烁样式
+
+方式1：
+
+```html
+<svg t="1758857706414" class="icon-blick path" viewBox="0 0 1092 1024" version="1.1">
+    <path ></path>
+    <title>浪涌开关动作</title>
+    <path></path>
+</svg>
+```
+
+```css
+.icon-blick path {
+  animation: blink 1s infinite;
+}
+
+// 定义闪烁动画
+@keyframes blink {
+  0% {
+    opacity: 1;
+    fill: #efb336; /* 初始颜色 */
+  }
+  50% {
+    opacity: 0.2;
+    fill: #ffd36a; /* 变亮一点 */
+  }
+  100% {
+    opacity: 1;
+    fill: #efb336;
+  }
+}
+```
+
+方式2：
+
+```css
+// 绿灯
+.green-light-on {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #00ff00;
+    box-shadow: 0 0 15px #00ff00;
+}
+// 灰灯
+.gray-light-on {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #afaeae;
+}
+@keyframes blinkYellow {
+
+    0%,
+    100% {
+        background-color: #ffcc00;
+        box-shadow: 0 0 10px #ffcc00;
+    }
+
+    50% {
+        background-color: #996600;
+        box-shadow: none;
+    }
+}
+// 黄灯闪烁
+.yellow-light {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ffcc00;
+    box-shadow: 0 0 10px #ffcc00;
+    animation: blinkYellow 1s infinite;
+}
+```
+
+### 动态Class切换
+
+```html
+你这个需求在前端里就是一个动态 class 切换。常见写法：
+<svg :class="device.online ? 'icon-blick path' : 'icon-static path'">
+  <!-- ... -->
+</svg>
+
+// 或
+<svg :class="['path', device.online ? 'icon-blick' : 'icon-static']">
+  <!-- ... -->
+</svg>
+```
+
