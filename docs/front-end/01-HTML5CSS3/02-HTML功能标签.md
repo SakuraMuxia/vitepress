@@ -159,9 +159,84 @@ base64编码工具： https://tool.chinaz.com/tools/imgtobase/
 
 **总结：**
 
+```ts
+target 属性设置目标文件在哪个窗口打开，默认值是 _self,表示本窗口打开；
+可以设置为 _blank, 表示新窗口打开
+
 ```
-target 属性设置目标文件在哪个窗口打开，默认值是 _self,表示本窗口打开；可以设置为 _blank, 表示新窗口打开
+
+| 值          | 含义              | 效果说明                                                     |
+| ----------- | ----------------- | ------------------------------------------------------------ |
+| `_self`     | 当前窗口（默认）  | 在**当前页面**中打开链接。                                   |
+| `_blank`    | 新窗口 / 新标签页 | 在**新标签页**中打开。                                       |
+| `_parent`   | 父级框架          | 如果当前页面在 `<iframe>` 中，则在**父级页面**打开。若无父级，与 `_self` 相同。 |
+| `_top`      | 顶级窗口          | 在**最外层窗口**打开（会跳出所有嵌套的 iframe）。            |
+| `framename` | 自定义框架名      | 在指定名称的 `<iframe>` 中打开。                             |
+
+指定 iframe 中打开
+
+假设页面结构如下：
+
+```html
+<iframe name="mainFrame" src="home.html"></iframe>
 ```
+
+那么：
+
+```html
+<a href="profile.html" target="mainFrame">打开资料页</a>
+```
+
+👉 这个链接会在名为 `mainFrame` 的 iframe 中加载新页面。
+
+ 与JavaScript结合
+
+```ts
+<a id="myLink" href="page.html">跳转</a>
+
+<script>
+  const link = document.getElementById('myLink');
+  link.target = '_blank'; // 动态指定新标签页打开
+</script>
+```
+
+```ts
+<div id="div_top">
+  <iframe id="iframeTop" name="iframeTop" src="/page?page=frames/top" height="118px" width="100%" frameborder="no"></iframe>
+</div>
+
+<div id="div_left">
+  <iframe id="iframeLeft" name="iframeLeft" src="/page?page=frames/left" width="200px" height="100%" frameborder="no"></iframe>
+</div>
+
+<div id="div_main">
+  <iframe id="iframeMain" name="iframeMain" src="/page?page=frames/main" width="100%" height="100%" frameborder="no"></iframe>
+</div>
+
+<script>
+  function openInMain(url) {
+    // 通过 window.top 访问最外层页面（index.html）
+    // 找到主区域的 iframe
+    window.top.document.getElementById('iframeMain').src = url;
+  }
+</script>
+
+<!-- 点击后加载新的页面到 main 区域 -->
+<div class="friend-item" onclick="openInMain('/topic.do?oper=getTopicList&id=1001')">
+  <img src="avatar.jpg" class="friend-avatar">
+  <span>小明</span>
+</div>
+<!--thymeleaf页面语法-->
+<div th:each="friend : ${session.userBasic.friendList}"
+     th:object="${friend}"
+     th:onclick="'openInMain(\'/topic.do?oper=getTopicList&id=' + *{id} + '\')'">
+  <img src="https://q1.qlogo.cn/g?b=qq&nk=10001&s=100" class="friend-avatar">
+  <div class="friend-name" th:text="*{nickName}">好友名称</div>
+</div>
+
+```
+
+
 
 ###  超链接
 
