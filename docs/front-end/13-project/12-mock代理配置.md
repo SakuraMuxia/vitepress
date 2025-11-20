@@ -160,3 +160,31 @@ export const reqDeviceDownFirm = (params: any) => request.get<any, any>(API.DEVI
 export const reqNBInit = (params: any) => mockrequest.post<any, any>(API.NBINIT, null, { params })
 ```
 
+## Uniapp H5端报错
+
+```ts
+
+设置别名
+
+import { defineConfig } from 'vite';
+import uni from '@dcloudio/vite-plugin-uni';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [uni()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@dcloudio/uni-ui': path.resolve(__dirname, 'node_modules/@dcloudio/uni-ui')
+    }
+  }
+});
+```
+
+升级uni ui
+
+```ts
+确保 uni-ui 最新版本
+npm update @dcloudio/uni-ui
+```
+

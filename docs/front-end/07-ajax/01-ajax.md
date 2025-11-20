@@ -783,5 +783,76 @@ function ajax(options) {
    
 ```
 
+## fetch和Ajax
 
+**它们的关系**
 
+| 名称      | 时代               | 所属              | 底层机制                           | 是否需要引入库 |
+| --------- | ------------------ | ----------------- | ---------------------------------- | -------------- |
+| **AJAX**  | 第一代（2005 起）  | jQuery / 原生 XHR | `XMLHttpRequest`                   | ✅ 需要 jQuery  |
+| **Fetch** | 第二代（ES6 起）   | 浏览器原生        | `Promise + Fetch API`              | ❌ 不需要       |
+| **Axios** | 第三代（社区封装） | 独立第三方库      | `Promise + XMLHttpRequest / Fetch` | ✅ 需要安装     |
+
+AJAX 是老式方案，Fetch 是浏览器原生标准，Axios 是在 Fetch/XHR 之上做了「更好用的封装」
+
+**jQuery AJAX**
+
+```js
+$.ajax({
+  url: '/api/user',
+  method: 'POST',
+  data: { name: 'Tom', age: 18 },
+  success: function(res) {
+    console.log('成功', res)
+  },
+  error: function(err) {
+    console.log('失败', err)
+  }
+})
+
+```
+
+**Fetch**
+
+```js
+fetch('/api/user', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name: 'Tom', age: 18 })
+})
+  .then(res => res.json())
+  .then(data => console.log('成功', data))
+  .catch(err => console.log('失败', err))
+
+```
+
+**Axios**
+
+```js
+axios.post('/api/user', { name: 'Tom', age: 18 })
+  .then(res => console.log('成功', res.data))
+  .catch(err => console.log('失败', err))
+```
+
+**核心区别**
+
+| 对比项           | **AJAX (jQuery)**      | **Fetch**                 | **Axios**                            |
+| ---------------- | ---------------------- | ------------------------- | ------------------------------------ |
+| **依赖**         | jQuery                 | 无（原生）                | 独立库                               |
+| **返回类型**     | 依赖回调函数           | Promise                   | Promise                              |
+| **请求体 JSON**  | 自动编码为表单         | 需手动 `JSON.stringify()` | 自动处理                             |
+| **响应处理**     | 自动解析               | 需手动 `.json()`          | 自动解析 JSON                        |
+| **超时控制**     | 支持 `timeout`         | 需手动 AbortController    | 内置 `timeout`                       |
+| **上传进度**     | 支持                   | 不支持                    | 支持                                 |
+| **拦截器功能**   | ❌                      | ❌                         | ✅ request / response 拦截器          |
+| **错误处理**     | 404/500 自动进入 error | 仅网络错误触发 catch      | 404/500 均触发 catch                 |
+| **浏览器兼容性** | IE8+                   | IE 不支持（需 polyfill）  | IE11+                                |
+| **使用场景**     | 旧项目                 | 原生轻量项目              | 现代前端项目（Vue、React、UniApp等） |
+
+Axios 是对 `fetch` + `xhr` 的封装，解决了许多「fetch 不方便的点
+
+- 自动把对象转为 JSON（无需 `JSON.stringify`）；
+- 自动把响应解析成 JS 对象；
+- 支持请求/响应拦截器（可统一加 token、统一错误处理）；
+- 支持取消请求、超时设置；
+- 支持 node.js 端复用（SSR / 后端接口代理）。
